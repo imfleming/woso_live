@@ -6,5 +6,5 @@ page-layout: full
 <iframe 
   src="https://ianmichaelfleming.shinyapps.io/nwsl_simulator_deploy/" 
   style="border: none; width: 100%; height: 1200px;"
-  title="Women's World Cup Simulator">
+  title="Shot Simulator">
 </iframe>
