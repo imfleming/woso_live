@@ -4,7 +4,7 @@ project:
 website:
   title: "WoSo Live"
   navbar:
-    background: "#38787c" # The Dispelling Voodoo Teal
+    background: "#00747A" # The Dispelling Voodoo Teal
     foreground: "#ffffff" # White text
     left:
       - text: "Home"
