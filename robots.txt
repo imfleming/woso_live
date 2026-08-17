@@ -1,1 +1,1 @@
-Sitemap: https://imfleming.github.io/woso_live/sitemap.xml
+Sitemap: https://woso.live/sitemap.xml
