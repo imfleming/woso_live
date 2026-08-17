@@ -1,1 +1,12 @@
-/* css styles */
+/* Import the Assistant font from Google */
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700&display=swap');
+
+/* Apply it globally to all text elements */
+*, body, h1, h2, h3, h4, h5, h6, p, div, table, .navbar-brand, .nav-link, .btn {
+  font-family: 'Assistant', sans-serif !important;
+}
+
+/* Optional: Match the deep teal background for the navbar */
+.navbar {
+  background-color: #00747A !important;
+}
