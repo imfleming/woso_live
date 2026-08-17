@@ -1,0 +1,25 @@
+project:
+  type: website
+
+website:
+  title: "WoSo Live"
+  navbar:
+    background: "#38787c" # The Dispelling Voodoo Teal
+    foreground: "#ffffff" # White text
+    left:
+      - text: "Home"
+        href: index.qmd
+      - text: "RAPM Tools"
+        href: rapm-tools.qmd
+      - text: "Shot Simulator"
+        href: shot-simulator.qmd
+      - text: "World Cup Simulator"
+        href: wwc-simulator.qmd
+      - text: "About"
+        href: about.qmd
+
+format:
+  html:
+    theme: litera # Matches the bslib theme in your Shiny app
+    css: styles.css
+    toc: false
