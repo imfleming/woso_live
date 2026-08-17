@@ -10,3 +10,8 @@
 .navbar {
   background-color: #00747A !important;
 }
+
+/* Hide default Quarto page titles globally */
+header.quarto-title-block {
+  display: none !important;
+}
