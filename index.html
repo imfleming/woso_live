@@ -180,10 +180,39 @@ gtag('config', 'G-HV5N2DMVZR', { 'anonymize_ip': true});
 <h1 style="color: white; font-size: clamp(3.5rem, 10vw, 8rem); font-weight: 700; margin: 0; font-family: 'Assistant', sans-serif; letter-spacing: clamp(-1px, -0.5vw, -3px);">
 WoSo.Live
 </h1>
-<p style="color: white; font-size: clamp(1rem, 3vw, 1.25rem); font-weight: 400; margin-top: 1rem; max-width: 800px; font-family: 'Assistant', sans-serif;">
-A site for women’s soccer data and visualizations. Take it for a spin.
+<p style="color: white; font-size: clamp(1rem, 3vw, 1.25rem); font-weight: 400; margin-top: 1rem; margin-bottom: 0.2rem; max-width: 800px; font-family: 'Assistant', sans-serif;">
+A site for women’s soccer data and visualizations.
+</p>
+<p id="dynamic-caption" style="visibility: hidden; color: white; font-size: clamp(1rem, 3vw, 1.25rem); font-weight: 400; margin-top: 0; max-width: 800px; font-family: 'Assistant', sans-serif;">
+Take it for a spin.
 </p>
 </div>
+<script>
+  (function() {
+    const callToAction = [
+      "Take it for a spin.",
+      "Dive into the numbers.",
+      "Explore the data.",
+      "See the game differently.",
+      "Uncover the insights.",
+      "It's not just for nerds.",
+      "Be your inner spreadsheet person.",
+      "Separate signal from noise.",
+      "Thanks for visiting!",
+      "Bienvenue.",
+      "Find something fun and share it for the world to see.",
+      "Kick your feet up and stay a while."
+    ];
+    
+    const randomCTA = callToAction[Math.floor(Math.random() * callToAction.length)];
+    const captionEl = document.getElementById("dynamic-caption");
+    
+    if (captionEl) {
+      captionEl.innerText = randomCTA;
+      captionEl.style.visibility = "visible";
+    }
+  })();
+</script>
 
 
 
