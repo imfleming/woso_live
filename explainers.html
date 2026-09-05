@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Analytics Primer – WoSo.Live</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./favicon.svg" rel="icon" type="image/svg+xml">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-1e0dc91f29d2ccce92a36a09db8e57e9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-HV5N2DMVZR"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-HV5N2DMVZR', { 'anonymize_ip': true});
+</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">WoSo.Live</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./rapm-tools.html"> 
+<span class="menu-text">RAPM Tools</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./goalkeepers.html"> 
+<span class="menu-text">Goalkeepers</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./shot-simulator.html"> 
+<span class="menu-text">Shot Simulator</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./wwc-simulator.html"> 
+<span class="menu-text">World Cup Simulator</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./explainers.html" aria-current="page"> 
+<span class="menu-text">Explainers</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Analytics Primer</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div style="margin-top: 1.5rem; margin-bottom: 2.5rem; border-bottom: 2px solid #00747A; padding-bottom: 1rem;">
+<h1 style="color: #111111; font-weight: 700; font-size: 2.5rem; margin-bottom: 0.5rem;">
+Analytics Primer
+</h1>
+<p style="color: #555555; font-size: 1.2rem; margin: 0;">
+An guide to the quantitative models across WoSo.Live.
+</p>
+</div>
+<p>Soccer is a fluid, low-scoring game where traditional counting statistics - such as goals, assists, and clean sheets - routinely tell misleading stories.</p>
+<p>A striker might score a hat trick of simple tap-ins created entirely by her teammates, while an elite playmaker creates five clear-cut openings that her forwards fail to convert. Similarly, a goalkeeper might earn a clean sheet without facing a single difficult shot, while another concedes three times after facing ten point-blank strikes.</p>
+<p>The analytics models across <strong>WoSo.Live</strong> look past surface results to measure what actually occurred on the pitch, operating across four distinct layers:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Layer</th>
+<th style="text-align: left;">Question Answered</th>
+<th style="text-align: left;">Core Metrics</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>1. Chance Quality</strong></td>
+<td style="text-align: left;">How dangerous was the scoring opportunity before the ball was struck?</td>
+<td style="text-align: left;"><strong>xG</strong> (Expected Goals)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>2. Shot Execution</strong></td>
+<td style="text-align: left;">Where did the ball go, and how difficult was it to save?</td>
+<td style="text-align: left;"><strong>xGOT</strong> (Expected Goals on Target)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>3. Goalkeeping</strong></td>
+<td style="text-align: left;">How many goals did the keeper prevent, how consistent is she, and what is her true talent?</td>
+<td style="text-align: left;"><strong>Goals Prevented (GP)</strong>, <strong>SAVE Profile</strong>, <strong>Bayesian Posteriors</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>4. On-Pitch Value</strong></td>
+<td style="text-align: left;">How much does a player improve her team’s goal differential and standings points?</td>
+<td style="text-align: left;"><strong>RAPM</strong>, <strong>GAA</strong>, <strong>GAR</strong>, <strong>WAR</strong></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<section id="expected-goals-xg-evaluating-chance-creation" class="level2">
+<h2 class="anchored" data-anchor-id="expected-goals-xg-evaluating-chance-creation">1. Expected Goals (xG): Evaluating Chance Creation</h2>
+<p><strong>Expected Goals (xG)</strong> measures the quality of a scoring chance. It assigns a probability between <strong>0.00</strong> (impossible to score) and <strong>1.00</strong> (a guaranteed goal) to every attempt taken.</p>
+<p>An xG value of <strong>0.25</strong> indicates that, based on historical shots taken under identical circumstances, an average professional scores that chance <strong>25% of the time</strong> (or 1 in every 4 attempts).</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Opportunity</th>
+<th style="text-align: left;">Match Scenario</th>
+<th style="text-align: left;">Historical Frequency</th>
+<th style="text-align: left;">Expected Goals (xG)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Low-Threat Attempt</strong></td>
+<td style="text-align: left;">30-yard shot taken through defensive traffic</td>
+<td style="text-align: left;">Converted in ~3% of attempts</td>
+<td style="text-align: left;"><strong>0.03 xG</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Medium-Threat Attempt</strong></td>
+<td style="text-align: left;">Header from an outswinging cross near the edge of the 18-yard box</td>
+<td style="text-align: left;">Converted in ~12% of attempts</td>
+<td style="text-align: left;"><strong>0.12 xG</strong></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>High-Threat Attempt</strong></td>
+<td style="text-align: left;">Central penalty kick or uncontested back-post tap-in</td>
+<td style="text-align: left;">Converted in ~78% of attempts</td>
+<td style="text-align: left;"><strong>0.78 xG</strong></td>
+</tr>
+</tbody>
+</table>
+<section id="what-factors-shape-xg" class="level3">
+<h3 class="anchored" data-anchor-id="what-factors-shape-xg">What Factors Shape xG?</h3>
+<ul>
+<li><strong>Distance to Goal:</strong> Closer attempts convert at significantly higher baseline rates.</li>
+<li><strong>Shooting Angle:</strong> Central attempts facing an open goal frame carry far more danger than tight-angle shots near the endline.</li>
+<li><strong>Striking Mechanism:</strong> Foot strikes convert at higher baseline rates than headers from the exact same pitch coordinates.</li>
+<li><strong>Phase of Play:</strong> Open-play counter-attacks against disorganized defenses yield higher probabilities than set-piece deliveries into crowded penalty boxes.</li>
+</ul>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Key Takeaway:</strong> xG evaluates the <strong>chance creator</strong>. It answers: <em>Did the team generate dangerous scoring positions, regardless of whether the final touch found the net?</em></p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+</section>
+<section id="expected-goals-on-target-xgot-evaluating-shot-placement" class="level2">
+<h2 class="anchored" data-anchor-id="expected-goals-on-target-xgot-evaluating-shot-placement">2. Expected Goals on Target (xGOT): Evaluating Shot Placement</h2>
+<p>While xG measures chance quality <em>before</em> the shot is taken, <strong>Expected Goals on Target (xGOT)</strong> - frequently called <em>Post-Shot xG</em> - evaluates the shot <em>after</em> it leaves the player’s boot or head.</p>
+<p>Once a strike occurs, its trajectory, velocity, and landing destination inside the goal frame are known:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Phase</th>
+<th style="text-align: left;">Metric Value</th>
+<th style="text-align: left;">Event Detail</th>
+<th style="text-align: left;">Practical Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Chance Opening</strong></td>
+<td style="text-align: left;"><strong>0.35 xG</strong></td>
+<td style="text-align: left;">Open look from 12 yards out</td>
+<td style="text-align: left;">An above-average opportunity created by the attacking team.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Scenario A</strong></td>
+<td style="text-align: left;"><strong>0.00 xGOT</strong></td>
+<td style="text-align: left;">Attempt flies over crossbar or hits a blocking defender</td>
+<td style="text-align: left;">Threat ends immediately; zero probability of beating the goalkeeper.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Scenario B</strong></td>
+<td style="text-align: left;"><strong>0.15 xGOT</strong></td>
+<td style="text-align: left;">Shot struck weakly toward the center of the goal frame</td>
+<td style="text-align: left;">Poor placement reduces chance quality, making the save routine.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Scenario C</strong></td>
+<td style="text-align: left;"><strong>0.85 xGOT</strong></td>
+<td style="text-align: left;">Shot driven with pace into the upper side netting</td>
+<td style="text-align: left;">Elite placement converts an average chance into a near-certain goal.</td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Key Takeaway:</strong> Comparing a player’s total <strong>xGOT to xG</strong> isolates finishing execution. Elite finishers consistently turn modest opportunities into difficult-to-save placements.</p>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="the-save-profile-advanced-goalkeeper-evaluation" class="level2">
+<h2 class="anchored" data-anchor-id="the-save-profile-advanced-goalkeeper-evaluation">3. The SAVE Profile: Advanced Goalkeeper Evaluation</h2>
+<p>Evaluating a goalkeeper by raw goals conceded or clean sheets primarily reflects team defensive structure rather than individual goalkeeping skill. Even raw save percentage can be misleading: a keeper who faces 20 weak, rolling shots from 30 yards will post an artificially high save percentage, while a keeper who faces five uncontested point-blank breakaways will post a low save percentage despite making exceptional stops.</p>
+<p>To isolate true shot-stopping skill, WoSo.Live evaluates goalkeepers across three core dimensions: <strong>Workload</strong>, <strong>Shot-Stopping Efficiency</strong>, and <strong>Game-to-Game Reliability</strong>.</p>
+<section id="goals-prevented-gp" class="level3">
+<h3 class="anchored" data-anchor-id="goals-prevented-gp">Goals Prevented (GP)</h3>
+<p>The foundation of shot-stopping evaluation begins with Goals Prevented:</p>
+<div style="background-color: #f8f9fa; border-left: 4px solid #00747A; padding: 14px 18px; margin: 18px 0; font-size: 1.15rem; font-weight: 600; color: #111111;">
+<p>Goals Prevented = Total xGOT Faced − Goals Conceded</p>
+</div>
+<ul>
+<li><strong>What it Means:</strong> If a goalkeeper faces <strong>20.0 xGOT</strong> across a season and concedes only <strong>15 goals</strong>, she has prevented <strong>+5.0 goals</strong> above what an average professional goalkeeper would have allowed facing those identical shots.</li>
+<li><strong>Positive Goals Prevented (+GP):</strong> The goalkeeper is outperforming expectation and rescuing her team through elite shot-stopping.</li>
+<li><strong>Negative Goals Prevented (−GP):</strong> The goalkeeper is allowing routine, savable attempts to enter the net.</li>
+</ul>
+</section>
+<section id="chance-quality-cq-tiers-shot-diet" class="level3">
+<h3 class="anchored" data-anchor-id="chance-quality-cq-tiers-shot-diet">Chance Quality (CQ) Tiers &amp; Shot Diet</h3>
+<p>Every on-target attempt is classified into a <strong>Chance Quality (CQ)</strong> tier based on its Post-Shot Expected Goals (xGOT):</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Danger Tier</th>
+<th style="text-align: left;">xGOT Range</th>
+<th style="text-align: left;">Opportunity Type</th>
+<th style="text-align: left;">Pro Baseline Save Rate</th>
+<th style="text-align: left;">Evaluation Focus</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Low Danger (LD)</strong></td>
+<td style="text-align: left;"><strong>≤ 0.10 xGOT</strong></td>
+<td style="text-align: left;">Speculative long-distance strikes, weak headers, central rolling balls</td>
+<td style="text-align: left;"><strong>~96% to 98%</strong></td>
+<td style="text-align: left;">Routine ball handling; allowing a goal here is a severe blunder.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Medium Danger (MD)</strong></td>
+<td style="text-align: left;"><strong>0.11 to 0.35 xGOT</strong></td>
+<td style="text-align: left;">Contested in-box strikes, angled drives, partially screened shots</td>
+<td style="text-align: left;"><strong>~75% to 80%</strong></td>
+<td style="text-align: left;">Baseline professional competence; solid positioning and footwork prevail.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>High Danger (HD)</strong></td>
+<td style="text-align: left;"><strong>&gt; 0.35 xGOT</strong></td>
+<td style="text-align: left;">1v1 breakaways, point-blank rebounds, strikes into the upper-90 corners</td>
+<td style="text-align: left;"><strong>~30% to 45%</strong></td>
+<td style="text-align: left;">Pure shot-stopping talent; where elite athleticism and reflex saves separate keepers.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The CQ Mix per 90</strong> A goalkeeper’s workload is defined not only by the total shots she faces, but by the <em>composition</em> of those shots. A keeper with a high <strong>High-Danger Mix</strong> is under constant pressure from defensive breakdowns, while one with a heavy <strong>Low-Danger Mix</strong> is shielded by her backline.</p>
+</section>
+<section id="danger-specific-save-rates-ldsv-mdsv-hdsv" class="level3">
+<h3 class="anchored" data-anchor-id="danger-specific-save-rates-ldsv-mdsv-hdsv">Danger-Specific Save Rates (LDSv%, MDSv%, HDSv%)</h3>
+<p>Rather than evaluating goalkeepers on an aggregate save percentage, WoSo.Live measures save percentages within each individual danger tier against league and global benchmarks:</p>
+<ul>
+<li><strong>Low-Danger Save Percentage (LDSv%):</strong> The measure of baseline reliability. Elite goalkeepers rarely allow soft goals, maintaining an LDSv% above 98%.</li>
+<li><strong>Medium-Danger Save Percentage (MDSv%):</strong> Demonstrates consistency on standard in-box chances.</li>
+<li><strong>High-Danger Save Percentage (HDSv%):</strong> The separator for elite talent. Top-tier goalkeepers stop 40% to 50% of high-danger chances, whereas below-replacement keepers stop fewer than 25%.</li>
+</ul>
+</section>
+<section id="standardized-value-consistency-metrics" class="level3">
+<h3 class="anchored" data-anchor-id="standardized-value-consistency-metrics">Standardized Value &amp; Consistency Metrics</h3>
+<p>To compare keepers playing behind airtight defenses with those playing behind leaky backlines, the SAVE dashboard introduces two standardized metrics:</p>
+<p><strong>Goals Prevented per 10 xGOT (GP/10xGOT)</strong> Raw Goals Prevented accumulates with playing time and shot volume. A keeper who faces 60 xGOT will naturally accumulate more raw Goals Prevented than a keeper who faces only 20 xGOT.</p>
+<div style="background-color: #f8f9fa; border-left: 4px solid #00747A; padding: 14px 18px; margin: 18px 0; font-size: 1.15rem; font-weight: 600; color: #111111;">
+<p>GP/10xGOT = (Total Goals Prevented / Total xGOT Faced) × 10</p>
+</div>
+<ul>
+<li><strong>What it Means:</strong> For every 10 expected goals on target a keeper faces, how many did she prevent from crossing the line?</li>
+<li><strong>Baseline:</strong> A league-average goalkeeper sits at <strong>0.00</strong>.</li>
+<li><strong>Elite Level:</strong> Ratings of <strong>+1.50 to +2.50 GP/10xGOT</strong> indicate a keeper who consistently stops 15% to 25% more goal threat than an average professional.</li>
+</ul>
+<p><strong>Above Expected Appearance Percentage (AxA%)</strong> Cumulative season totals can hide erratic form. A goalkeeper could compile +5.0 Goals Prevented on the season by posting a single miracle +6.0 performance, while playing below average in every other fixture.</p>
+<div style="background-color: #f8f9fa; border-left: 4px solid #00747A; padding: 14px 18px; margin: 18px 0; font-size: 1.15rem; font-weight: 600; color: #111111;">
+<p>AxA% = (Matches with Goals Prevented &gt; 0 / Total Matches Played) × 100</p>
+</div>
+<ul>
+<li><strong>What it Means:</strong> The percentage of appearances in which the goalkeeper outperformed expectation (GP &gt; 0).</li>
+<li><strong>Baseline:</strong> Average professional goalkeepers post an AxA% between <strong>45% and 50%</strong>.</li>
+<li><strong>Elite Consistency:</strong> Goalkeepers with an AxA% above <strong>65%</strong> are game-to-game stabilizers who rarely cost their team points.</li>
+</ul>
+</section>
+<section id="bayesian-shot-stopping-posteriors" class="level3">
+<h3 class="anchored" data-anchor-id="bayesian-shot-stopping-posteriors">Bayesian Shot-Stopping Posteriors</h3>
+<p>Goalkeeping sample sizes are notoriously volatile. If a backup saves the first four shots she faces in her debut, her raw save rate is 100%, but she is not necessarily the best keeper in the league.</p>
+<p>WoSo.Live uses <strong>Conjugate Empirical Bayes modeling</strong> to estimate a goalkeeper’s <em>true talent distribution</em>:</p>
+<ul>
+<li><strong>The Baseline Prior:</strong> Every keeper begins anchored to the global professional baseline (a bell curve centered at <code>0.00</code> Goals Prevented per shot).</li>
+<li><strong>Live Posterior Updating:</strong> Each time a shot is faced, the model updates the curve based on the shot’s difficulty (xGOT) and the actual outcome (goal or save).</li>
+<li><strong>Curve Center (Peak):</strong> Represents the keeper’s most likely true shot-stopping talent. Shifted right = elite shot-stopper; shifted left = below average.</li>
+<li><strong>Curve Width (Spread):</strong> Represents statistical certainty. A wide, flat curve indicates high uncertainty (small sample size). As a goalkeeper faces 100, 200, and 300 shots, the curve narrows into a tall, sharp peak, confirming her established talent level.</li>
+</ul>
+<p><strong>Head-to-Head Probability of Superiority</strong> When comparing two goalkeepers, single-number averages ignore sample confidence. The Head-to-Head engine calculates the exact mathematical overlap of both full posterior curves:</p>
+<div style="background-color: #f8f9fa; border-left: 4px solid #00747A; padding: 14px 18px; margin: 18px 0; font-size: 1.15rem; font-weight: 600; color: #111111;">
+<p>Probability of Superiority = P(Talent of Keeper A &gt; Talent of Keeper B)</p>
+</div>
+<p>This answers the scouting question directly: <em>Accounting for sample size, shot difficulty, and historical variance, what is the exact probability that Goalkeeper A is genuinely a better shot-stopper than Goalkeeper B?</em></p>
+<hr>
+</section>
+</section>
+<section id="regularized-adjusted-plus-minus-rapm-complete-on-pitch-impact" class="level2">
+<h2 class="anchored" data-anchor-id="regularized-adjusted-plus-minus-rapm-complete-on-pitch-impact">4. Regularized Adjusted Plus-Minus (RAPM): Complete On-Pitch Impact</h2>
+<p>Most decisive soccer contributions occur off the ball: opening passing lanes with an uncredited decoy run, applying a pressing angle that forces a hurried turnover, or tracking a runner to prevent a cutback cross. Traditional box-score tallies miss these events entirely.</p>
+<p><strong>Regularized Adjusted Plus-Minus (RAPM)</strong> isolates a player’s direct impact on her team’s goal differential per 90 minutes.</p>
+<section id="the-modeling-sequence" class="level3">
+<h3 class="anchored" data-anchor-id="the-modeling-sequence">The Modeling Sequence</h3>
+<ol type="1">
+<li><p><strong>Stint-by-Stint Segmentation:</strong> Matches are divided into distinct stints whenever a substitution, goal, or red card alters on-pitch personnel or game state.</p></li>
+<li><p><strong>Context Residualization (Stage 1 OLS):</strong> The model strips away external noise unrelated to individual ability:</p>
+<ul>
+<li><strong>Venue Advantage:</strong> Home teams generate higher threat on baseline expectation.</li>
+<li><strong>Score Differential:</strong> Teams trailing by two attack aggressively, while teams defending a lead drop into low defensive blocks.</li>
+<li><strong>Numerical Strength:</strong> Playing 11v11, 11v10, or 10v11 fundamentally alters baseline scoring rates.</li>
+<li><strong>Schedule Load:</strong> 10-day rolling minutes played and cross-country travel mileage are explicitly accounted for.</li>
+</ul></li>
+<li><p><strong>Player Attribution (Stage 2 Ridge Regression):</strong> Simple plus-minus is biased if a player shares the pitch with superstars. RAPM applies Ridge regression to isolate an individual’s contribution independent of her 10 teammates and the 11 opponents on the pitch.</p></li>
+</ol>
+</section>
+<section id="reading-rapm-values" class="level3">
+<h3 class="anchored" data-anchor-id="reading-rapm-values">Reading RAPM Values</h3>
+<ul>
+<li><strong>Offensive RAPM (xGF/90):</strong> Expected goals her team generates per 90 minutes driven by her presence on the pitch.</li>
+<li><strong>Defensive RAPM (xGA/90):</strong> Expected goals her team suppresses per 90 minutes. Positive numbers indicate stronger defensive suppression.</li>
+<li><strong>Net RAPM/90:</strong> Total isolated possession value (Offensive RAPM + Defensive RAPM). A rating of <strong>+0.25</strong> means a player improves her team’s net goal differential by a quarter-goal every full match.</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="spatial-rapm-mapping-where-threat-occurs" class="level2">
+<h2 class="anchored" data-anchor-id="spatial-rapm-mapping-where-threat-occurs">5. Spatial RAPM: Mapping Where Threat Occurs</h2>
+<p>While Net RAPM produces a single overall score, <strong>Spatial RAPM</strong> illustrates <em>where on the pitch</em> a player makes her impact.</p>
+<p>WoSo.Live partitions the attacking half into <strong>91 distinct zones</strong> (a Deep Zone plus a 90-hexagon grid in the final third). The model solves for a player’s isolated offensive creation and defensive suppression inside each individual zone.</p>
+<p>These spatial vectors are smoothed using thin-plate splines and rendered via <strong>Tanaka shaded elevation contours</strong>:</p>
+<ul>
+<li><strong>Red and Orange Elevation Ridges:</strong> High-impact zones where a player generates significant offensive threat or concedes more threat than league average when the player is on the pitch.</li>
+<li><strong>Blue Depressions:</strong> Zones where the team produces less threat or delivers heavy defensive suppression.</li>
+<li><strong>Contour Peaks:</strong> Lighted from the upper-left to visually display the depth and sharpness of a player’s local territorial influence.</li>
+</ul>
+<hr>
+</section>
+<section id="wins-above-replacement-war-converting-talent-into-standings-value" class="level2">
+<h2 class="anchored" data-anchor-id="wins-above-replacement-war-converting-talent-into-standings-value">6. Wins Above Replacement (WAR): Converting Talent into Standings Value</h2>
+<p>A rate metric like Net RAPM/90 measures per-minute efficiency, but it does not account for availability. A substitute who plays 150 elite minutes off the bench provides less aggregate value to a club over a season than a reliable starter logging 2,500 minutes at an above-average level.</p>
+<p>The <strong>Wins Above Replacement (WAR)</strong> framework connects per-minute performance with playing time to evaluate a player’s total contribution to her team’s standings position.</p>
+<section id="the-valuation-chain" class="level3">
+<h3 class="anchored" data-anchor-id="the-valuation-chain">The Valuation Chain</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Step</th>
+<th style="text-align: left;">Metric</th>
+<th style="text-align: left;">Mathematical Formula</th>
+<th style="text-align: left;">Practical Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>1. Per-Minute Talent</strong></td>
+<td style="text-align: left;"><strong>Net RAPM / 90</strong></td>
+<td style="text-align: left;">Stage 2 Ridge Regression</td>
+<td style="text-align: left;">Isolated player rate impact per 90 minutes.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>2. Average Baseline</strong></td>
+<td style="text-align: left;"><strong>Goals Above Average (GAA)</strong></td>
+<td style="text-align: left;">(Net xG per 90 × Nineties) + Finishing Talent</td>
+<td style="text-align: left;">Net goals produced relative to an average player over the same minutes.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>3. Replacement Baseline</strong></td>
+<td style="text-align: left;"><strong>Goals Above Replacement (GAR)</strong></td>
+<td style="text-align: left;">GAA − (Replacement Floor × Nineties)</td>
+<td style="text-align: left;">Net goals produced relative to an accessible bench or reserve replacement.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>4. Standings Impact</strong></td>
+<td style="text-align: left;"><strong>Points Above Replacement (PAR)</strong></td>
+<td style="text-align: left;">GAR × 0.65</td>
+<td style="text-align: left;">League table standings points delivered to the team.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>5. Match Victories</strong></td>
+<td style="text-align: left;"><strong>Wins Above Replacement (WAR)</strong></td>
+<td style="text-align: left;">GAR / 3.65</td>
+<td style="text-align: left;">Total match victories directly added by the player.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>6. Season Efficiency</strong></td>
+<td style="text-align: left;"><strong>Paced WAR (WAR/30)</strong></td>
+<td style="text-align: left;">(WAR / Nineties) × 30</td>
+<td style="text-align: left;">Value paced to a full 30-match season (minimum 450 minutes).</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="core-valuation-concepts" class="level3">
+<h3 class="anchored" data-anchor-id="core-valuation-concepts">Core Valuation Concepts</h3>
+<section id="the-replacement-level-benchmark" class="level4">
+<h4 class="anchored" data-anchor-id="the-replacement-level-benchmark">The “Replacement Level” Benchmark</h4>
+<p>Average talent (<code>GAA = 0.0</code>) is not the baseline of value. If a starting central defender suffers an injury, her club cannot sign a league-average starter mid-season; they must rely on a <strong>replacement player</strong> - a reserve from the back end of the squad or a youth call-up.</p>
+<ul>
+<li><strong>Outfield Replacement Floors:</strong> Defined by the bottom 15th percentile of active rotation players in each position group (Center Back, Fullback, Midfielder, Forward), bounded between <strong>−0.25</strong> and <strong>−0.12</strong> goals per 90 minutes.</li>
+<li><strong>Goalkeeper Replacement Floor:</strong> Anchored to <strong>−0.104</strong> goals per 90 minutes to prevent small backup samples from distorting starter ratings.</li>
+</ul>
+</section>
+<section id="goals-to-points-par-and-wins-war" class="level4">
+<h4 class="anchored" data-anchor-id="goals-to-points-par-and-wins-war">Goals to Points (PAR) and Wins (WAR)</h4>
+<ul>
+<li><strong>Points Above Replacement (PAR):</strong> In professional soccer, each +1.0 in net goal differential historically yields approximately <strong>0.65 standings points</strong> (<code>PAR = GAR × 0.65</code>).</li>
+<li><strong>Wins Above Replacement (WAR):</strong> It takes approximately <strong>3.65 net goals</strong> above replacement to produce one additional team victory (<code>WAR = GAR / 3.65</code>).</li>
+</ul>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">WAR Range</th>
+<th style="text-align: left;">Production Tier</th>
+<th style="text-align: left;">Typical Profile</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>+3.0 to +4.5 WAR</strong></td>
+<td style="text-align: left;">MVP Contender</td>
+<td style="text-align: left;">Dominant league leader responsible for 3 to 4 team victories over replacement.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>+1.5 to +2.5 WAR</strong></td>
+<td style="text-align: left;">High-End Starter</td>
+<td style="text-align: left;">All-League caliber player who consistently swings matches.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>+0.8 to +1.4 WAR</strong></td>
+<td style="text-align: left;">Solid Starter</td>
+<td style="text-align: left;">Dependable everyday starter playing above replacement level.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>0.0 to +0.5 WAR</strong></td>
+<td style="text-align: left;">Rotational Depth</td>
+<td style="text-align: left;">Bench contributor providing replacement-level support.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>&lt; 0.0 WAR</strong></td>
+<td style="text-align: left;">Below Replacement</td>
+<td style="text-align: left;">Player performing below readily available reserve options.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="paced-war-war30" class="level4">
+<h4 class="anchored" data-anchor-id="paced-war-war30">Paced WAR (WAR/30)</h4>
+<p>Because injuries or transfers limit total minutes, <strong>Paced WAR (WAR/30)</strong> standardizes performance to a full 30-match season (2,700 minutes) to display per-game efficiency.</p>
+<p>To prevent small-sample cameos from distorting the leaderboard, Paced WAR enforces a strict <strong>450-minute qualification floor</strong> (five full matches). Players below 450 minutes receive an <code>NA</code> rating, preventing a player who logged 20 fortunate minutes from displaying an unearned 7.0 WAR pace.</p>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/woso\.live");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
