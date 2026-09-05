@@ -1,0 +1,239 @@
+---
+title: "Analytics Primer"
+page-layout: article
+---
+
+<div style="margin-top: 1.5rem; margin-bottom: 2.5rem; border-bottom: 2px solid #00747A; padding-bottom: 1rem;">
+  <h1 style="color: #111111; font-weight: 700; font-size: 2.5rem; margin-bottom: 0.5rem;">Analytics Primer</h1>
+  <p style="color: #555555; font-size: 1.2rem; margin: 0;">An guide to the quantitative models across WoSo.Live.</p>
+</div>
+
+Soccer is a fluid, low-scoring game where traditional counting statistics - such as goals, assists, and clean sheets - routinely tell misleading stories.
+
+A striker might score a hat trick of simple tap-ins created entirely by her teammates, while an elite playmaker creates five clear-cut openings that her forwards fail to convert. Similarly, a goalkeeper might earn a clean sheet without facing a single difficult shot, while another concedes three times after facing ten point-blank strikes.
+
+The analytics models across **WoSo.Live** look past surface results to measure what actually occurred on the pitch, operating across four distinct layers:
+
+| Layer | Question Answered | Core Metrics |
+| :--- | :--- | :--- |
+| **1. Chance Quality** | How dangerous was the scoring opportunity before the ball was struck? | **xG** (Expected Goals) |
+| **2. Shot Execution** | Where did the ball go, and how difficult was it to save? | **xGOT** (Expected Goals on Target) |
+| **3. Goalkeeping** | How many goals did the keeper prevent, how consistent is she, and what is her true talent? | **Goals Prevented (GP)**, **SAVE Profile**, **Bayesian Posteriors** |
+| **4. On-Pitch Value** | How much does a player improve her team's goal differential and standings points? | **RAPM**, **GAA**, **GAR**, **WAR** |
+
+---
+
+## 1. Expected Goals (xG): Evaluating Chance Creation
+
+**Expected Goals (xG)** measures the quality of a scoring chance. It assigns a probability between **0.00** (impossible to score) and **1.00** (a guaranteed goal) to every attempt taken.
+
+An xG value of **0.25** indicates that, based on historical shots taken under identical circumstances, an average professional scores that chance **25% of the time** (or 1 in every 4 attempts).
+
+| Opportunity | Match Scenario | Historical Frequency | Expected Goals (xG) |
+| :--- | :--- | :--- | :--- |
+| **Low-Threat Attempt** | 30-yard shot taken through defensive traffic | Converted in ~3% of attempts | **0.03 xG** |
+| **Medium-Threat Attempt** | Header from an outswinging cross near the edge of the 18-yard box | Converted in ~12% of attempts | **0.12 xG** |
+| **High-Threat Attempt** | Central penalty kick or uncontested back-post tap-in | Converted in ~78% of attempts | **0.78 xG** |
+
+### What Factors Shape xG?
+
+* **Distance to Goal:** Closer attempts convert at significantly higher baseline rates.
+* **Shooting Angle:** Central attempts facing an open goal frame carry far more danger than tight-angle shots near the endline.
+* **Striking Mechanism:** Foot strikes convert at higher baseline rates than headers from the exact same pitch coordinates.
+* **Phase of Play:** Open-play counter-attacks against disorganized defenses yield higher probabilities than set-piece deliveries into crowded penalty boxes.
+
+::: {.callout-note appearance="simple"}
+**Key Takeaway:** xG evaluates the **chance creator**. It answers: *Did the team generate dangerous scoring positions, regardless of whether the final touch found the net?*
+:::
+
+---
+
+## 2. Expected Goals on Target (xGOT): Evaluating Shot Placement
+
+While xG measures chance quality *before* the shot is taken, **Expected Goals on Target (xGOT)** - frequently called *Post-Shot xG* - evaluates the shot *after* it leaves the player's boot or head.
+
+Once a strike occurs, its trajectory, velocity, and landing destination inside the goal frame are known:
+
+| Phase | Metric Value | Event Detail | Practical Interpretation |
+| :--- | :--- | :--- | :--- |
+| **Chance Opening** | **0.35 xG** | Open look from 12 yards out | An above-average opportunity created by the attacking team. |
+| **Scenario A** | **0.00 xGOT** | Attempt flies over crossbar or hits a blocking defender | Threat ends immediately; zero probability of beating the goalkeeper. |
+| **Scenario B** | **0.15 xGOT** | Shot struck weakly toward the center of the goal frame | Poor placement reduces chance quality, making the save routine. |
+| **Scenario C** | **0.85 xGOT** | Shot driven with pace into the upper side netting | Elite placement converts an average chance into a near-certain goal. |
+
+::: {.callout-note appearance="simple"}
+**Key Takeaway:** Comparing a player's total **xGOT to xG** isolates finishing execution. Elite finishers consistently turn modest opportunities into difficult-to-save placements.
+:::
+
+---
+
+## 3. The SAVE Profile: Advanced Goalkeeper Evaluation
+
+Evaluating a goalkeeper by raw goals conceded or clean sheets primarily reflects team defensive structure rather than individual goalkeeping skill. Even raw save percentage can be misleading: a keeper who faces 20 weak, rolling shots from 30 yards will post an artificially high save percentage, while a keeper who faces five uncontested point-blank breakaways will post a low save percentage despite making exceptional stops.
+
+To isolate true shot-stopping skill, WoSo.Live evaluates goalkeepers across three core dimensions: **Workload**, **Shot-Stopping Efficiency**, and **Game-to-Game Reliability**.
+
+### Goals Prevented (GP)
+
+The foundation of shot-stopping evaluation begins with Goals Prevented:
+
+<div style="background-color: #f8f9fa; border-left: 4px solid #00747A; padding: 14px 18px; margin: 18px 0; font-size: 1.15rem; font-weight: 600; color: #111111;">
+Goals Prevented = Total xGOT Faced &minus; Goals Conceded
+</div>
+
+* **What it Means:** If a goalkeeper faces **20.0 xGOT** across a season and concedes only **15 goals**, she has prevented **+5.0 goals** above what an average professional goalkeeper would have allowed facing those identical shots.
+* **Positive Goals Prevented (+GP):** The goalkeeper is outperforming expectation and rescuing her team through elite shot-stopping.
+* **Negative Goals Prevented (&minus;GP):** The goalkeeper is allowing routine, savable attempts to enter the net.
+
+### Chance Quality (CQ) Tiers & Shot Diet
+
+Every on-target attempt is classified into a **Chance Quality (CQ)** tier based on its Post-Shot Expected Goals (xGOT):
+
+| Danger Tier | xGOT Range | Opportunity Type | Pro Baseline Save Rate | Evaluation Focus |
+| :--- | :--- | :--- | :--- | :--- |
+| **Low Danger (LD)** | **&le; 0.10 xGOT** | Speculative long-distance strikes, weak headers, central rolling balls | **~96% to 98%** | Routine ball handling; allowing a goal here is a severe blunder. |
+| **Medium Danger (MD)** | **0.11 to 0.35 xGOT** | Contested in-box strikes, angled drives, partially screened shots | **~75% to 80%** | Baseline professional competence; solid positioning and footwork prevail. |
+| **High Danger (HD)** | **&gt; 0.35 xGOT** | 1v1 breakaways, point-blank rebounds, strikes into the upper-90 corners | **~30% to 45%** | Pure shot-stopping talent; where elite athleticism and reflex saves separate keepers. |
+
+**The CQ Mix per 90**
+A goalkeeper's workload is defined not only by the total shots she faces, but by the *composition* of those shots. A keeper with a high **High-Danger Mix** is under constant pressure from defensive breakdowns, while one with a heavy **Low-Danger Mix** is shielded by her backline.
+
+### Danger-Specific Save Rates (LDSv%, MDSv%, HDSv%)
+
+Rather than evaluating goalkeepers on an aggregate save percentage, WoSo.Live measures save percentages within each individual danger tier against league and global benchmarks:
+
+* **Low-Danger Save Percentage (LDSv%):** The measure of baseline reliability. Elite goalkeepers rarely allow soft goals, maintaining an LDSv% above 98%.
+* **Medium-Danger Save Percentage (MDSv%):** Demonstrates consistency on standard in-box chances.
+* **High-Danger Save Percentage (HDSv%):** The separator for elite talent. Top-tier goalkeepers stop 40% to 50% of high-danger chances, whereas below-replacement keepers stop fewer than 25%.
+
+### Standardized Value & Consistency Metrics
+
+To compare keepers playing behind airtight defenses with those playing behind leaky backlines, the SAVE dashboard introduces two standardized metrics:
+
+**Goals Prevented per 10 xGOT (GP/10xGOT)**
+Raw Goals Prevented accumulates with playing time and shot volume. A keeper who faces 60 xGOT will naturally accumulate more raw Goals Prevented than a keeper who faces only 20 xGOT.
+
+<div style="background-color: #f8f9fa; border-left: 4px solid #00747A; padding: 14px 18px; margin: 18px 0; font-size: 1.15rem; font-weight: 600; color: #111111;">
+GP/10xGOT = (Total Goals Prevented / Total xGOT Faced) &times; 10
+</div>
+
+* **What it Means:** For every 10 expected goals on target a keeper faces, how many did she prevent from crossing the line?
+* **Baseline:** A league-average goalkeeper sits at **0.00**.
+* **Elite Level:** Ratings of **+1.50 to +2.50 GP/10xGOT** indicate a keeper who consistently stops 15% to 25% more goal threat than an average professional.
+
+**Above Expected Appearance Percentage (AxA%)**
+Cumulative season totals can hide erratic form. A goalkeeper could compile +5.0 Goals Prevented on the season by posting a single miracle +6.0 performance, while playing below average in every other fixture.
+
+<div style="background-color: #f8f9fa; border-left: 4px solid #00747A; padding: 14px 18px; margin: 18px 0; font-size: 1.15rem; font-weight: 600; color: #111111;">
+AxA% = (Matches with Goals Prevented &gt; 0 / Total Matches Played) &times; 100
+</div>
+
+* **What it Means:** The percentage of appearances in which the goalkeeper outperformed expectation (GP &gt; 0).
+* **Baseline:** Average professional goalkeepers post an AxA% between **45% and 50%**.
+* **Elite Consistency:** Goalkeepers with an AxA% above **65%** are game-to-game stabilizers who rarely cost their team points.
+
+### Bayesian Shot-Stopping Posteriors
+
+Goalkeeping sample sizes are notoriously volatile. If a backup saves the first four shots she faces in her debut, her raw save rate is 100%, but she is not necessarily the best keeper in the league.
+
+WoSo.Live uses **Conjugate Empirical Bayes modeling** to estimate a goalkeeper's *true talent distribution*:
+
+* **The Baseline Prior:** Every keeper begins anchored to the global professional baseline (a bell curve centered at `0.00` Goals Prevented per shot).
+* **Live Posterior Updating:** Each time a shot is faced, the model updates the curve based on the shot's difficulty (xGOT) and the actual outcome (goal or save).
+* **Curve Center (Peak):** Represents the keeper's most likely true shot-stopping talent. Shifted right = elite shot-stopper; shifted left = below average.
+* **Curve Width (Spread):** Represents statistical certainty. A wide, flat curve indicates high uncertainty (small sample size). As a goalkeeper faces 100, 200, and 300 shots, the curve narrows into a tall, sharp peak, confirming her established talent level.
+
+**Head-to-Head Probability of Superiority**
+When comparing two goalkeepers, single-number averages ignore sample confidence. The Head-to-Head engine calculates the exact mathematical overlap of both full posterior curves:
+
+<div style="background-color: #f8f9fa; border-left: 4px solid #00747A; padding: 14px 18px; margin: 18px 0; font-size: 1.15rem; font-weight: 600; color: #111111;">
+Probability of Superiority = P(Talent of Keeper A &gt; Talent of Keeper B)
+</div>
+
+This answers the scouting question directly: *Accounting for sample size, shot difficulty, and historical variance, what is the exact probability that Goalkeeper A is genuinely a better shot-stopper than Goalkeeper B?*
+
+---
+
+## 4. Regularized Adjusted Plus-Minus (RAPM): Complete On-Pitch Impact
+
+Most decisive soccer contributions occur off the ball: opening passing lanes with an uncredited decoy run, applying a pressing angle that forces a hurried turnover, or tracking a runner to prevent a cutback cross. Traditional box-score tallies miss these events entirely.
+
+**Regularized Adjusted Plus-Minus (RAPM)** isolates a player's direct impact on her team's goal differential per 90 minutes.
+
+### The Modeling Sequence
+
+1. **Stint-by-Stint Segmentation:** Matches are divided into distinct stints whenever a substitution, goal, or red card alters on-pitch personnel or game state.
+
+2. **Context Residualization (Stage 1 OLS):** The model strips away external noise unrelated to individual ability:
+   * **Venue Advantage:** Home teams generate higher threat on baseline expectation.
+   * **Score Differential:** Teams trailing by two attack aggressively, while teams defending a lead drop into low defensive blocks.
+   * **Numerical Strength:** Playing 11v11, 11v10, or 10v11 fundamentally alters baseline scoring rates.
+   * **Schedule Load:** 10-day rolling minutes played and cross-country travel mileage are explicitly accounted for.
+
+3. **Player Attribution (Stage 2 Ridge Regression):** Simple plus-minus is biased if a player shares the pitch with superstars. RAPM applies Ridge regression to isolate an individual's contribution independent of her 10 teammates and the 11 opponents on the pitch.
+
+### Reading RAPM Values
+
+* **Offensive RAPM (xGF/90):** Expected goals her team generates per 90 minutes driven by her presence on the pitch.
+* **Defensive RAPM (xGA/90):** Expected goals her team suppresses per 90 minutes. Positive numbers indicate stronger defensive suppression.
+* **Net RAPM/90:** Total isolated possession value (Offensive RAPM &plus; Defensive RAPM). A rating of **+0.25** means a player improves her team's net goal differential by a quarter-goal every full match.
+
+---
+
+## 5. Spatial RAPM: Mapping Where Threat Occurs
+
+While Net RAPM produces a single overall score, **Spatial RAPM** illustrates *where on the pitch* a player makes her impact.
+
+WoSo.Live partitions the attacking half into **91 distinct zones** (a Deep Zone plus a 90-hexagon grid in the final third). The model solves for a player's isolated offensive creation and defensive suppression inside each individual zone.
+
+These spatial vectors are smoothed using thin-plate splines and rendered via **Tanaka shaded elevation contours**:
+
+* **Red and Orange Elevation Ridges:** High-impact zones where a player generates significant offensive threat or concedes more threat than league average when the player is on the pitch.
+* **Blue Depressions:** Zones where the team produces less threat or delivers heavy defensive suppression.
+* **Contour Peaks:** Lighted from the upper-left to visually display the depth and sharpness of a player's local territorial influence.
+
+---
+
+## 6. Wins Above Replacement (WAR): Converting Talent into Standings Value
+
+A rate metric like Net RAPM/90 measures per-minute efficiency, but it does not account for availability. A substitute who plays 150 elite minutes off the bench provides less aggregate value to a club over a season than a reliable starter logging 2,500 minutes at an above-average level.
+
+The **Wins Above Replacement (WAR)** framework connects per-minute performance with playing time to evaluate a player's total contribution to her team's standings position.
+
+### The Valuation Chain
+
+| Step | Metric | Mathematical Formula | Practical Meaning |
+| :--- | :--- | :--- | :--- |
+| **1. Per-Minute Talent** | **Net RAPM / 90** | Stage 2 Ridge Regression | Isolated player rate impact per 90 minutes. |
+| **2. Average Baseline** | **Goals Above Average (GAA)** | (Net xG per 90 &times; Nineties) &plus; Finishing Talent | Net goals produced relative to an average player over the same minutes. |
+| **3. Replacement Baseline** | **Goals Above Replacement (GAR)** | GAA &minus; (Replacement Floor &times; Nineties) | Net goals produced relative to an accessible bench or reserve replacement. |
+| **4. Standings Impact** | **Points Above Replacement (PAR)** | GAR &times; 0.65 | League table standings points delivered to the team. |
+| **5. Match Victories** | **Wins Above Replacement (WAR)** | GAR / 3.65 | Total match victories directly added by the player. |
+| **6. Season Efficiency** | **Paced WAR (WAR/30)** | (WAR / Nineties) &times; 30 | Value paced to a full 30-match season (minimum 450 minutes). |
+
+### Core Valuation Concepts
+
+#### The "Replacement Level" Benchmark
+Average talent (`GAA = 0.0`) is not the baseline of value. If a starting central defender suffers an injury, her club cannot sign a league-average starter mid-season; they must rely on a **replacement player** - a reserve from the back end of the squad or a youth call-up.
+
+* **Outfield Replacement Floors:** Defined by the bottom 15th percentile of active rotation players in each position group (Center Back, Fullback, Midfielder, Forward), bounded between **&minus;0.25** and **&minus;0.12** goals per 90 minutes.
+* **Goalkeeper Replacement Floor:** Anchored to **&minus;0.104** goals per 90 minutes to prevent small backup samples from distorting starter ratings.
+
+#### Goals to Points (PAR) and Wins (WAR)
+
+* **Points Above Replacement (PAR):** In professional soccer, each +1.0 in net goal differential historically yields approximately **0.65 standings points** (`PAR = GAR × 0.65`).
+* **Wins Above Replacement (WAR):** It takes approximately **3.65 net goals** above replacement to produce one additional team victory (`WAR = GAR / 3.65`).
+
+| WAR Range | Production Tier | Typical Profile |
+| :--- | :--- | :--- |
+| **+3.0 to +4.5 WAR** | MVP Contender | Dominant league leader responsible for 3 to 4 team victories over replacement. |
+| **+1.5 to +2.5 WAR** | High-End Starter | All-League caliber player who consistently swings matches. |
+| **+0.8 to +1.4 WAR** | Solid Starter | Dependable everyday starter playing above replacement level. |
+| **0.0 to +0.5 WAR** | Rotational Depth | Bench contributor providing replacement-level support. |
+| **< 0.0 WAR** | Below Replacement | Player performing below readily available reserve options. |
+
+#### Paced WAR (WAR/30)
+
+Because injuries or transfers limit total minutes, **Paced WAR (WAR/30)** standardizes performance to a full 30-match season (2,700 minutes) to display per-game efficiency.
+
+To prevent small-sample cameos from distorting the leaderboard, Paced WAR enforces a strict **450-minute qualification floor** (five full matches). Players below 450 minutes receive an `NA` rating, preventing a player who logged 20 fortunate minutes from displaying an unearned 7.0 WAR pace.

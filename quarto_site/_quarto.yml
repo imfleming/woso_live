@@ -1,8 +1,18 @@
 project:
   type: website
+  resources:
+    - CNAME
+    - social_preview.png
+    - favicon.svg
+    - linkedin_icon.png
+    - bluesky_icon.png
+    - twitter_icon.png
+    - email_icon.png
 
 website:
-  title: "WoSo Live"
+  title: "WoSo.Live"
+  google-analytics: "G-HV5N2DMVZR"
+  favicon: "favicon.svg"
   navbar:
     background: "#00747A" # The Dispelling Voodoo Teal
     foreground: "#ffffff" # White text
@@ -11,10 +21,14 @@ website:
         href: index.qmd
       - text: "RAPM Tools"
         href: rapm-tools.qmd
+      - text: "Goalkeepers"
+        href: goalkeepers.qmd
       - text: "Shot Simulator"
         href: shot-simulator.qmd
       - text: "World Cup Simulator"
         href: wwc-simulator.qmd
+      - text: "Explainers"
+        href: explainers.qmd
       - text: "About"
         href: about.qmd
 
