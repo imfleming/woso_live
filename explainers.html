@@ -81,6 +81,35 @@ gtag('js', new Date());
 gtag('config', 'G-HV5N2DMVZR', { 'anonymize_ip': true});
 </script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -450,14 +479,19 @@ An guide to the quantitative models across WoSo.Live.
 <h3 class="anchored" data-anchor-id="the-modeling-sequence">The Modeling Sequence</h3>
 <ol type="1">
 <li><p><strong>Stint-by-Stint Segmentation:</strong> Matches are divided into distinct stints whenever a substitution, goal, or red card alters on-pitch personnel or game state.</p></li>
-<li><p><strong>Context Residualization (Stage 1 OLS):</strong> The model strips away external noise unrelated to individual ability:</p>
+<li><p><strong>Single-Stage Environmental Conditioning:</strong> The model solves for player talent and environmental context simultaneously within a unified design matrix. Rather than residualizing through an initial unregularized stage (which risks over-attributing superstar talent to match context), structural environmental factors enter with a penalty factor of zero (<span class="math inline">\(\lambda_{env} = 0\)</span>), guaranteeing unpenalized estimation of baseline conditions:</p>
 <ul>
-<li><strong>Venue Advantage:</strong> Home teams generate higher threat on baseline expectation.</li>
-<li><strong>Score Differential:</strong> Teams trailing by two attack aggressively, while teams defending a lead drop into low defensive blocks.</li>
-<li><strong>Numerical Strength:</strong> Playing 11v11, 11v10, or 10v11 fundamentally alters baseline scoring rates.</li>
-<li><strong>Schedule Load:</strong> 10-day rolling minutes played and cross-country travel mileage are explicitly accounted for.</li>
+<li><strong>Venue Advantage:</strong> Empirical Bayes regularized home advantage bounded in <span class="math inline">\([+0.0300, +0.2490]\)</span>.</li>
+<li><strong>Score Differential:</strong> State clamped strictly within <span class="math inline">\([-4.0, +4.0]\)</span> to prevent garbage-time distortions.</li>
+<li><strong>Rest Dynamics:</strong> Continuous cubic natural splines <span class="math inline">\(ns(df = 3)\)</span> on rest days, coalesced to a 7.0-day default.</li>
+<li><strong>Flight &amp; Minute Load:</strong> Continuous splines capturing acute travel mileage and accumulated fatigue.</li>
 </ul></li>
-<li><p><strong>Player Attribution (Stage 2 Ridge Regression):</strong> Simple plus-minus is biased if a player shares the pitch with superstars. RAPM applies Ridge regression to isolate an individual’s contribution independent of her 10 teammates and the 11 opponents on the pitch.</p></li>
+<li><p><strong>Player &amp; Position-Specific Ridge Shrinkage:</strong> RAPM applies L2 Ridge regularization to isolate individual contributions independent of teammates and opponents. Regularization multipliers are structurally partitioned:</p>
+<ul>
+<li><strong>Outfielders:</strong> Standard baseline regularization (<span class="math inline">\(c_{outfield} = 1.0\)</span>).</li>
+<li><strong>Goalkeepers:</strong> Regularization multiplier <span class="math inline">\(c_{gk} \in [2.5, 7.5]\)</span> tuned via 10-fold cross-validation to account for post-shot variance.</li>
+<li><strong>Managers:</strong> Coach baseline multiplier <span class="math inline">\(c_{coach} \in [1.0, 20.0]\)</span> isolating tactical system effects.</li>
+</ul></li>
 </ol>
 </section>
 <section id="reading-rapm-values" class="level3">
@@ -507,7 +541,7 @@ An guide to the quantitative models across WoSo.Live.
 <tr class="odd">
 <td style="text-align: left;"><strong>1. Per-Minute Talent</strong></td>
 <td style="text-align: left;"><strong>Net RAPM / 90</strong></td>
-<td style="text-align: left;">Stage 2 Ridge Regression</td>
+<td style="text-align: left;">Single-Stage Ridge Regression</td>
 <td style="text-align: left;">Isolated player rate impact per 90 minutes.</td>
 </tr>
 <tr class="even">
