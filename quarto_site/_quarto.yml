@@ -34,6 +34,8 @@ website:
 
 format:
   html:
-    theme: litera # Matches the bslib theme in your Shiny app
+    theme: flatly
+    mainfont: "Assistant"
+    sansfont: "Assistant"
     css: styles.css
     toc: false

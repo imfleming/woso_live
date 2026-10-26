@@ -5,3 +5,14 @@
 
 /.quarto/
 **/*.quarto_ipynb
+
+# Build directories
+quarto_site/_site/
+
+# Local analysis & ingestion tools
+audit_codebase_inventory.R
+codebase_inventory_manifest.csv
+condense_codebase_for_ingestion.R
+llm_ingestion_bundles/
+wsl2_sofascore_coverage_audit.*
+wyscout_endpoint_tests/

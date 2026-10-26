@@ -1,8 +1,22 @@
 ---
-title: "About Ian"
+title: "About"
 page-layout: full
 ---
 
+## About the Site
+
+WoSo.Live hosts a suite of advanced quantitative tools and interactive applications dedicated to women's soccer analytics. Featuring custom Regularized Adjusted Plus-Minus (RAPM) modeling, expected goals (xG) shot simulations, and comprehensive tournament forecasting, the platform aims to bridge the gap between complex data science and accessible visual insights for the global women's game.
+
+## About Ian
+
 Ian Fleming is a FIFA-licensed agent and the former General Manager and Director of Soccer Operations of the Orlando Pride of the National Women's Soccer League, as well as previously serving as the Director of Strategy and Analytics for the Houston Dynamo and Houston Dash, and Director of Analytics and Strategy for the San Jose Earthquakes.
 
-Ian is a Chicago-Kent College of Law graduate, having focused on corporate law, by way of an Bachelor of Science degree in Economics from the University of South Carolina. In a previous life, he played collegiate soccer at the Division II level.
+Ian is a Chicago-Kent College of Law graduate, having focused on corporate law, by way of a Bachelor of Science degree in Economics from the University of South Carolina. In a previous life, he played collegiate soccer at the Division II level.
+
+## Connect with Ian
+
+<a href="https://www.linkedin.com/in/ianmfleming/" target="_blank" style="margin-right: 10px;"><img src="linkedin_icon.png" width="20" style="vertical-align: middle; display: inline-block;" alt="LinkedIn"></a>
+<a href="https://bsky.app/profile/ianmfleming.bsky.social" target="_blank" style="margin-right: 10px;"><img src="bluesky_icon.png" width="20" style="vertical-align: middle; display: inline-block;" alt="Bluesky"></a>
+<a href="https://x.com/ian_m_fleming" target="_blank" style="margin-right: 10px;"><img src="twitter_icon.png" width="20" style="vertical-align: middle; display: inline-block;" alt="Twitter"></a>
+<a href="mailto:ianmichaelfleming@gmail.com" style="margin-right: 10px;"><img src="email_icon.png" width="20" style="vertical-align: middle; display: inline-block;" alt="Email"></a>
+<span style="vertical-align: middle; font-size: 14px;">ianmichaelfleming [at] gmail [dot] com</span>

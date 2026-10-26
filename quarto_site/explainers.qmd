@@ -164,13 +164,16 @@ Most decisive soccer contributions occur off the ball: opening passing lanes wit
 
 1. **Stint-by-Stint Segmentation:** Matches are divided into distinct stints whenever a substitution, goal, or red card alters on-pitch personnel or game state.
 
-2. **Context Residualization (Stage 1 OLS):** The model strips away external noise unrelated to individual ability:
-   * **Venue Advantage:** Home teams generate higher threat on baseline expectation.
-   * **Score Differential:** Teams trailing by two attack aggressively, while teams defending a lead drop into low defensive blocks.
-   * **Numerical Strength:** Playing 11v11, 11v10, or 10v11 fundamentally alters baseline scoring rates.
-   * **Schedule Load:** 10-day rolling minutes played and cross-country travel mileage are explicitly accounted for.
+2. **Single-Stage Environmental Conditioning:** The model solves for player talent and environmental context simultaneously within a unified design matrix. Rather than residualizing through an initial unregularized stage (which risks over-attributing superstar talent to match context), structural environmental factors enter with a penalty factor of zero ($\lambda_{env} = 0$), guaranteeing unpenalized estimation of baseline conditions:
+   * **Venue Advantage:** Empirical Bayes regularized home advantage bounded in $[+0.0300, +0.2490]$.
+   * **Score Differential:** State clamped strictly within $[-4.0, +4.0]$ to prevent garbage-time distortions.
+   * **Rest Dynamics:** Continuous cubic natural splines $ns(df = 3)$ on rest days, coalesced to a 7.0-day default.
+   * **Flight & Minute Load:** Continuous splines capturing acute travel mileage and accumulated fatigue.
 
-3. **Player Attribution (Stage 2 Ridge Regression):** Simple plus-minus is biased if a player shares the pitch with superstars. RAPM applies Ridge regression to isolate an individual's contribution independent of her 10 teammates and the 11 opponents on the pitch.
+3. **Player & Position-Specific Ridge Shrinkage:** RAPM applies L2 Ridge regularization to isolate individual contributions independent of teammates and opponents. Regularization multipliers are structurally partitioned:
+   * **Outfielders:** Standard baseline regularization ($c_{outfield} = 1.0$).
+   * **Goalkeepers:** Regularization multiplier $c_{gk} \in [2.5, 7.5]$ tuned via 10-fold cross-validation to account for post-shot variance.
+   * **Managers:** Coach baseline multiplier $c_{coach} \in [1.0, 20.0]$ isolating tactical system effects.
 
 ### Reading RAPM Values
 
@@ -204,7 +207,7 @@ The **Wins Above Replacement (WAR)** framework connects per-minute performance w
 
 | Step | Metric | Mathematical Formula | Practical Meaning |
 | :--- | :--- | :--- | :--- |
-| **1. Per-Minute Talent** | **Net RAPM / 90** | Stage 2 Ridge Regression | Isolated player rate impact per 90 minutes. |
+| **1. Per-Minute Talent** | **Net RAPM / 90** | Single-Stage Ridge Regression | Isolated player rate impact per 90 minutes. |
 | **2. Average Baseline** | **Goals Above Average (GAA)** | (Net xG per 90 &times; Nineties) &plus; Finishing Talent | Net goals produced relative to an average player over the same minutes. |
 | **3. Replacement Baseline** | **Goals Above Replacement (GAR)** | GAA &minus; (Replacement Floor &times; Nineties) | Net goals produced relative to an accessible bench or reserve replacement. |
 | **4. Standings Impact** | **Points Above Replacement (PAR)** | GAR &times; 0.65 | League table standings points delivered to the team. |
