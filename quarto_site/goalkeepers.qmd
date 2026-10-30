@@ -1,10 +1,1610 @@
 ---
 title: "Goalkeepers"
-page-layout: full
+page-layout: custom
+execute:
+  echo: false
+  warning: false
+  message: false
 ---
 
-<iframe 
-  src="https://ianmichaelfleming.shinyapps.io/gk_app/" 
-  style="border: none; width: 100%; height: 1200px;"
-  title="Goalkeepers">
-</iframe>
+```{r}
+#| label: build-gk-payload
+#| results: asis
+
+suppressPackageStartupMessages({
+  library(qs2)
+  library(dplyr)
+  library(stringr)
+  library(jsonlite)
+})
+
+data_dir <- "data"
+if (!dir.exists(data_dir)) dir.create(data_dir, recursive = TRUE)
+
+primary_gk_path  <- "C:/Users/iflem/Documents/Work/GK_App/data/master_gk_payload.qs2"
+fallback_gk_path <- file.path(data_dir, "master_gk_payload.qs2")
+
+if (file.exists(primary_gk_path)) {
+  file.copy(primary_gk_path, fallback_gk_path, overwrite = TRUE)
+  master_payload <- qs2::qs_read(primary_gk_path)
+} else if (file.exists(fallback_gk_path)) {
+  master_payload <- qs2::qs_read(fallback_gk_path)
+} else {
+  stop("master_gk_payload.qs2 not found.")
+}
+
+gk_mapping  <- master_payload$gk_mapping
+shot_stream <- master_payload$gk_shot_stream
+gk_match_log <- master_payload$gk_match_log
+gk_cq_splits <- master_payload$gk_cq_splits
+
+# Global reference baselines matching gk_app/app.R
+global_cq_avgs <- gk_cq_splits %>%
+  dplyr::group_by(cq_bin) %>%
+  dplyr::summarise(
+    avg_sv_pct = round(1 - (sum(goals_allowed, na.rm = TRUE) / pmax(sum(shots_faced, na.rm = TRUE), 1)), 4),
+    .groups = "drop"
+  )
+
+global_gp_avg <- gk_match_log %>%
+  dplyr::summarise(
+    avg_gp_10xgot = round((sum(match_gp, na.rm = TRUE) / pmax(sum(match_xgot, na.rm = TRUE), 0.1)) * 10, 4),
+    avg_axa_pct   = round((sum(match_gp > 0, na.rm = TRUE) / pmax(dplyr::n(), 1)) * 100, 2)
+  )
+
+global_max_gp <- max(abs(gk_match_log$match_gp), na.rm = TRUE)
+if (is.infinite(global_max_gp) || is.na(global_max_gp)) global_max_gp <- 3.0
+global_max_gp <- round(global_max_gp, 3)
+
+global_avg_xgot <- round(sum(gk_match_log$match_xgot, na.rm = TRUE) / pmax(sum(gk_cq_splits$shots_faced, na.rm = TRUE), 1), 4)
+
+# Pre-compute League-level CQ & GP benchmarks for O(1) lookup in SAVE Profile
+keeper_leagues <- gk_mapping %>% dplyr::select(keeper_id, league_id) %>% dplyr::distinct()
+
+league_cq_table <- gk_cq_splits %>%
+  dplyr::left_join(keeper_leagues, by = "keeper_id", relationship = "many-to-many") %>%
+  dplyr::filter(!is.na(league_id)) %>%
+  dplyr::group_by(league_id, cq_bin) %>%
+  dplyr::summarise(
+    shots = sum(shots_faced, na.rm = TRUE),
+    goals = sum(goals_allowed, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+league_gp_table <- gk_match_log %>%
+  dplyr::filter(!is.na(league_id)) %>%
+  dplyr::group_by(league_id) %>%
+  dplyr::summarise(
+    sum_gp   = round(sum(match_gp, na.rm = TRUE), 4),
+    sum_xgot = round(sum(match_xgot, na.rm = TRUE), 4),
+    pos_cnt  = sum(match_gp > 0, na.rm = TRUE),
+    tot_cnt  = dplyr::n(),
+    .groups  = "drop"
+  )
+
+# Retain every shot (up to 300 frames per keeper) so the slider steps through consecutive 1, 2, 3... shot numbers
+stream_anim <- shot_stream %>%
+  dplyr::group_by(keeper_id) %>%
+  dplyr::slice(unique(round(seq(1, dplyr::n(), length.out = min(dplyr::n(), 300))))) %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate(
+    date_str = stringr::str_match(stat_label, "<b>Date:</b> (.*?)<br>")[, 2],
+    cum_xgot = as.numeric(stringr::str_match(stat_label, "<b>Expected Goals \\(xGOT\\):</b> ([0-9.]+)")[, 2]),
+    post_mu  = round(post_mu, 4),
+    post_sd  = round(post_sd, 4),
+    cum_gp   = round(cum_goals_prevented, 2)
+  )
+
+stream_by_gk <- split(
+  stream_anim %>% dplyr::select(s = shot_num, m = post_mu, sd = post_sd, gp = cum_gp, x = cum_xgot, d = date_str),
+  stream_anim$keeper_id
+)
+stream_by_gk <- lapply(stream_by_gk, function(df) {
+  list(s = df$s, m = df$m, sd = df$sd, gp = df$gp, x = df$x, d = df$d)
+})
+
+matches_clean <- gk_match_log %>%
+  dplyr::transmute(
+    keeper_id = keeper_id,
+    d  = as.character(match_date),
+    df = ifelse(is.na(match_date), "Unknown Date", format(as.Date(match_date), "%b %d, %Y")),
+    x  = round(match_xgot, 2),
+    g  = as.integer(match_goals),
+    gp = round(match_gp, 2)
+  )
+matches_by_gk <- split(matches_clean %>% dplyr::select(-keeper_id), matches_clean$keeper_id)
+matches_by_gk <- lapply(matches_by_gk, function(df) {
+  list(d = df$d, df = df$df, x = df$x, g = df$g, gp = df$gp)
+})
+
+cq_clean <- gk_cq_splits %>%
+  dplyr::transmute(
+    keeper_id = keeper_id,
+    b  = as.character(cq_bin),
+    sf = as.integer(shots_faced),
+    ga = as.integer(goals_allowed),
+    sv = round(sv_pct, 4)
+  )
+cq_by_gk <- split(cq_clean %>% dplyr::select(-keeper_id), cq_clean$keeper_id)
+
+mapping_clean <- gk_mapping %>%
+  dplyr::mutate(
+    keeper_id     = as.character(keeper_id),
+    league_id     = as.numeric(league_id),
+    player_name   = as.character(player_name),
+    team_name     = as.character(team_name),
+    age           = ifelse(is.na(age), NA_real_, round(as.numeric(age))),
+    total_minutes = round(as.numeric(total_minutes))
+  )
+
+payload <- list(
+  globals = list(
+    cq_avgs    = global_cq_avgs,
+    gp_avg     = global_gp_avg,
+    max_gp     = global_max_gp,
+    avg_xgot   = global_avg_xgot
+  ),
+  league_cq = league_cq_table,
+  league_gp = league_gp_table,
+  mapping   = mapping_clean,
+  stream    = stream_by_gk,
+  matches   = matches_by_gk,
+  cq        = cq_by_gk
+)
+
+cat(sprintf(
+  "\n```{=html}\n<script id=\"gk-app-payload\" type=\"application/json\">%s</script>\n```\n",
+  jsonlite::toJSON(payload, dataframe = "columns", auto_unbox = TRUE)
+))
+```
+
+```{=html}
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+  .gk-app-wrapper {
+    background-color: #FFFFFF;
+    color: #222222;
+    min-height: calc(100vh - 60px);
+    font-family: 'Assistant', sans-serif;
+    padding-bottom: 3rem;
+  }
+
+  .gk-subnav {
+    background-color: #1D3549;
+    padding: 0 1.5rem;
+    min-height: 54px;
+    display: flex;
+    align-items: stretch;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+
+  .gk-subnav-left {
+    display: flex;
+    align-items: stretch;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .gk-brand {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    margin-right: 0.5rem;
+  }
+
+  .gk-tabs {
+    display: flex;
+    align-items: stretch;
+    gap: 0.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .gk-tab-btn {
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 0.95rem;
+    font-weight: 400;
+    padding: 0 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: all 0.15s ease;
+    font-family: 'Assistant', sans-serif;
+  }
+
+  .gk-tab-btn:hover {
+    color: #FFFFFF;
+  }
+
+  .gk-tab-btn.active {
+    color: #FFFFFF;
+    font-weight: 700;
+    border-bottom: 3px solid #FFFFFF;
+  }
+
+  .gk-body-container {
+    max-width: 1680px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .gk-layout {
+    display: grid;
+    grid-template-columns: 320px minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  @media (max-width: 992px) {
+    .gk-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .gk-sidebar {
+    background-color: #F8F9FA;
+    border: 1px solid #DEE2E6;
+    border-radius: 6px;
+    padding: 1.25rem;
+  }
+
+  .gk-sidebar h4 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #111111;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+  }
+
+  .gk-sidebar h5 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #111111;
+    margin-top: 0;
+    margin-bottom: 0.6rem;
+  }
+
+  .gk-sidebar p {
+    font-size: 0.9rem;
+    color: #444444;
+    line-height: 1.45;
+    margin-bottom: 1rem;
+  }
+
+  .gk-label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #222222;
+    margin-bottom: 0.35rem;
+  }
+
+  .gk-select {
+    width: 100%;
+    background-color: #FFFFFF;
+    color: #222222;
+    border: 1px solid #CED4DA;
+    border-radius: 4px;
+    padding: 0.45rem 0.65rem;
+    font-size: 0.92rem;
+    font-family: 'Assistant', sans-serif;
+    margin-bottom: 0.9rem;
+    box-sizing: border-box;
+  }
+
+  .gk-select:focus {
+    outline: none;
+    border-color: #1D3549;
+    box-shadow: 0 0 0 2px rgba(29, 53, 73, 0.2);
+  }
+
+  /* Searchable Goalkeeper Combobox */
+  .gk-search-wrap {
+    position: relative;
+    width: 100%;
+    margin-bottom: 0.9rem;
+  }
+
+  .gk-search-input {
+    width: 100%;
+    background-color: #FFFFFF;
+    color: #222222;
+    border: 1px solid #CED4DA;
+    border-radius: 4px;
+    padding: 0.45rem 2rem 0.45rem 0.65rem;
+    font-size: 0.92rem;
+    font-family: 'Assistant', sans-serif;
+    box-sizing: border-box;
+    cursor: pointer;
+  }
+
+  .gk-search-input:focus {
+    outline: none;
+    border-color: #00747A;
+    box-shadow: 0 0 0 2px rgba(0, 116, 122, 0.25);
+    cursor: text;
+  }
+
+  .gk-search-chevron {
+    position: absolute;
+    right: 0.65rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 0.8rem;
+    color: #555555;
+  }
+
+  .gk-search-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 0;
+    right: 0;
+    background-color: #FFFFFF;
+    border: 1px solid #CED4DA;
+    border-radius: 4px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+    max-height: 250px;
+    overflow-y: auto;
+    z-index: 1050;
+  }
+
+  .gk-search-menu.open {
+    display: block;
+  }
+
+  .gk-search-option {
+    padding: 0.42rem 0.65rem;
+    font-size: 0.9rem;
+    color: #222222;
+    cursor: pointer;
+  }
+
+  .gk-search-option:hover, .gk-search-option.active {
+    background-color: #00747A;
+    color: #FFFFFF;
+  }
+
+  .gk-search-empty {
+    padding: 0.5rem 0.65rem;
+    font-size: 0.88rem;
+    color: #777777;
+    font-style: italic;
+  }
+
+  .gk-divider {
+    border: 0;
+    border-top: 1px solid #DEE2E6;
+    margin: 1rem 0;
+  }
+
+  .gk-btn-outline {
+    width: 100%;
+    background-color: transparent;
+    color: #222222;
+    border: 1px solid #333333;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: 'Assistant', sans-serif;
+  }
+
+  .gk-btn-outline:hover {
+    background-color: #111111;
+    color: #FFFFFF;
+  }
+
+  .gk-main-panel {
+    background-color: #FFFFFF;
+    min-height: 560px;
+  }
+
+  .save-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .save-demo-grid {
+    display: grid;
+    grid-template-columns: 5fr 2fr 5fr;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .save-header-grid {
+    display: grid;
+    grid-template-columns: 3fr 9fr;
+    gap: 20px;
+    align-items: center;
+  }
+</style>
+
+<div class="gk-app-wrapper">
+  <div class="gk-subnav">
+    <div class="gk-subnav-left">
+      <span class="gk-brand">Global Goalkeeper Evaluation</span>
+      <div class="gk-tabs">
+        <button id="gk-tab-btn-post" class="gk-tab-btn active" onclick="switchGkTab('post')">Shotstopping Posterior (Animated)</button>
+        <button id="gk-tab-btn-comp" class="gk-tab-btn" onclick="switchGkTab('comp')">Goalkeeper Comparison</button>
+        <button id="gk-tab-btn-save" class="gk-tab-btn" onclick="switchGkTab('save')">SAVE Profile</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="gk-body-container">
+    <!-- TAB 1: SHOTSTOPPING POSTERIOR (ANIMATED) -->
+    <div id="gk-panel-post" class="gk-layout">
+      <div class="gk-sidebar">
+        <h4>Live Evaluation</h4>
+        <p>Watch how the model's estimate of a goalkeeper's true shotstopping ability updates live as they face more shots. A wider curve indicates uncertainty; a narrow curve indicates an established talent baseline.</p>
+
+        <label class="gk-label" for="league_filter">Find Goalkeeper by League:</label>
+        <select id="league_filter" class="gk-select"></select>
+
+        <label class="gk-label" for="gk_select_search">Select Goalkeeper:</label>
+        <input type="hidden" id="gk_select">
+        <div class="gk-search-wrap" id="wrap_gk_select">
+          <input type="text" id="gk_select_search" class="gk-search-input" placeholder="Search first or last name..." autocomplete="off">
+          <span class="gk-search-chevron">&#9662;</span>
+          <div id="gk_select_menu" class="gk-search-menu"></div>
+        </div>
+
+        <hr class="gk-divider">
+        <button id="download_plotly" class="gk-btn-outline">Download Plot (PNG)</button>
+      </div>
+
+      <div class="gk-main-panel">
+        <div id="gk_posterior_plot" style="width: 100%; height: 560px;"></div>
+      </div>
+    </div>
+
+    <!-- TAB 2: GOALKEEPER COMPARISON -->
+    <div id="gk-panel-comp" class="gk-layout" style="display: none;">
+      <div class="gk-sidebar">
+        <h4>Head-to-Head Comparison</h4>
+        <p>Compare the final estimated true shotstopping ability of two goalkeepers.</p>
+        <hr class="gk-divider">
+
+        <h5>Goalkeeper A</h5>
+        <label class="gk-label" for="comp_league_a">League A:</label>
+        <select id="comp_league_a" class="gk-select"></select>
+        <label class="gk-label" for="comp_gk_a_search">Select GK A:</label>
+        <input type="hidden" id="comp_gk_a">
+        <div class="gk-search-wrap" id="wrap_comp_gk_a">
+          <input type="text" id="comp_gk_a_search" class="gk-search-input" placeholder="Search first or last name..." autocomplete="off">
+          <span class="gk-search-chevron">&#9662;</span>
+          <div id="comp_gk_a_menu" class="gk-search-menu"></div>
+        </div>
+
+        <hr class="gk-divider">
+
+        <h5>Goalkeeper B</h5>
+        <label class="gk-label" for="comp_league_b">League B:</label>
+        <select id="comp_league_b" class="gk-select"></select>
+        <label class="gk-label" for="comp_gk_b_search">Select GK B:</label>
+        <input type="hidden" id="comp_gk_b">
+        <div class="gk-search-wrap" id="wrap_comp_gk_b">
+          <input type="text" id="comp_gk_b_search" class="gk-search-input" placeholder="Search first or last name..." autocomplete="off">
+          <span class="gk-search-chevron">&#9662;</span>
+          <div id="comp_gk_b_menu" class="gk-search-menu"></div>
+        </div>
+
+        <hr class="gk-divider">
+        <button id="download_plotly_comp" class="gk-btn-outline">Download Plot (PNG)</button>
+      </div>
+
+      <div class="gk-main-panel">
+        <div id="gk_comp_plot" style="width: 100%; height: 560px;"></div>
+      </div>
+    </div>
+
+    <!-- TAB 3: SAVE PROFILE -->
+    <div id="gk-panel-save" class="gk-layout" style="display: none;">
+      <div class="gk-sidebar">
+        <h4>SAVE Dashboard</h4>
+        <p>A comprehensive profile of a goalkeeper's shotstopping performance, analyzing empirical performance across Chance Quality (CQ) tiers and game-by-game form.</p>
+
+        <label class="gk-label" for="save_league">Find Goalkeeper by League:</label>
+        <select id="save_league" class="gk-select"></select>
+
+        <label class="gk-label" for="save_gk_search">Select Goalkeeper:</label>
+        <input type="hidden" id="save_gk">
+        <div class="gk-search-wrap" id="wrap_save_gk">
+          <input type="text" id="save_gk_search" class="gk-search-input" placeholder="Search first or last name..." autocomplete="off">
+          <span class="gk-search-chevron">&#9662;</span>
+          <div id="save_gk_menu" class="gk-search-menu"></div>
+        </div>
+
+        <hr class="gk-divider">
+        <button id="download_save_dash" class="gk-btn-outline">Download Dashboard (PNG)</button>
+      </div>
+
+      <div class="gk-main-panel">
+        <div id="save_scale_wrapper" style="width: 100%; overflow: hidden;">
+          <div id="save_dashboard_export_area" style="width: 1280px; height: 720px; padding: 65px 40px; background-color: #1D3549; color: #FFFFFF; font-family: 'Assistant', sans-serif; box-sizing: border-box; transform-origin: top left;">
+            <div class="save-header-grid">
+              <div style="line-height: 0.85;">
+                <span style="font-size: 72px; font-weight: 900; letter-spacing: -3px; color: #FFFFFF;">SAVE</span><span style="font-size: 26px; color: #AAAAAA; font-weight: bold;"> v1</span><br>
+                <span style="font-size: 15px; color: #00A6A6; font-weight: bold;">WoSo.Live</span>
+              </div>
+              <div id="save_demographics_ui"></div>
+            </div>
+
+            <hr style="border: 0; border-top: 2px solid #4A6E8C; margin-top: 20px; margin-bottom: 28px;">
+
+            <div class="save-grid-3">
+              <div style="background-color: #E6E6E6; padding: 20px; height: 430px; box-sizing: border-box;">
+                <div id="save_vol_plot" style="width: 100%; height: 390px;"></div>
+              </div>
+              <div style="background-color: #E6E6E6; padding: 20px; height: 430px; box-sizing: border-box;">
+                <div id="save_sv_plot" style="width: 100%; height: 390px;"></div>
+              </div>
+              <div style="background-color: #E6E6E6; padding: 20px; height: 430px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;">
+                <div id="save_val_plot" style="width: 100%; height: 220px;"></div>
+                <div id="save_form_plot" style="width: 100%; height: 170px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const LEAGUE_CHOICES = [
+    { label: "All Leagues", value: "all" },
+    { label: "NWSL (USA)", value: "9134" },
+    { label: "USL Super League (USA)", value: "28384" },
+    { label: "NCAA Division I (USA)", value: "18944" },
+    { label: "WSL (ENG)", value: "9227" },
+    { label: "WSL2 (ENG)", value: "10553" },
+    { label: "Liga F (ESP)", value: "1127" },
+    { label: "Premi\u00e8re Ligue (FRA)", value: "9677" },
+    { label: "Frauen-Bundesliga (GER)", value: "232" },
+    { label: "Serie A (ITA)", value: "10640" },
+    { label: "Damallsvenskan (SWE)", value: "214" },
+    { label: "Elitettan (SWE)", value: "19860" },
+    { label: "Kvindeliga (DEN)", value: "9412" },
+    { label: "Campeonato Nacional (POR)", value: "10527" },
+    { label: "Besta deild kvenna (ISL)", value: "10307" },
+    { label: "Toppserien (NOR)", value: "201" },
+    { label: "Kansallinen Liiga (FIN)", value: "1662" },
+    { label: "SWPL 1 (SCO)", value: "2054" },
+    { label: "Brasileir\u00e3o S\u00e9rie A1 (BRA)", value: "10257" },
+    { label: "Liga MX Femenil (MEX)", value: "13593" },
+    { label: "WE-League (JPN)", value: "18653" },
+    { label: "A-League (AUS)", value: "9495" },
+    { label: "UEFA Women's Champions League", value: "696" },
+    { label: "Senior International Matches", value: "intl" },
+    { label: "FIFA U-20 Women's World Cup", value: "804" },
+    { label: "FIFA U-17 Women's World Cup", value: "827" }
+  ];
+
+  const INTL_SET = new Set([3076, 852, 1954, 780, 20378, 477, 878, 437, 290, 32833, 18681, 9558, 11330, 1692, 404]);
+
+  const rawPayload = document.getElementById("gk-app-payload").textContent;
+  const payload = JSON.parse(rawPayload);
+
+  function normSearch(str) {
+    return String(str || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+  }
+
+  function colsToRows(colObj) {
+    if (!colObj) return [];
+    const keys = Object.keys(colObj);
+    if (keys.length === 0) return [];
+    const n = Array.isArray(colObj[keys[0]]) ? colObj[keys[0]].length : 1;
+    const rows = new Array(n);
+    for (let i = 0; i < n; i++) {
+      const r = {};
+      for (let k = 0; k < keys.length; k++) {
+        const key = keys[k];
+        r[key] = Array.isArray(colObj[key]) ? colObj[key][i] : colObj[key];
+      }
+      r._norm = normSearch(r.player_name);
+      rows[i] = r;
+    }
+    return rows;
+  }
+
+  const mappingRows  = colsToRows(payload.mapping);
+  const leagueCqRows = colsToRows(payload.league_cq);
+  const leagueGpRows = colsToRows(payload.league_gp);
+  const globalCqRows = colsToRows(payload.globals.cq_avgs);
+  const globalGpRow  = colsToRows(payload.globals.gp_avg)[0] || { avg_gp_10xgot: 0, avg_axa_pct: 50 };
+  const globalMaxGp  = Number(payload.globals.max_gp) || 3.0;
+  const globalAvgXgot = Number(payload.globals.avg_xgot) || 0.25;
+
+  const streamMap  = payload.stream || {};
+  const matchesMap = payload.matches || {};
+  const cqMap      = payload.cq || {};
+
+  // Registry of searchable goalkeeper comboboxes
+  const comboRegistry = {};
+
+  const N_GRID = 400;
+  const X_SEQ = new Array(N_GRID);
+  const PRIOR_Y = new Array(N_GRID);
+  const INV_SQRT_2PI = 1 / Math.sqrt(2 * Math.PI);
+
+  function dnorm(x, mu, sd) {
+    const z = (x - mu) / sd;
+    return (INV_SQRT_2PI / sd) * Math.exp(-0.5 * z * z);
+  }
+
+  function pnorm(x, mu, sd) {
+    const z = (x - mu) / (sd * Math.SQRT2);
+    const t = 1 / (1 + 0.3275911 * Math.abs(z));
+    const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741, a4 = -1.453152027, a5 = 1.061405429;
+    const erf = 1 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-z * z);
+    const sign = z < 0 ? -1 : 1;
+    return 0.5 * (1 + sign * erf);
+  }
+
+  for (let i = 0; i < N_GRID; i++) {
+    const x = -0.2 + (0.4 * i) / (N_GRID - 1);
+    X_SEQ[i] = x;
+    PRIOR_Y[i] = dnorm(x, 0.0, 0.036);
+  }
+
+  function getBlueShade(val, minVal = 0, maxVal = 100) {
+    const pct = Math.max(0, Math.min((val - minVal) / Math.max(maxVal - minVal, 1), 1));
+    let r, g, b;
+    if (pct <= 0.5) {
+      const t = pct * 2;
+      r = Math.round(189 + t * (49 - 189));
+      g = Math.round(215 + t * (130 - 215));
+      b = Math.round(231 + t * (189 - 231));
+    } else {
+      const t = (pct - 0.5) * 2;
+      r = Math.round(49 + t * (8 - 49));
+      g = Math.round(130 + t * (81 - 130));
+      b = Math.round(189 + t * (156 - 189));
+    }
+    return `rgb(${r},${g},${b})`;
+  }
+
+  function toArr(v) {
+    if (v === undefined || v === null) return [];
+    return Array.isArray(v) ? v : [v];
+  }
+
+  function formatSigned(val, digits) {
+    const n = Number(val) || 0;
+    return (n >= 0 ? "+" : "") + n.toFixed(digits);
+  }
+
+  function buildStatLabel(dateStr, shotNum, cumXgot, cumGp, postMu, postSd) {
+    const avgQual = cumXgot / Math.max(shotNum, 1);
+    const qualDiff = avgQual - globalAvgXgot;
+    const credLower = postMu - 1.96 * postSd;
+    const credUpper = postMu + 1.96 * postSd;
+    return `<b>Date:</b> ${dateStr}<br><b>Shots Against:</b> ${shotNum}<br><b>Expected Goals (xGOT):</b> ${cumXgot.toFixed(2)}<br><b>Average xGOT:</b> ${avgQual.toFixed(2)} (${formatSigned(qualDiff, 2)} vs Global)<br><b>Goals Prevented:</b> ${formatSigned(cumGp, 2)}<br><b>Talent Estimate:</b> ${formatSigned(postMu, 2)}<br><b>95% Credible Interval:</b> [${formatSigned(credLower, 2)}, ${formatSigned(credUpper, 2)}]`;
+  }
+
+  function getFilteredKeepers(leagueFilterVal) {
+    const seen = new Set();
+    const out = [];
+    for (let i = 0; i < mappingRows.length; i++) {
+      const row = mappingRows[i];
+      const lid = Number(row.league_id);
+      let match = false;
+      if (leagueFilterVal === "all") match = true;
+      else if (leagueFilterVal === "intl") match = INTL_SET.has(lid);
+      else match = (lid === Number(leagueFilterVal));
+
+      if (match && !seen.has(row.keeper_id)) {
+        seen.add(row.keeper_id);
+        out.push(row);
+      }
+    }
+    return out;
+  }
+
+  function getKeeperMeta(keeperId) {
+    return mappingRows.find(r => String(r.keeper_id) === String(keeperId)) || null;
+  }
+
+  function populateLeagueSelect(selectId) {
+    const sel = document.getElementById(selectId);
+    sel.innerHTML = "";
+    LEAGUE_CHOICES.forEach(ch => {
+      const opt = document.createElement("option");
+      opt.value = ch.value;
+      opt.textContent = ch.label;
+      sel.appendChild(opt);
+    });
+  }
+
+  function setupSearchableCombo(baseId, onSelectCallback) {
+    const hiddenEl = document.getElementById(baseId);
+    const inputEl  = document.getElementById(baseId + "_search");
+    const menuEl   = document.getElementById(baseId + "_menu");
+    const wrapEl   = document.getElementById("wrap_" + baseId);
+
+    const state = {
+      items: [],
+      filtered: [],
+      selectedId: "",
+      selectedLabel: "",
+      highlightIdx: 0
+    };
+
+    function renderMenu(queryStr) {
+      const q = normSearch(queryStr);
+      state.filtered = q
+        ? state.items.filter(k => k._norm.includes(q))
+        : state.items;
+
+      menuEl.innerHTML = "";
+      if (state.filtered.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "gk-search-empty";
+        empty.textContent = "No matching goalkeepers";
+        menuEl.appendChild(empty);
+        return;
+      }
+
+      state.highlightIdx = Math.max(0, state.filtered.findIndex(k => String(k.keeper_id) === String(state.selectedId)));
+
+      state.filtered.forEach((k, idx) => {
+        const div = document.createElement("div");
+        div.className = "gk-search-option" + (idx === state.highlightIdx ? " active" : "");
+        div.textContent = k.player_name;
+        div.addEventListener("mousedown", (e) => {
+          e.preventDefault();
+          selectKeeper(k.keeper_id, k.player_name, true);
+          closeMenu();
+        });
+        menuEl.appendChild(div);
+      });
+
+      const activeNode = menuEl.children[state.highlightIdx];
+      if (activeNode) activeNode.scrollIntoView({ block: "nearest" });
+    }
+
+    function selectKeeper(id, name, triggerCallback) {
+      state.selectedId = String(id);
+      state.selectedLabel = String(name);
+      hiddenEl.value = state.selectedId;
+      inputEl.value = state.selectedLabel;
+      if (triggerCallback && onSelectCallback) onSelectCallback();
+    }
+
+    function openMenu() {
+      Object.keys(comboRegistry).forEach(k => {
+        if (k !== baseId) comboRegistry[k].closeMenu();
+      });
+      inputEl.value = "";
+      renderMenu("");
+      menuEl.classList.add("open");
+    }
+
+    function closeMenu() {
+      menuEl.classList.remove("open");
+      inputEl.value = state.selectedLabel;
+    }
+
+    inputEl.addEventListener("focus", () => {
+      openMenu();
+    });
+
+    inputEl.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (!menuEl.classList.contains("open")) openMenu();
+    });
+
+    inputEl.addEventListener("input", () => {
+      if (!menuEl.classList.contains("open")) menuEl.classList.add("open");
+      renderMenu(inputEl.value);
+    });
+
+    inputEl.addEventListener("keydown", (e) => {
+      if (!menuEl.classList.contains("open")) return;
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        if (state.filtered.length > 0) {
+          state.highlightIdx = Math.min(state.highlightIdx + 1, state.filtered.length - 1);
+          Array.from(menuEl.children).forEach((c, i) => c.classList.toggle("active", i === state.highlightIdx));
+          if (menuEl.children[state.highlightIdx]) menuEl.children[state.highlightIdx].scrollIntoView({ block: "nearest" });
+        }
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        if (state.filtered.length > 0) {
+          state.highlightIdx = Math.max(state.highlightIdx - 1, 0);
+          Array.from(menuEl.children).forEach((c, i) => c.classList.toggle("active", i === state.highlightIdx));
+          if (menuEl.children[state.highlightIdx]) menuEl.children[state.highlightIdx].scrollIntoView({ block: "nearest" });
+        }
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        if (state.filtered.length > 0 && state.filtered[state.highlightIdx]) {
+          const picked = state.filtered[state.highlightIdx];
+          selectKeeper(picked.keeper_id, picked.player_name, true);
+          closeMenu();
+          inputEl.blur();
+        }
+      } else if (e.key === "Escape") {
+        closeMenu();
+        inputEl.blur();
+      }
+    });
+
+    wrapEl.addEventListener("click", (e) => e.stopPropagation());
+
+    comboRegistry[baseId] = {
+      setItems: function(keepers, defaultIndex) {
+        state.items = keepers;
+        const existing = keepers.find(k => String(k.keeper_id) === String(state.selectedId));
+        if (existing) {
+          selectKeeper(existing.keeper_id, existing.player_name, false);
+        } else if (keepers.length > 0) {
+          const idx = Math.min(defaultIndex || 0, keepers.length - 1);
+          selectKeeper(keepers[idx].keeper_id, keepers[idx].player_name, false);
+        } else {
+          selectKeeper("", "", false);
+        }
+      },
+      closeMenu: closeMenu
+    };
+  }
+
+  document.addEventListener("click", () => {
+    Object.keys(comboRegistry).forEach(k => comboRegistry[k].closeMenu());
+  });
+
+  function updateKeeperSelect(leagueSelectId, gkSelectId, defaultIndex = 0) {
+    const leagueVal = document.getElementById(leagueSelectId).value;
+    const keepers = getFilteredKeepers(leagueVal);
+    if (comboRegistry[gkSelectId]) {
+      comboRegistry[gkSelectId].setItems(keepers, defaultIndex);
+    }
+  }
+
+  // --- TAB 1: ANIMATED POSTERIOR PLOT ---
+  function renderPosteriorPlot() {
+    const gkId = document.getElementById("gk_select").value;
+    const st = streamMap[gkId];
+    if (!st) return;
+
+    const sArr  = toArr(st.s);
+    const muArr = toArr(st.m);
+    const sdArr = toArr(st.sd);
+    const gpArr = toArr(st.gp);
+    const xArr  = toArr(st.x);
+    const dArr  = toArr(st.d);
+
+    const nFrames = sArr.length;
+    if (nFrames === 0) return;
+
+    const meta = getKeeperMeta(gkId);
+    const selectedName = (meta && meta.player_name) ? meta.player_name : "Goalkeeper";
+
+    let maxY = 5.0;
+    const frameCurves = new Array(nFrames);
+    const peakYs = new Array(nFrames);
+    const statLabels = new Array(nFrames);
+
+    for (let f = 0; f < nFrames; f++) {
+      const mu = Number(muArr[f]);
+      const sd = Number(sdArr[f]);
+      const yVec = new Array(N_GRID);
+      for (let i = 0; i < N_GRID; i++) {
+        const yVal = dnorm(X_SEQ[i], mu, sd);
+        yVec[i] = yVal;
+        if (yVal > maxY) maxY = yVal;
+      }
+      frameCurves[f] = yVec;
+      peakYs[f] = dnorm(mu, mu, sd);
+      statLabels[f] = buildStatLabel(dArr[f] || "Unknown Date", Number(sArr[f]), Number(xArr[f] || 0), Number(gpArr[f] || 0), mu, sd);
+    }
+
+    const yLimit = Math.max(maxY * 1.2, 5.0);
+    const frameDur = Math.max(18, Math.min(65, Math.round(3200 / Math.max(nFrames, 1))));
+
+    const initIdx = 0;
+    const initMu = Number(muArr[initIdx]);
+
+    const traces = [
+      {
+        x: [initMu, initMu],
+        y: [0, peakYs[initIdx]],
+        type: "scatter",
+        mode: "lines",
+        line: { color: "#00747A", dash: "dot", width: 2 },
+        hoverinfo: "none",
+        showlegend: false
+      },
+      {
+        x: X_SEQ,
+        y: PRIOR_Y,
+        type: "scatter",
+        mode: "lines",
+        line: { color: "#666666", dash: "dash", width: 2 },
+        fill: "tozeroy",
+        fillcolor: "rgba(136,136,136,0.2)",
+        name: "Global xG Model Baseline",
+        hoverinfo: "none",
+        showlegend: false
+      },
+      {
+        x: X_SEQ,
+        y: frameCurves[initIdx],
+        type: "scatter",
+        mode: "lines",
+        line: { color: "#00747A", width: 3 },
+        fill: "tozeroy",
+        fillcolor: "rgba(0,116,122,0.4)",
+        name: "Keeper's Live Estimate",
+        hoverinfo: "none",
+        showlegend: false
+      },
+      {
+        x: [-0.145],
+        y: [yLimit * 0.70],
+        type: "scatter",
+        mode: "text",
+        text: [statLabels[initIdx]],
+        textposition: "middle right",
+        textfont: { family: "Assistant", size: 14, color: "#111111" },
+        hoverinfo: "none",
+        showlegend: false
+      }
+    ];
+
+    const frames = new Array(nFrames);
+    const sliderSteps = new Array(nFrames);
+
+    for (let f = 0; f < nFrames; f++) {
+      const fName = String(sArr[f]);
+      const mu = Number(muArr[f]);
+      frames[f] = {
+        name: fName,
+        data: [
+          { x: [mu, mu], y: [0, peakYs[f]] },
+          { x: X_SEQ, y: frameCurves[f] },
+          { x: [-0.145], y: [yLimit * 0.70], text: [statLabels[f]] }
+        ],
+        traces: [0, 2, 3]
+      };
+
+      sliderSteps[f] = {
+        label: fName,
+        method: "animate",
+        args: [[fName], { mode: "immediate", frame: { duration: frameDur, redraw: false }, transition: { duration: frameDur } }]
+      };
+    }
+
+    const layout = {
+      title: {
+        text: `<b>${selectedName} | Shotstopping Performance</b><br><sup>Grey = Global xG Model Baseline | Teal = Live Keeper Estimate</sup>`,
+        font: { family: "Assistant", size: 18 }
+      },
+      margin: { t: 90, b: 110, l: 55, r: 50 },
+      xaxis: {
+        title: "<b>True Talent Estimate (Goals Prevented per Shot)</b><br>\u2190 Below Average | Elite Shotstopper \u2192",
+        range: [-0.15, 0.15],
+        tickvals: [-0.15, -0.10, -0.05, 0, 0.05, 0.10, 0.15],
+        ticktext: ["-0.150", "-0.100", "-0.050", "0.000", "+0.050", "+0.100", "+0.150"],
+        zeroline: false
+      },
+      yaxis: {
+        title: "Certainty (Density)",
+        range: [0, yLimit],
+        showgrid: false,
+        zeroline: false
+      },
+      showlegend: false,
+      font: { family: "Assistant" },
+      updatemenus: [{
+        type: "buttons",
+        showactive: false,
+        x: 0,
+        y: -0.22,
+        xanchor: "left",
+        yanchor: "top",
+        direction: "left",
+        pad: { t: 0, r: 10 },
+        buttons: [
+          {
+            label: "Play",
+            method: "animate",
+            args: [null, { fromcurrent: true, frame: { duration: frameDur, redraw: false }, transition: { duration: frameDur } }]
+          },
+          {
+            label: "Pause",
+            method: "animate",
+            args: [[null], { mode: "immediate", frame: { duration: 0, redraw: false }, transition: { duration: 0 } }]
+          }
+        ]
+      }],
+      sliders: [{
+        active: 0,
+        steps: sliderSteps,
+        x: 0.12,
+        len: 0.88,
+        y: -0.20,
+        xanchor: "left",
+        yanchor: "top",
+        currentvalue: {
+          visible: true,
+          prefix: "Timeline: Shot ",
+          xanchor: "right",
+          font: { color: "#00747A", size: 14, family: "Assistant" }
+        },
+        transition: { duration: frameDur }
+      }]
+    };
+
+    const el = document.getElementById("gk_posterior_plot");
+    Plotly.purge(el);
+    Plotly.newPlot(el, traces, layout, { displayModeBar: false, responsive: true }).then(() => {
+      Plotly.addFrames(el, frames);
+    });
+  }
+
+  // --- TAB 2: HEAD-TO-HEAD COMPARISON PLOT ---
+  function renderCompPlot() {
+    const gkA = document.getElementById("comp_gk_a").value;
+    const gkB = document.getElementById("comp_gk_b").value;
+    if (!gkA || !gkB) return;
+
+    const stA = streamMap[gkA];
+    const stB = streamMap[gkB];
+    if (!stA || !stB) return;
+
+    const sA = toArr(stA.s), muA = toArr(stA.m), sdA = toArr(stA.sd), gpA = toArr(stA.gp);
+    const sB = toArr(stB.s), muB = toArr(stB.m), sdB = toArr(stB.sd), gpB = toArr(stB.gp);
+
+    const idxA = sA.length - 1;
+    const idxB = sB.length - 1;
+    if (idxA < 0 || idxB < 0) return;
+
+    const fMuA = Number(muA[idxA]), fSdA = Number(sdA[idxA]), fShotsA = Number(sA[idxA]), fGpA = Number(gpA[idxA]);
+    const fMuB = Number(muB[idxB]), fSdB = Number(sdB[idxB]), fShotsB = Number(sB[idxB]), fGpB = Number(gpB[idxB]);
+
+    const metaA = getKeeperMeta(gkA);
+    const metaB = getKeeperMeta(gkB);
+    const nameA = (metaA && metaA.player_name) ? metaA.player_name : "Goalkeeper A";
+    const nameB = (metaB && metaB.player_name) ? metaB.player_name : "Goalkeeper B";
+
+    const yA = new Array(N_GRID);
+    const yB = new Array(N_GRID);
+    let maxY = 5.0;
+
+    for (let i = 0; i < N_GRID; i++) {
+      yA[i] = dnorm(X_SEQ[i], fMuA, fSdA);
+      yB[i] = dnorm(X_SEQ[i], fMuB, fSdB);
+      if (yA[i] > maxY) maxY = yA[i];
+      if (yB[i] > maxY) maxY = yB[i];
+    }
+
+    const yLimit = Math.max(maxY * 1.2, 5.0);
+
+    const labelA = `<b>${nameA}</b><br>Shots Faced: ${fShotsA}<br>Goals Prevented: ${formatSigned(fGpA, 2)}<br>Talent Est: ${formatSigned(fMuA, 2)}`;
+    const labelB = `<b>${nameB}</b><br>Shots Faced: ${fShotsB}<br>Goals Prevented: ${formatSigned(fGpB, 2)}<br>Talent Est: ${formatSigned(fMuB, 2)}`;
+
+    const diffSd = Math.sqrt(fSdA * fSdA + fSdB * fSdB);
+    const probA = (1 - pnorm(0, fMuA - fMuB, diffSd)) * 100;
+    const probCaption = (probA >= 50)
+      ? `<i>${nameA} is ${probA.toFixed(1)}% likely to be a better true shotstopper than ${nameB}.</i>`
+      : `<i>${nameB} is ${(100 - probA).toFixed(1)}% likely to be a better true shotstopper than ${nameA}.</i>`;
+
+    const traces = [
+      {
+        x: X_SEQ, y: yA, type: "scatter", mode: "lines",
+        line: { color: "#00747A", width: 3 },
+        fill: "tozeroy", fillcolor: "rgba(0,116,122,0.4)",
+        name: nameA, hoverinfo: "none"
+      },
+      {
+        x: X_SEQ, y: yB, type: "scatter", mode: "lines",
+        line: { color: "#D6604D", width: 3 },
+        fill: "tozeroy", fillcolor: "rgba(214,96,77,0.4)",
+        name: nameB, hoverinfo: "none"
+      },
+      {
+        x: [fMuA, fMuA], y: [0, dnorm(fMuA, fMuA, fSdA)],
+        type: "scatter", mode: "lines",
+        line: { color: "#00747A", dash: "dot", width: 2 },
+        showlegend: false, hoverinfo: "none"
+      },
+      {
+        x: [fMuB, fMuB], y: [0, dnorm(fMuB, fMuB, fSdB)],
+        type: "scatter", mode: "lines",
+        line: { color: "#D6604D", dash: "dot", width: 2 },
+        showlegend: false, hoverinfo: "none"
+      },
+      {
+        x: [-0.145], y: [yLimit * 0.88],
+        type: "scatter", mode: "text", text: [labelA],
+        textposition: "middle right",
+        textfont: { family: "Assistant", size: 13, color: "#00747A" },
+        showlegend: false, hoverinfo: "none"
+      },
+      {
+        x: [-0.145], y: [yLimit * 0.60],
+        type: "scatter", mode: "text", text: [labelB],
+        textposition: "middle right",
+        textfont: { family: "Assistant", size: 13, color: "#D6604D" },
+        showlegend: false, hoverinfo: "none"
+      }
+    ];
+
+    const layout = {
+      title: {
+        text: "<b>Goalkeeper Head-to-Head Comparison</b><br><sup>Final Posterior Distributions</sup>",
+        font: { family: "Assistant", size: 18 }
+      },
+      margin: { t: 90, b: 170, l: 55, r: 50 },
+      xaxis: {
+        title: "<b>True Talent Estimate (Goals Prevented per Shot)</b><br>\u2190 Below Average | Elite Shotstopper \u2192",
+        range: [-0.15, 0.15],
+        tickvals: [-0.15, -0.10, -0.05, 0, 0.05, 0.10, 0.15],
+        ticktext: ["-0.150", "-0.100", "-0.050", "0.000", "+0.050", "+0.100", "+0.150"],
+        zeroline: false
+      },
+      yaxis: {
+        title: "Certainty (Density)",
+        range: [0, yLimit],
+        showgrid: false,
+        zeroline: false
+      },
+      legend: { orientation: "h", x: 0.5, xanchor: "center", y: -0.22, yanchor: "top" },
+      annotations: [{
+        x: 0.5, y: -0.38, xref: "paper", yref: "paper",
+        text: probCaption, showarrow: false,
+        font: { family: "Assistant", size: 13, color: "#555555" }
+      }],
+      font: { family: "Assistant" }
+    };
+
+    Plotly.react("gk_comp_plot", traces, layout, { displayModeBar: false, responsive: true });
+  }
+
+  // --- TAB 3: SAVE PROFILE DASHBOARD ---
+  function renderSaveProfile() {
+    const gkId = document.getElementById("save_gk").value;
+    const saveLeague = document.getElementById("save_league").value;
+    if (!gkId) return;
+
+    const meta = getKeeperMeta(gkId);
+    if (!meta) return;
+
+    const demoEl = document.getElementById("save_demographics_ui");
+    const ageStr = (meta.age === null || meta.age === undefined || isNaN(meta.age)) ? "N/A" : Math.round(meta.age);
+    demoEl.innerHTML = `
+      <div class="save-demo-grid">
+        <div style="line-height: 1.1; margin-top: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          <span style="color:#AAAAAA; font-size:13px;">Player</span><br>
+          <span style="font-size:24px; font-weight:bold; color:#FFFFFF;">${String(meta.player_name).toUpperCase()}</span>
+        </div>
+        <div style="line-height: 1.1; margin-top: 20px; white-space: nowrap;">
+          <span style="color:#AAAAAA; font-size:13px;">Age:</span>
+          <span style="font-size:18px; font-weight:bold; color:#FFFFFF;"> ${ageStr}</span>
+        </div>
+        <div style="line-height: 1.1; margin-top: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          <span style="color:#AAAAAA; font-size:13px;">Team:</span>
+          <span style="font-size:18px; font-weight:bold; color:#FFFFFF;"> ${String(meta.team_name).toUpperCase()}</span>
+        </div>
+      </div>
+    `;
+
+    const mLog = matchesMap[gkId] || { d: [], df: [], x: [], g: [], gp: [] };
+    const mDates = toArr(mLog.d);
+    const mDatesFmt = toArr(mLog.df);
+    const mXgot = toArr(mLog.x).map(Number);
+    const mGp = toArr(mLog.gp).map(Number);
+
+    const cqRaw = cqMap[gkId] || { b: [], sf: [], ga: [], sv: [] };
+    const cqBins = toArr(cqRaw.b);
+    const cqSf   = toArr(cqRaw.sf).map(Number);
+    const cqSv   = toArr(cqRaw.sv).map(Number);
+
+    const getSplit = (binName) => {
+      const idx = cqBins.indexOf(binName);
+      return idx >= 0 ? { sf: cqSf[idx], sv: cqSv[idx] } : { sf: 0, sv: 0 };
+    };
+
+    const lowSplit  = getSplit("Low");
+    const medSplit  = getSplit("Medium");
+    const highSplit = getSplit("High");
+
+    const totalMinutes = Math.max(Number(meta.total_minutes) || 1, 1);
+    const p90Factor = 90 / totalMinutes;
+
+    const totalShots = lowSplit.sf + medSplit.sf + highSplit.sf;
+    const totalXgot  = mXgot.reduce((a, b) => a + b, 0);
+
+    const shotsP90 = totalShots * p90Factor;
+    const xgotP90  = totalXgot * p90Factor;
+    const lowP90   = lowSplit.sf * p90Factor;
+    const medP90   = medSplit.sf * p90Factor;
+    const highP90  = highSplit.sf * p90Factor;
+
+    const drawTotal = (totalShots / Math.max(totalShots, 200)) * 100;
+    const drawShots = (shotsP90 / Math.max(shotsP90, 8)) * 100;
+    const drawXgot  = (xgotP90 / Math.max(xgotP90, 2.5)) * 100;
+    const drawHigh  = (highP90 / Math.max(shotsP90, 8)) * 100;
+    const drawMed   = (medP90 / Math.max(shotsP90, 8)) * 100;
+    const drawLow   = (lowP90 / Math.max(shotsP90, 8)) * 100;
+
+    // 1. Volume Plot
+    const yLabelsVol = ["xGOT/90", "CQ Mix/90", "Shots/90", "Total Shots"];
+    const barW = 0.4;
+
+    const volTraces = [
+      {
+        x: [0, 0, 0, drawTotal], y: yLabelsVol, type: "bar", orientation: "h", width: barW,
+        marker: { color: getBlueShade(drawTotal) }, hoverinfo: "text", hoverlabel: { align: "left" },
+        hovertext: ["", "", "", `<b>Total Shots: ${totalShots.toFixed(0)}</b><br>Absolute volume of non-penalty shots faced.`]
+      },
+      {
+        x: [0, 0, drawShots, 0], y: yLabelsVol, type: "bar", orientation: "h", width: barW,
+        marker: { color: getBlueShade(drawShots) }, hoverinfo: "text", hoverlabel: { align: "left" },
+        hovertext: ["", "", `<b>Shots/90: ${shotsP90.toFixed(2)}</b><br>Non-penalty shots faced per 90 minutes.`, ""]
+      },
+      {
+        x: [0, drawHigh, 0, 0], y: yLabelsVol, type: "bar", orientation: "h", width: barW,
+        marker: { color: "#E34A33" }, hoverinfo: "text", hoverlabel: { align: "left" },
+        hovertext: ["", `<b>High CQ/90: ${highP90.toFixed(2)}</b><br>Shots > 0.35 xGOT per 90.`, "", ""]
+      },
+      {
+        x: [0, drawMed, 0, 0], y: yLabelsVol, type: "bar", orientation: "h", width: barW,
+        marker: { color: "#FD8D3C" }, hoverinfo: "text", hoverlabel: { align: "left" },
+        hovertext: ["", `<b>Medium CQ/90: ${medP90.toFixed(2)}</b><br>Shots between 0.11 - 0.35 xGOT per 90.`, "", ""]
+      },
+      {
+        x: [0, drawLow, 0, 0], y: yLabelsVol, type: "bar", orientation: "h", width: barW,
+        marker: { color: "#FEB24C" }, hoverinfo: "text", hoverlabel: { align: "left" },
+        hovertext: ["", `<b>Low CQ/90: ${lowP90.toFixed(2)}</b><br>Shots \u2264 0.10 xGOT per 90.`, "", ""]
+      },
+      {
+        x: [drawXgot, 0, 0, 0], y: yLabelsVol, type: "bar", orientation: "h", width: barW,
+        marker: { color: getBlueShade(drawXgot) }, hoverinfo: "text", hoverlabel: { align: "left" },
+        hovertext: [`<b>xGOT/90: ${xgotP90.toFixed(2)}</b><br>Expected Goals on Target faced per 90 minutes.`, "", "", ""]
+      }
+    ];
+
+    const volLayout = {
+      barmode: "stack", showlegend: false,
+      paper_bgcolor: "#E6E6E6", plot_bgcolor: "#E6E6E6",
+      xaxis: { title: "", showgrid: false, zeroline: false, showticklabels: false, range: [0, 100] },
+      yaxis: { title: "", showgrid: true, gridcolor: "#FFFFFF", gridwidth: 2, showticklabels: false, categoryorder: "array", categoryarray: yLabelsVol },
+      margin: { l: 10, r: 20, t: 10, b: 10 },
+      annotations: [
+        {
+          x: drawTotal >= 28 ? 2 : drawTotal + 1.5, y: "Total Shots",
+          text: `<b>Total Shots: ${totalShots.toFixed(0)}</b>`, showarrow: false, xanchor: "left",
+          font: { size: 13, color: drawTotal >= 28 ? "#FFFFFF" : "#1D3549", family: "Assistant" }
+        },
+        {
+          x: drawShots >= 28 ? 2 : drawShots + 1.5, y: "Shots/90",
+          text: `<b>Shots/90: ${shotsP90.toFixed(2)}</b>`, showarrow: false, xanchor: "left",
+          font: { size: 13, color: drawShots >= 28 ? "#FFFFFF" : "#1D3549", family: "Assistant" }
+        },
+        {
+          x: drawXgot >= 28 ? 2 : drawXgot + 1.5, y: "xGOT/90",
+          text: `<b>xGOT/90: ${xgotP90.toFixed(2)}</b>`, showarrow: false, xanchor: "left",
+          font: { size: 13, color: drawXgot >= 28 ? "#FFFFFF" : "#1D3549", family: "Assistant" }
+        },
+        {
+          x: drawHigh / 2, y: "CQ Mix/90",
+          text: drawHigh >= 8 ? `<b>HD: ${highP90.toFixed(1)}</b>` : "",
+          showarrow: false, font: { color: "#FFFFFF", size: 12, family: "Assistant" }
+        },
+        {
+          x: drawHigh + (drawMed / 2), y: "CQ Mix/90",
+          text: drawMed >= 8 ? `<b>MD: ${medP90.toFixed(1)}</b>` : "",
+          showarrow: false, font: { color: "#111111", size: 12, family: "Assistant" }
+        },
+        {
+          x: drawHigh + drawMed + (drawLow / 2), y: "CQ Mix/90",
+          text: drawLow >= 8 ? `<b>LD: ${lowP90.toFixed(1)}</b>` : "",
+          showarrow: false, font: { color: "#111111", size: 12, family: "Assistant" }
+        }
+      ]
+    };
+
+    Plotly.react("save_vol_plot", volTraces, volLayout, { displayModeBar: false, responsive: true });
+
+    const isTargetLeague = (lid) => {
+      const nLid = Number(lid);
+      if (saveLeague === "intl") return INTL_SET.has(nLid);
+      if (saveLeague !== "all") return nLid === Number(saveLeague);
+      return nLid === Number(meta.league_id);
+    };
+
+    // 2. Save Percentage by CQ Tier Plot
+    const binsOrder = ["Low", "Medium", "High"];
+    const labelsOrder = ["LDSv%", "MDSv%", "HDSv%"];
+    const svValues = [];
+    const lgSvValues = [];
+    const glSvValues = [];
+    const svColors = [];
+    const svTooltips = [];
+
+    for (let i = 0; i < 3; i++) {
+      const bName = binsOrder[i];
+      const lbl = labelsOrder[i];
+      const sp = getSplit(bName);
+      const gkSv = (sp.sv || 0) * 100;
+
+      const glRow = globalCqRows.find(r => r.cq_bin === bName);
+      const glSv = glRow ? Number(glRow.avg_sv_pct) * 100 : 50;
+
+      let lgShots = 0, lgGoals = 0;
+      leagueCqRows.forEach(r => {
+        if (r.cq_bin === bName && isTargetLeague(r.league_id)) {
+          lgShots += Number(r.shots);
+          lgGoals += Number(r.goals);
+        }
+      });
+      const lgSv = lgShots > 0 ? (1 - lgGoals / lgShots) * 100 : glSv;
+
+      svValues.push(gkSv);
+      lgSvValues.push(lgSv);
+      glSvValues.push(glSv);
+      svColors.push(getBlueShade(gkSv));
+      svTooltips.push(`<b>${lbl}: ${gkSv.toFixed(1)}%</b><br>League Average: ${lgSv.toFixed(1)}%<br>Global Average: ${glSv.toFixed(1)}%<br>Save percentage for this Chance Quality tier.`);
+    }
+
+    const svShapes = [0, 1, 2].map(i => ({
+      type: "line",
+      x0: lgSvValues[i], x1: lgSvValues[i],
+      y0: i - barW / 2, y1: i + barW / 2,
+      line: { color: "#333333", width: 3 }
+    }));
+
+    const svAnnotations = [0, 1, 2].map(i => {
+      const val = svValues[i];
+      const isWide = val >= 28;
+      return {
+        x: isWide ? 2 : Math.max(val, 0) + 1.5,
+        y: labelsOrder[i],
+        text: `<b>${labelsOrder[i]}: ${val.toFixed(1)}</b>`,
+        showarrow: false, xanchor: "left",
+        font: { color: isWide ? "#FFFFFF" : "#1D3549", size: 13, family: "Assistant" }
+      };
+    });
+    svAnnotations.push({
+      x: (lgSvValues[0] || 50) + 2,
+      y: -0.3,
+      text: "Lg Avg",
+      showarrow: false, xanchor: "left",
+      font: { size: 12, color: "#555555", family: "Assistant" }
+    });
+
+    const svTrace = [{
+      x: svValues, y: labelsOrder, type: "bar", orientation: "h", width: barW,
+      marker: { color: svColors }, hoverinfo: "text", hoverlabel: { align: "left" }, hovertext: svTooltips
+    }];
+
+    const svLayout = {
+      shapes: svShapes, showlegend: false,
+      paper_bgcolor: "#E6E6E6", plot_bgcolor: "#E6E6E6",
+      xaxis: { title: "", showgrid: false, zeroline: false, showticklabels: false, range: [0, 100] },
+      yaxis: { title: "", showgrid: true, gridcolor: "#FFFFFF", gridwidth: 2, showticklabels: false, categoryorder: "array", categoryarray: labelsOrder },
+      margin: { l: 10, r: 20, t: 10, b: 10 },
+      annotations: svAnnotations
+    };
+
+    Plotly.react("save_sv_plot", svTrace, svLayout, { displayModeBar: false, responsive: true });
+
+    // 3. Value & Consistency Plot (AxA% & GP/10xGOT)
+    let lgSumGp = 0, lgSumXgot = 0, lgPosCnt = 0, lgTotCnt = 0;
+    leagueGpRows.forEach(r => {
+      if (isTargetLeague(r.league_id)) {
+        lgSumGp   += Number(r.sum_gp);
+        lgSumXgot += Number(r.sum_xgot);
+        lgPosCnt  += Number(r.pos_cnt);
+        lgTotCnt  += Number(r.tot_cnt);
+      }
+    });
+
+    const refGp10 = lgTotCnt > 0 ? (lgSumGp / Math.max(lgSumXgot, 0.1)) * 10 : Number(globalGpRow.avg_gp_10xgot);
+    const refAxa  = lgTotCnt > 0 ? (lgPosCnt / Math.max(lgTotCnt, 1)) * 100 : Number(globalGpRow.avg_axa_pct);
+
+    const sumMatchGp = mGp.reduce((a, b) => a + b, 0);
+    const gp10Xgot   = (sumMatchGp / Math.max(totalXgot, 0.1)) * 10;
+    const posMatches = mGp.filter(v => v > 0).length;
+    const axaPct     = (posMatches / Math.max(mGp.length, 1)) * 100;
+
+    const visGp    = Math.min(Math.max((gp10Xgot + 5) * 10, 0), 100);
+    const visAvgGp = Math.min(Math.max((refGp10 + 5) * 10, 0), 100);
+    const valLabels = ["AxA%", "GP/10xGOT"];
+
+    const valShapes = [
+      { type: "line", x0: refAxa, x1: refAxa, y0: -barW / 2, y1: barW / 2, line: { color: "#333333", width: 3 } },
+      { type: "line", x0: visAvgGp, x1: visAvgGp, y0: 1 - barW / 2, y1: 1 + barW / 2, line: { color: "#333333", width: 3 } }
+    ];
+
+    const valTooltips = [
+      `<b>AxA%: ${axaPct.toFixed(1)}%</b><br>League Average: ${refAxa.toFixed(1)}%<br>Global Average: ${Number(globalGpRow.avg_axa_pct).toFixed(1)}%<br>Above Expected Appearance %.<br>Percentage of matches where Goals Prevented > 0.`,
+      `<b>GP/10xGOT: ${formatSigned(gp10Xgot, 3)}</b><br>League Average: ${formatSigned(refGp10, 3)}<br>Global Average: ${formatSigned(globalGpRow.avg_gp_10xgot, 3)}<br>Goals Prevented per 10 xGOT faced.`
+    ];
+
+    const valTrace = [{
+      x: [axaPct, visGp], y: valLabels, type: "bar", orientation: "h", width: barW,
+      marker: { color: [getBlueShade(axaPct), getBlueShade(visGp)] },
+      hoverinfo: "text", hoverlabel: { align: "left" }, hovertext: valTooltips
+    }];
+
+    const valLayout = {
+      shapes: valShapes, showlegend: false,
+      paper_bgcolor: "#E6E6E6", plot_bgcolor: "#E6E6E6",
+      xaxis: { title: "", showgrid: false, zeroline: false, showticklabels: false, range: [0, 100] },
+      yaxis: { title: "", showgrid: true, gridcolor: "#FFFFFF", gridwidth: 2, showticklabels: false, categoryorder: "array", categoryarray: valLabels },
+      margin: { l: 10, r: 20, t: 10, b: 0 },
+      annotations: [
+        {
+          x: axaPct >= 28 ? 2 : axaPct + 1.5, y: "AxA%",
+          text: `<b>AxA%: ${axaPct.toFixed(1)}</b>`, showarrow: false, xanchor: "left",
+          font: { color: axaPct >= 28 ? "#FFFFFF" : "#1D3549", size: 13, family: "Assistant" }
+        },
+        {
+          x: visGp >= 35 ? 2 : visGp + 1.5, y: "GP/10xGOT",
+          text: `<b>GP/10xGOT: ${formatSigned(gp10Xgot, 3)}</b>`, showarrow: false, xanchor: "left",
+          font: { color: visGp >= 35 ? "#FFFFFF" : "#1D3549", size: 13, family: "Assistant" }
+        }
+      ]
+    };
+
+    Plotly.react("save_val_plot", valTrace, valLayout, { displayModeBar: false, responsive: true });
+
+    // 4. Game-by-Game Form Plot
+    const formColors = mGp.map(v => v > 0 ? "#3182BD" : "#DE2D26");
+    const formTooltips = mGp.map((v, idx) =>
+      `<b>Date:</b> ${mDatesFmt[idx] || mDates[idx]}<br><b>Goals Prevented:</b> ${formatSigned(v, 2)}<br><b>Match xGOT:</b> ${Number(mXgot[idx]).toFixed(2)}`
+    );
+
+    const formTrace = [{
+      x: mDates, y: mGp, type: "bar",
+      marker: { color: formColors },
+      width: 86400000 * 4,
+      hoverinfo: "text", hoverlabel: { align: "left" }, hovertext: formTooltips
+    }];
+
+    const formLayout = {
+      showlegend: false,
+      paper_bgcolor: "#E6E6E6", plot_bgcolor: "#E6E6E6",
+      xaxis: { title: "", showgrid: false, tickfont: { family: "Assistant", size: 12, color: "#555555" } },
+      yaxis: {
+        title: "",
+        range: [-globalMaxGp * 1.05, globalMaxGp * 1.05],
+        showgrid: true, gridcolor: "#FFFFFF", gridwidth: 2,
+        zeroline: true, zerolinecolor: "#333333", zerolinewidth: 2,
+        tickfont: { family: "Assistant", size: 12, color: "#555555" }
+      },
+      margin: { t: 5, b: 22, l: 32, r: 20 }
+    };
+
+    Plotly.react("save_form_plot", formTrace, formLayout, { displayModeBar: false, responsive: true });
+    scaleDashboard();
+  }
+
+  function scaleDashboard() {
+    const wrapper = document.getElementById("save_scale_wrapper");
+    const dash = document.getElementById("save_dashboard_export_area");
+    if (wrapper && dash && wrapper.clientWidth > 0) {
+      const scale = wrapper.clientWidth / 1280;
+      if (scale < 1) {
+        dash.style.transform = `scale(${scale})`;
+        wrapper.style.height = `${720 * scale}px`;
+      } else {
+        dash.style.transform = "none";
+        wrapper.style.height = "720px";
+      }
+    }
+  }
+
+  window.switchGkTab = function(tab) {
+    document.getElementById("gk-panel-post").style.display = (tab === "post") ? "grid" : "none";
+    document.getElementById("gk-panel-comp").style.display = (tab === "comp") ? "grid" : "none";
+    document.getElementById("gk-panel-save").style.display = (tab === "save") ? "grid" : "none";
+
+    document.getElementById("gk-tab-btn-post").classList.toggle("active", tab === "post");
+    document.getElementById("gk-tab-btn-comp").classList.toggle("active", tab === "comp");
+    document.getElementById("gk-tab-btn-save").classList.toggle("active", tab === "save");
+
+    if (tab === "post") renderPosteriorPlot();
+    else if (tab === "comp") renderCompPlot();
+    else if (tab === "save") {
+      renderSaveProfile();
+      setTimeout(scaleDashboard, 80);
+    }
+  };
+
+  function initGkApp() {
+    ["league_filter", "comp_league_a", "comp_league_b", "save_league"].forEach(populateLeagueSelect);
+
+    setupSearchableCombo("gk_select", renderPosteriorPlot);
+    setupSearchableCombo("comp_gk_a", renderCompPlot);
+    setupSearchableCombo("comp_gk_b", renderCompPlot);
+    setupSearchableCombo("save_gk", renderSaveProfile);
+
+    updateKeeperSelect("league_filter", "gk_select", 0);
+    updateKeeperSelect("comp_league_a", "comp_gk_a", 0);
+    updateKeeperSelect("comp_league_b", "comp_gk_b", 1);
+    updateKeeperSelect("save_league", "save_gk", 0);
+
+    document.getElementById("league_filter").addEventListener("change", () => {
+      updateKeeperSelect("league_filter", "gk_select", 0);
+      renderPosteriorPlot();
+    });
+
+    document.getElementById("comp_league_a").addEventListener("change", () => {
+      updateKeeperSelect("comp_league_a", "comp_gk_a", 0);
+      renderCompPlot();
+    });
+    document.getElementById("comp_league_b").addEventListener("change", () => {
+      updateKeeperSelect("comp_league_b", "comp_gk_b", 1);
+      renderCompPlot();
+    });
+
+    document.getElementById("save_league").addEventListener("change", () => {
+      updateKeeperSelect("save_league", "save_gk", 0);
+      renderSaveProfile();
+    });
+
+    document.getElementById("download_plotly").addEventListener("click", () => {
+      const el = document.getElementById("gk_posterior_plot");
+      const origSliders = el.layout.sliders || [];
+      const origMenus = el.layout.updatemenus || [];
+      Plotly.relayout(el, { sliders: [], updatemenus: [] }).then(() => {
+        return Plotly.downloadImage(el, { format: "png", width: 1200, height: 750, scale: 3, filename: "goalkeeper_posterior" });
+      }).then(() => {
+        Plotly.relayout(el, { sliders: origSliders, updatemenus: origMenus });
+      });
+    });
+
+    document.getElementById("download_plotly_comp").addEventListener("click", () => {
+      const el = document.getElementById("gk_comp_plot");
+      Plotly.downloadImage(el, { format: "png", width: 1200, height: 750, scale: 3, filename: "goalkeeper_head_to_head_comparison" });
+    });
+
+    document.getElementById("download_save_dash").addEventListener("click", () => {
+      const dash = document.getElementById("save_dashboard_export_area");
+      const origTransform = dash.style.transform;
+      dash.style.transform = "none";
+      html2canvas(dash, { backgroundColor: "#1D3549", scale: 2 }).then(canvas => {
+        dash.style.transform = origTransform;
+        const link = document.createElement("a");
+        link.download = "SAVE_Dashboard_Export.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      });
+    });
+
+    window.addEventListener("resize", scaleDashboard);
+
+    renderPosteriorPlot();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initGkApp);
+  } else {
+    initGkApp();
+  }
+})();
+</script>
+```
