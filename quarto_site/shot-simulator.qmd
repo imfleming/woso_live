@@ -1,10 +1,942 @@
 ---
 title: "Shot Simulator"
-page-layout: full
+page-layout: custom
+execute:
+  echo: false
+  warning: false
+  message: false
 ---
 
-<iframe 
-  src="https://ianmichaelfleming.shinyapps.io/nwsl_simulator_deploy/" 
-  style="border: none; width: 100%; height: 1200px;"
-  title="Shot Simulator">
-</iframe>
+```{r}
+#| label: build-shot-simulator-payload
+#| results: asis
+
+suppressPackageStartupMessages({
+  library(arrow)
+  library(dplyr)
+  library(jsonlite)
+})
+
+data_dir <- "data"
+if (!dir.exists(data_dir)) dir.create(data_dir, recursive = TRUE)
+
+sched_cache <- file.path(data_dir, "shot_sim_schedule.rds")
+shots_cache <- file.path(data_dir, "shot_sim_shotmaps.rds")
+
+master_schedule_url <- "https://www.dropbox.com/scl/fi/ibk1u01s67trk4htmhav6/master_schedule.parquet?rlkey=k943rqlck6qaomy5qovf4q98p&dl=1"
+shotmaps_url        <- "https://www.dropbox.com/scl/fi/78zxfgwywkge3umf86rj2/historical_shotmaps.parquet?rlkey=l8601gfmi6vgldzc8y7twgtb0&dl=1"
+
+master_schedule <- tryCatch({
+  df <- arrow::read_parquet(master_schedule_url) %>%
+    dplyr::mutate(date = as.character(as.Date(date))) %>%
+    dplyr::arrange(dplyr::desc(date), match_id)
+  saveRDS(df, sched_cache, compress = "xz")
+  df
+}, error = function(e) {
+  if (file.exists(sched_cache)) readRDS(sched_cache) else stop("Schedule data unavailable.")
+})
+
+shotmaps_raw <- tryCatch({
+  df <- arrow::read_parquet(shotmaps_url)
+  saveRDS(df, shots_cache, compress = "xz")
+  df
+}, error = function(e) {
+  if (file.exists(shots_cache)) readRDS(shots_cache) else stop("Shotmap data unavailable.")
+})
+
+shots_grouped <- shotmaps_raw %>%
+  dplyr::mutate(
+    match_id = as.character(match_id),
+    xg_clamped = round(pmin(as.numeric(xg), 0.999), 4)
+  ) %>%
+  dplyr::group_by(match_id) %>%
+  dplyr::summarise(
+    venue = dplyr::first(na.omit(as.character(venue))),
+    h_xg  = list(xg_clamped[is_home == TRUE]),
+    a_xg  = list(xg_clamped[is_home == FALSE]),
+    .groups = "drop"
+  )
+
+shots_lookup <- setNames(
+  lapply(seq_len(nrow(shots_grouped)), function(i) {
+    list(
+      venue = ifelse(is.na(shots_grouped$venue[i]) || !nzchar(shots_grouped$venue[i]), "League Match", shots_grouped$venue[i]),
+      h_xg  = shots_grouped$h_xg[[i]],
+      a_xg  = shots_grouped$a_xg[[i]]
+    )
+  }),
+  shots_grouped$match_id
+)
+
+schedule_payload <- master_schedule %>%
+  dplyr::transmute(
+    match_id    = as.character(match_id),
+    date        = as.character(date),
+    competition = as.character(competition),
+    home        = as.character(home),
+    away        = as.character(away),
+    home_score  = as.numeric(home_score),
+    away_score  = as.numeric(away_score)
+  )
+
+nwsl_colors <- dplyr::tibble(
+  team_name = c("Angel City FC", "Chicago Stars", "Houston Dash", "Kansas City Current",
+                "Gotham FC", "North Carolina Courage", "Seattle Reign FC", "Orlando Pride",
+                "Portland Thorns", "Racing Louisville", "San Diego Wave FC", "Utah Royals",
+                "Washington Spirit", "Bay FC", "Boston Legacy FC", "Denver Summit FC"),
+  team_color = c("#F1B1A5", "#3AB5E8", "#FF6900", "#62CBC9",
+                 "#A9F1FD", "#B4A269", "#5D7BA8", "#61259E",
+                 "#99242B", "#C5B5F2", "#FC1896", "#FDB71A",
+                 "#EDE939", "#DFDEDE", "#36E882", "#20604E")
+)
+
+usls_colors <- dplyr::tibble(
+  team_name = c("Brooklyn FC", "Carolina Ascent FC", "Dallas Trinity FC", "DC Power FC",
+                "Fort Lauderdale United FC", "Lexington SC", "Spokane Zephyr FC", "Tampa Bay Sun FC",
+                "Sporting JAX"),
+  team_color = c("#C5BFAE", "#BD7DB6", "#54052B", "#177BD9", "#A7E6D7", "#00EA1F", "#0095B3", "#FBDF49", "#00ADEE")
+)
+
+england_colors <- dplyr::tibble(
+  team_name = c("Arsenal", "Aston Villa", "Brighton", "Chelsea", "Everton", "Leicester City", "Liverpool",
+                "London City Lionesses", "Manchester City", "Manchester United", "Tottenham Hotspur",
+                "West Ham United", "Birmingham City", "Blackburn Rovers", "Bristol City", "Charlton",
+                "Durham Women FC", "Newcastle United", "Portsmouth", "Sheffield United", "Southampton FC",
+                "Sunderland", "Crystal Palace", "Ipswich Town WFC", "Nottingham Forest WFC"),
+  team_color = c("#EF0107", "#95BFE5", "#0057B8", "#034694", "#003399", "#003090",
+                 "#C8102E", "#00E5FF", "#6CABDD", "#DA291C", "#FFFFFF", "#7A263A",
+                 "#0000FF", "#009EE0", "#A71930", "#E90013", "#004B87", "#000000", 
+                 "#000080", "#E30613", "#D71920", "#F51026", "#1B458F", "#000033", "#DD0000")
+)
+
+france_colors <- dplyr::tibble(
+  team_name = c("Saint-Etienne", "Dijon Foot", "Fleury Merogis U.S", "Nantes", "Le Havre", "Marseille",
+                "Montpellier", "OL Lyonnes", "Paris FC", "Paris Saint Germain", "Lens", "Strasbourg", 
+                "Toulouse", "Saint Malo"),
+  team_color = c("#006F3C", "#E30613", "#E21017", "#FFE300", "#002D5E", "#00A2E2", "#0B1D33",
+                 "#DA0019", "#0F1626", "#004170", "#E30613", "#005CA9", "#51267D", "#004B87")
+)
+
+australia_colors <- dplyr::tibble(
+  team_name = c("Adelaide United", "Brisbane Roar FC", "Canberra United FC", "Central Coast Mariners", 
+                "Melbourne City FC", "Melbourne Victory", "Newcastle Jets", "Perth Glory", 
+                "Sydney FC", "Wellington Phoenix", "Western Sydney Wanderers FC", "Western United FC"),
+  team_color = c("#E30043", "#F26522", "#1B5E20", "#002E5C", 
+                 "#7AB2E1", "#032E5E", "#024C91", "#5D2881", 
+                 "#62A8DA", "#FFDD00", "#C60C30", "#2BB56C")
+)
+
+team_colors_df <- dplyr::bind_rows(nwsl_colors, usls_colors, england_colors, france_colors, australia_colors)
+team_color_map <- setNames(as.list(team_colors_df$team_color), team_colors_df$team_name)
+
+full_payload <- list(
+  schedule = schedule_payload,
+  shots    = shots_lookup,
+  colors   = team_color_map
+)
+
+cat(sprintf(
+  "\n```{=html}\n<script id=\"shot-sim-payload\" type=\"application/json\">%s</script>\n```\n",
+  jsonlite::toJSON(full_payload, auto_unbox = TRUE)
+))
+```
+
+```{=html}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap');
+
+  .shot-sim-outer {
+    background-color: #FFFFFF;
+    padding: 0;
+  }
+
+  .shot-sim-wrapper {
+    background-color: #222222;
+    color: #EEEDCE;
+    max-width: 1320px;
+    margin: 0 auto;
+    min-height: calc(100vh - 70px);
+    font-family: 'Assistant', 'Noto Color Emoji', sans-serif;
+    padding-bottom: 2rem;
+  }
+
+  .sim-subnav {
+    background-color: #00747A;
+    padding: 0 1.25rem;
+    min-height: 54px;
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+  }
+
+  .sim-subnav-left {
+    display: flex;
+    align-items: stretch;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .sim-brand {
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: #EEEDCE;
+    display: flex;
+    align-items: center;
+    margin-right: 0.25rem;
+  }
+
+  .sim-tabs {
+    display: flex;
+    align-items: stretch;
+    gap: 0.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .sim-tab-btn {
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: rgba(238, 237, 206, 0.75);
+    font-size: 0.95rem;
+    font-weight: 400;
+    padding: 0 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: all 0.15s ease;
+    font-family: 'Assistant', sans-serif;
+  }
+
+  .sim-tab-btn:hover {
+    color: #FFFFFF;
+  }
+
+  .sim-tab-btn.active {
+    color: #EEEDCE;
+    font-weight: 700;
+    border-bottom: 3px solid #EEEDCE;
+  }
+
+  .sim-attribution {
+    color: #EEEDCE;
+    font-size: 0.9rem;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+  }
+
+  .sim-body-container {
+    padding: 0 1.25rem;
+  }
+
+  .sim-grid {
+    display: grid;
+    grid-template-columns: 290px minmax(0, 1fr);
+    gap: 1.25rem;
+    align-items: start;
+  }
+
+  @media (max-width: 768px) {
+    .sim-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .sim-card {
+    background-color: #2B2B2B;
+    border: 1px solid #3A3A3A;
+    border-radius: 5px;
+    padding: 1.15rem;
+  }
+
+  .sim-label {
+    display: block;
+    font-weight: 400;
+    margin-bottom: 0.4rem;
+    color: #EEEDCE;
+    font-size: 0.92rem;
+  }
+
+  .sim-select, .sim-input, .sim-textarea {
+    width: 100%;
+    background-color: #FFFFFF;
+    color: #222222;
+    border: 1px solid #CCCCCC;
+    border-radius: 4px;
+    padding: 0.45rem 0.65rem;
+    font-size: 0.92rem;
+    font-family: 'Assistant', 'Noto Color Emoji', sans-serif !important;
+    letter-spacing: normal !important;
+    box-sizing: border-box;
+  }
+
+  .sim-select:focus, .sim-input:focus, .sim-textarea:focus {
+    outline: none;
+    border-color: #00747A;
+    box-shadow: 0 0 0 2px rgba(0, 116, 122, 0.35);
+  }
+
+  .sim-divider {
+    border: 0;
+    border-top: 1px solid #484848;
+    margin: 1rem 0;
+  }
+
+  .sim-radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    margin-bottom: 1rem;
+  }
+
+  .sim-radio-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.92rem;
+    line-height: 1.3;
+    color: #EEEDCE;
+  }
+
+  .sim-radio-item input[type="radio"] {
+    accent-color: #00747A;
+    width: 15px;
+    height: 15px;
+    margin-top: 2px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  .sim-btn {
+    background-color: #00747A;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    font-size: 0.92rem;
+    font-weight: 400;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+    width: 100%;
+    font-family: 'Assistant', sans-serif;
+  }
+
+  .sim-btn:hover {
+    background-color: #005A5E;
+  }
+
+  .sim-btn-outline {
+    background-color: transparent;
+    color: #EEEDCE;
+    border: 1px solid #484848;
+    border-radius: 4px;
+    padding: 0.35rem 0.8rem;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: 'Assistant', sans-serif;
+  }
+
+  .sim-btn-outline:hover {
+    border-color: #00747A;
+    color: #FFFFFF;
+    background-color: rgba(0, 116, 122, 0.25);
+  }
+
+  .sim-summary-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    background-color: #161616;
+    border: 1px solid #383838;
+    border-radius: 4px;
+    padding: 0.55rem 1rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.92rem;
+  }
+
+  .sim-summary-outcomes {
+    display: flex;
+    align-items: center;
+    gap: 1.15rem;
+    flex-wrap: wrap;
+  }
+
+  .sim-summary-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #EEEDCE;
+  }
+
+  .sim-swatch {
+    width: 11px;
+    height: 11px;
+    border-radius: 2px;
+    display: inline-block;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+  }
+
+  .sim-summary-xpts {
+    color: #BBBBAA;
+    font-size: 0.88rem;
+  }
+
+  .sim-summary-xpts strong {
+    color: #EEEDCE;
+  }
+
+  .sim-canvas-wrap {
+    width: 100%;
+    background-color: #000000;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .sim-canvas-wrap canvas {
+    max-width: 100%;
+    height: auto !important;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .sim-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.5rem;
+  }
+</style>
+
+<div class="shot-sim-outer">
+  <div class="shot-sim-wrapper">
+    <div class="sim-subnav">
+      <div class="sim-subnav-left">
+        <span id="sim-dynamic-title" class="sim-brand">NWSL Shot Simulator</span>
+        <div class="sim-tabs">
+          <button id="tab-btn-hist" class="sim-tab-btn active" onclick="switchSimTab('hist')">Historical Match Simulator</button>
+          <button id="tab-btn-sb" class="sim-tab-btn" onclick="switchSimTab('sb')">Custom Match Sandbox</button>
+        </div>
+      </div>
+      <div class="sim-attribution">Created by Ian Fleming</div>
+    </div>
+
+    <div class="sim-body-container">
+      <div id="panel-hist" class="sim-grid">
+        <div class="sim-card">
+          <label class="sim-label" for="sel-league">Select Competition:</label>
+          <select id="sel-league" class="sim-select"></select>
+
+          <hr class="sim-divider">
+
+          <label class="sim-label" for="sel-date">Select Date:</label>
+          <input id="sel-date" type="text" class="sim-input" placeholder="YYYY-MM-DD">
+
+          <hr class="sim-divider">
+
+          <div id="match-list-container"></div>
+        </div>
+
+        <div class="sim-card">
+          <div id="hist-summary-strip" class="sim-summary-strip"></div>
+          <div class="sim-canvas-wrap">
+            <canvas id="hist-canvas" width="2400" height="1350"></canvas>
+          </div>
+          <div class="sim-toolbar">
+            <button class="sim-btn-outline" onclick="downloadCanvas('hist-canvas', 'historical_shot_simulation.png')">Download Plot (PNG)</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="panel-sb" class="sim-grid" style="display: none;">
+        <div class="sim-card">
+          <div style="margin-bottom: 0.75rem;">
+            <label class="sim-label" for="sb-home-team">Home Team Name:</label>
+            <input id="sb-home-team" type="text" class="sim-input" value="Home FC">
+          </div>
+          <div style="margin-bottom: 0.75rem;">
+            <label class="sim-label" for="sb-home-score">Actual Home Goals:</label>
+            <input id="sb-home-score" type="number" class="sim-input" value="0" min="0">
+          </div>
+          <div style="margin-bottom: 0.75rem;">
+            <label class="sim-label" for="sb-home-xg">Home xG Values (comma separated):</label>
+            <textarea id="sb-home-xg" class="sim-textarea" rows="3">0.05, 0.06, 0.07, 0.08, 0.09, 0.11, 0.12, 0.13, 0.14, 0.15</textarea>
+          </div>
+
+          <hr class="sim-divider">
+
+          <div style="margin-bottom: 0.75rem;">
+            <label class="sim-label" for="sb-away-team">Away Team Name:</label>
+            <input id="sb-away-team" type="text" class="sim-input" value="Away FC">
+          </div>
+          <div style="margin-bottom: 0.75rem;">
+            <label class="sim-label" for="sb-away-score">Actual Away Goals:</label>
+            <input id="sb-away-score" type="number" class="sim-input" value="0" min="0">
+          </div>
+          <div style="margin-bottom: 1rem;">
+            <label class="sim-label" for="sb-away-xg">Away xG Values (comma separated):</label>
+            <textarea id="sb-away-xg" class="sim-textarea" rows="3">0.50, 0.30, 0.20</textarea>
+          </div>
+
+          <button id="btn-run-sb" class="sim-btn" onclick="runSandboxSim()">Simulate Sandbox</button>
+        </div>
+
+        <div class="sim-card">
+          <div id="sb-summary-strip" class="sim-summary-strip"></div>
+          <div class="sim-canvas-wrap">
+            <canvas id="sb-canvas" width="2400" height="1350"></canvas>
+          </div>
+          <div class="sim-toolbar">
+            <button class="sim-btn-outline" onclick="downloadCanvas('sb-canvas', 'sandbox_shot_simulation.png')">Download Plot (PNG)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const rawPayload = document.getElementById("shot-sim-payload").textContent;
+  const payload = JSON.parse(rawPayload);
+  let schedule = payload.schedule || [];
+  let shotsMap = payload.shots || {};
+  const teamColors = payload.colors || {};
+
+  let fpInstance = null;
+
+  const flagMap = {
+    "NWSL": "\uD83C\uDDFA\uD83C\uDDF8",
+    "WSL": "\uD83C\uDFF4\uDB40\uDC67\uDB40\uDC62\uDB40\uDC65\uDB40\uDC6E\uDB40\uDC67\uDB40\uDC7F",
+    "Premi\u00e8re Ligue": "\uD83C\uDDEB\uD83C\uDDF7",
+    "A-League Women": "\uD83C\uDDE6\uD83C\uDDFA"
+  };
+
+  window.switchSimTab = function(tab) {
+    const isHist = (tab === "hist");
+    document.getElementById("panel-hist").style.display = isHist ? "grid" : "none";
+    document.getElementById("panel-sb").style.display = isHist ? "none" : "grid";
+    document.getElementById("tab-btn-hist").classList.toggle("active", isHist);
+    document.getElementById("tab-btn-sb").classList.toggle("active", !isHist);
+  };
+
+  window.downloadCanvas = function(canvasId, filename) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const link = document.createElement("a");
+    link.download = filename;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  };
+
+  function toArray(val) {
+    if (val === undefined || val === null) return [];
+    return Array.isArray(val) ? val : [val];
+  }
+
+  function runVectorizedSim(homeShots, awayShots, simRuns, homeColor, awayColor) {
+    const hShots = (homeShots && homeShots.length > 0) ? homeShots : [0.0001];
+    const aShots = (awayShots && awayShots.length > 0) ? awayShots : [0.0001];
+    const hLen = hShots.length;
+    const aLen = aShots.length;
+
+    const marginCounts = new Map();
+    let homeWins = 0;
+    let draws = 0;
+    let awayWins = 0;
+
+    for (let i = 0; i < simRuns; i++) {
+      let hGoals = 0;
+      for (let j = 0; j < hLen; j++) {
+        if (Math.random() < hShots[j]) hGoals++;
+      }
+      let aGoals = 0;
+      for (let k = 0; k < aLen; k++) {
+        if (Math.random() < aShots[k]) aGoals++;
+      }
+      const margin = hGoals - aGoals;
+      if (margin > 0) homeWins++;
+      else if (margin < 0) awayWins++;
+      else draws++;
+
+      marginCounts.set(margin, (marginCounts.get(margin) || 0) + 1);
+    }
+
+    const outcomes = [];
+    marginCounts.forEach((count, win_margin) => {
+      const pct = count / simRuns;
+      let color = "#EEEDCE";
+      if (win_margin >= 1) color = homeColor;
+      else if (win_margin <= -1) color = awayColor;
+
+      const perc = (pct < 0.001) ? "<0.01%" : (pct * 100).toFixed(2) + "%";
+      outcomes.push({
+        win_margin: win_margin,
+        count: count,
+        pct: pct,
+        perc: perc,
+        team_color: color
+      });
+    });
+
+    outcomes.sort((a, b) => a.win_margin - b.win_margin);
+
+    const pHome = homeWins / simRuns;
+    const pDraw = draws / simRuns;
+    const pAway = awayWins / simRuns;
+
+    return {
+      outcomes: outcomes,
+      summary: {
+        pHome: pHome,
+        pDraw: pDraw,
+        pAway: pAway,
+        xPtsHome: (3 * pHome) + pDraw,
+        xPtsAway: (3 * pAway) + pDraw
+      }
+    };
+  }
+
+  function renderSummaryStrip(stripId, summary, homeTeam, awayTeam, homeColor, awayColor) {
+    const el = document.getElementById(stripId);
+    if (!el || !summary) return;
+
+    const awayPct = (summary.pAway * 100).toFixed(1) + "%";
+    const drawPct = (summary.pDraw * 100).toFixed(1) + "%";
+    const homePct = (summary.pHome * 100).toFixed(1) + "%";
+
+    el.innerHTML = `
+      <div class="sim-summary-outcomes">
+        <span class="sim-summary-item">
+          <span class="sim-swatch" style="background-color: ${awayColor};"></span>
+          <span>${awayTeam} Win: <strong>${awayPct}</strong></span>
+        </span>
+        <span class="sim-summary-item">
+          <span class="sim-swatch" style="background-color: #EEEDCE;"></span>
+          <span>Draw: <strong>${drawPct}</strong></span>
+        </span>
+        <span class="sim-summary-item">
+          <span class="sim-swatch" style="background-color: ${homeColor};"></span>
+          <span>${homeTeam} Win: <strong>${homePct}</strong></span>
+        </span>
+      </div>
+      <div class="sim-summary-xpts">
+        xPts: <strong>${awayTeam} ${summary.xPtsAway.toFixed(2)}</strong> &nbsp;|&nbsp; <strong>${homeTeam} ${summary.xPtsHome.toFixed(2)}</strong>
+      </div>
+    `;
+  }
+
+  function drawSimulationCanvas(canvasId, plotData, homeTeam, awayTeam, homeScore, awayScore, homeShots, awayShots, gameDate, venue) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const W = canvas.width;
+    const H = canvas.height;
+
+    ctx.fillStyle = "#000000";
+    ctx.fillRect(0, 0, W, H);
+
+    if (!plotData || plotData.length === 0) return;
+
+    let maxMargin = 1;
+    let maxPct = 0.1;
+    for (let i = 0; i < plotData.length; i++) {
+      const absM = Math.abs(plotData[i].win_margin);
+      if (absM > maxMargin) maxMargin = absM;
+      if (plotData[i].pct > maxPct) maxPct = plotData[i].pct;
+    }
+
+    const yMax = maxPct + 0.05;
+    const xMin = -maxMargin - 0.5;
+    const xMax = maxMargin + 0.5;
+
+    const padLeft = 78;
+    const padRight = 35;
+    const padTop = 188;
+    const padBottom = 114;
+    const plotW = W - padLeft - padRight;
+    const plotH = H - padTop - padBottom;
+
+    // 1. Title & Two-Line Subtitle aligned with vertical Y-axis line (padLeft)
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.fillStyle = "#EEEDCE";
+    ctx.font = "700 62px 'Assistant', sans-serif";
+    ctx.fillText("Simulating the Shots", padLeft, 22);
+
+    const sumXGH = homeShots.reduce((a, b) => a + b, 0).toFixed(2);
+    const sumXGA = awayShots.reduce((a, b) => a + b, 0).toFixed(2);
+    const subLine1 = `${awayTeam} (${awayScore} Goals, ${sumXGA} xG, ${awayShots.length} Shots) at ${homeTeam} (${homeScore} Goals, ${sumXGH} xG, ${homeShots.length} Shots)`;
+    const subLine2 = `${gameDate}  |  ${venue}`;
+
+    ctx.font = "400 35px 'Assistant', sans-serif";
+    ctx.fillText(subLine1, padLeft, 96);
+    ctx.fillText(subLine2, padLeft, 138);
+
+    // 2. Bars & Data Labels
+    const unitW = plotW / (xMax - xMin);
+    const barW = unitW * 0.90;
+
+    for (let i = 0; i < plotData.length; i++) {
+      const d = plotData[i];
+      const centerX = padLeft + ((d.win_margin - xMin) / (xMax - xMin)) * plotW;
+      const barH = (d.pct / yMax) * plotH;
+      const barX = centerX - barW / 2;
+      const barY = padTop + plotH - barH;
+
+      ctx.fillStyle = d.team_color;
+      ctx.fillRect(barX, barY, barW, barH);
+
+      if (d.team_color.toUpperCase() === "#000000") {
+        ctx.strokeStyle = "#444444";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(barX, barY, barW, barH);
+      }
+
+      const nudgeY = (0.008 / yMax) * plotH;
+      ctx.fillStyle = "#EEEDCE";
+      ctx.font = "400 23px 'Assistant', sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "bottom";
+      ctx.fillText(d.perc, centerX, barY - nudgeY);
+    }
+
+    // 3. Axes Lines
+    ctx.strokeStyle = "#EEEDCE";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(padLeft, padTop);
+    ctx.lineTo(padLeft, padTop + plotH);
+    ctx.lineTo(padLeft + plotW, padTop + plotH);
+    ctx.stroke();
+
+    // 4. X-Axis Ticks & Integer Labels
+    ctx.fillStyle = "#EEEDCE";
+    ctx.font = "400 24px 'Assistant', sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    for (let m = -maxMargin; m <= maxMargin; m++) {
+      const tx = padLeft + ((m - xMin) / (xMax - xMin)) * plotW;
+      ctx.fillText(String(m), tx, padTop + plotH + 14);
+    }
+
+    // 5. Axis Titles
+    ctx.font = "700 35px 'Assistant', sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    ctx.fillText("Home Win Margin", padLeft + plotW / 2, padTop + plotH + 56);
+
+    ctx.save();
+    ctx.translate(24, padTop + plotH / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    ctx.fillText("Percentage of Simulations", 0, 0);
+    ctx.restore();
+  }
+
+  function updateMatchListUI(league, dateStr, autoRun) {
+    const container = document.getElementById("match-list-container");
+    const dailyMatches = schedule.filter(m => m.competition === league && m.date === dateStr);
+
+    if (dailyMatches.length === 0) {
+      container.innerHTML = `<p style="color: #AAAAAA; margin: 0;">No matches scheduled on this date for this competition.</p>`;
+      return;
+    }
+
+    let html = `<label class="sim-label">Select Match:</label><div class="sim-radio-group">`;
+    dailyMatches.forEach((m, idx) => {
+      const checked = (idx === 0) ? "checked" : "";
+      html += `<label class="sim-radio-item"><input type="radio" name="selected_daily_match" value="${m.match_id}" onchange="runHistoricalSim()" ${checked}><span>${m.home} vs ${m.away}</span></label>`;
+    });
+    html += `</div><button class="sim-btn" onclick="runHistoricalSim()">Simulate Match</button>`;
+    container.innerHTML = html;
+
+    if (autoRun) {
+      runHistoricalSim();
+    }
+  }
+
+  window.runHistoricalSim = function() {
+    const selectedRadio = document.querySelector('input[name="selected_daily_match"]:checked');
+    if (!selectedRadio) return;
+    const matchId = String(selectedRadio.value);
+    const matchInfo = schedule.find(m => String(m.match_id) === matchId);
+    if (!matchInfo) return;
+
+    const shotEntry = shotsMap[matchId] || { venue: "League Match", h_xg: [], a_xg: [] };
+    const homeShots = toArray(shotEntry.h_xg).map(Number).filter(v => !isNaN(v));
+    const awayShots = toArray(shotEntry.a_xg).map(Number).filter(v => !isNaN(v));
+    const venue = shotEntry.venue || "League Match";
+
+    const homeColor = teamColors[matchInfo.home] || "#3AB5E8";
+    const awayColor = teamColors[matchInfo.away] || "#EEEDCE";
+
+    const simRes = runVectorizedSim(homeShots, awayShots, 100000, homeColor, awayColor);
+    renderSummaryStrip("hist-summary-strip", simRes.summary, matchInfo.home, matchInfo.away, homeColor, awayColor);
+    drawSimulationCanvas(
+      "hist-canvas", simRes.outcomes,
+      matchInfo.home, matchInfo.away,
+      matchInfo.home_score, matchInfo.away_score,
+      homeShots, awayShots,
+      matchInfo.date, venue
+    );
+  };
+
+  window.runSandboxSim = function() {
+    const homeTeam = document.getElementById("sb-home-team").value || "Home FC";
+    const awayTeam = document.getElementById("sb-away-team").value || "Away FC";
+    const homeScore = Number(document.getElementById("sb-home-score").value) || 0;
+    const awayScore = Number(document.getElementById("sb-away-score").value) || 0;
+
+    const homeRaw = document.getElementById("sb-home-xg").value || "";
+    const awayRaw = document.getElementById("sb-away-xg").value || "";
+
+    const homeShots = homeRaw.split(",").map(s => parseFloat(s.trim())).filter(n => !isNaN(n) && n >= 0).map(n => Math.min(n, 0.999));
+    const awayShots = awayRaw.split(",").map(s => parseFloat(s.trim())).filter(n => !isNaN(n) && n >= 0).map(n => Math.min(n, 0.999));
+
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const simRes = runVectorizedSim(homeShots, awayShots, 100000, "#F1B1A5", "#62CBC9");
+    renderSummaryStrip("sb-summary-strip", simRes.summary, homeTeam, awayTeam, "#F1B1A5", "#62CBC9");
+    drawSimulationCanvas(
+      "sb-canvas", simRes.outcomes,
+      homeTeam, awayTeam,
+      homeScore, awayScore,
+      homeShots, awayShots,
+      todayStr, "Sandbox Arena"
+    );
+  };
+
+  function onLeagueChange(autoRun) {
+    const league = document.getElementById("sel-league").value;
+    document.getElementById("sim-dynamic-title").textContent = `${league} Shot Simulator`;
+
+    const leagueMatches = schedule.filter(m => m.competition === league);
+    const validDates = Array.from(new Set(leagueMatches.map(m => m.date))).sort();
+    const latestDate = validDates.length > 0 ? validDates[validDates.length - 1] : new Date().toISOString().slice(0, 10);
+
+    if (fpInstance) {
+      fpInstance.destroy();
+    }
+
+    fpInstance = flatpickr("#sel-date", {
+      defaultDate: latestDate,
+      dateFormat: "Y-m-d",
+      enable: validDates,
+      onChange: function(selectedDates, dateStr) {
+        updateMatchListUI(league, dateStr, true);
+      }
+    });
+
+    updateMatchListUI(league, latestDate, autoRun);
+  }
+
+  function formatParquetDate(val) {
+    if (val instanceof Date) {
+      return val.toISOString().slice(0, 10);
+    }
+    if (typeof val === "number") {
+      return new Date(val * 86400000).toISOString().slice(0, 10);
+    }
+    return String(val).slice(0, 10);
+  }
+
+  async function syncLiveDropboxParquet() {
+    try {
+      const { parquetReadObjects } = await import("https://cdn.jsdelivr.net/npm/hyparquet@1.8.0/+esm");
+      const schedUrl = "https://dl.dropboxusercontent.com/scl/fi/ibk1u01s67trk4htmhav6/master_schedule.parquet?rlkey=k943rqlck6qaomy5qovf4q98p&dl=1";
+      const shotsUrl = "https://dl.dropboxusercontent.com/scl/fi/78zxfgwywkge3umf86rj2/historical_shotmaps.parquet?rlkey=l8601gfmi6vgldzc8y7twgtb0&dl=1";
+
+      const [schedRes, shotsRes] = await Promise.all([fetch(schedUrl), fetch(shotsUrl)]);
+      if (!schedRes.ok || !shotsRes.ok) return;
+
+      const [schedBuf, shotsBuf] = await Promise.all([schedRes.arrayBuffer(), shotsRes.arrayBuffer()]);
+      const [liveSched, liveShots] = await Promise.all([
+        parquetReadObjects({ file: schedBuf }),
+        parquetReadObjects({ file: shotsBuf })
+      ]);
+
+      if (!liveSched || liveSched.length === 0) return;
+
+      const prevCount = schedule.length;
+      const newSched = liveSched.map(r => ({
+        match_id: String(r.match_id),
+        date: formatParquetDate(r.date),
+        competition: String(r.competition),
+        home: String(r.home),
+        away: String(r.away),
+        home_score: Number(r.home_score),
+        away_score: Number(r.away_score)
+      })).sort((a, b) => b.date.localeCompare(a.date));
+
+      const newShotsMap = {};
+      for (let i = 0; i < liveShots.length; i++) {
+        const s = liveShots[i];
+        const mid = String(s.match_id);
+        if (!newShotsMap[mid]) {
+          newShotsMap[mid] = { venue: s.venue ? String(s.venue) : "League Match", h_xg: [], a_xg: [] };
+        }
+        const xgVal = Math.min(Math.round(Number(s.xg) * 10000) / 10000, 0.999);
+        if (!isNaN(xgVal)) {
+          if (s.is_home === true || s.is_home === 1) newShotsMap[mid].h_xg.push(xgVal);
+          else newShotsMap[mid].a_xg.push(xgVal);
+        }
+      }
+
+      schedule = newSched;
+      shotsMap = newShotsMap;
+
+      if (newSched.length !== prevCount) {
+        onLeagueChange(true);
+      }
+    } catch (err) {
+      // Retain build-time snapshot if offline or blocked
+    }
+  }
+
+  function initSimulator() {
+    const leagues = Array.from(new Set(schedule.map(m => m.competition))).sort();
+    const selLeague = document.getElementById("sel-league");
+    selLeague.innerHTML = "";
+
+    leagues.forEach(lg => {
+      const opt = document.createElement("option");
+      opt.value = lg;
+      const flag = flagMap[lg] || "\uD83C\uDFF3\uFE0F";
+      opt.textContent = `${flag} ${lg}`;
+      if (lg === "NWSL") opt.selected = true;
+      selLeague.appendChild(opt);
+    });
+
+    selLeague.addEventListener("change", () => onLeagueChange(true));
+
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => {
+        onLeagueChange(true);
+        runSandboxSim();
+        syncLiveDropboxParquet();
+      });
+    } else {
+      onLeagueChange(true);
+      runSandboxSim();
+      syncLiveDropboxParquet();
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initSimulator);
+  } else {
+    initSimulator();
+  }
+})();
+</script>
+```
