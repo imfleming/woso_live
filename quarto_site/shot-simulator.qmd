@@ -159,7 +159,7 @@ cat(sprintf(
     max-width: 1320px;
     margin: 0 auto;
     min-height: calc(100vh - 70px);
-    font-family: 'Assistant', 'Noto Color Emoji', sans-serif;
+    font-family: 'Assistant', sans-serif;
     padding-bottom: 2rem;
   }
 
@@ -169,7 +169,7 @@ cat(sprintf(
     min-height: 54px;
     display: flex;
     align-items: stretch;
-    justify-content: space-between;
+    justify-content: flex-start;
     flex-wrap: wrap;
     margin-bottom: 1.25rem;
   }
@@ -184,7 +184,7 @@ cat(sprintf(
   .sim-brand {
     font-size: 1.25rem;
     font-weight: 400;
-    color: #EEEDCE;
+    color: #FFFFFF;
     display: flex;
     align-items: center;
     margin-right: 0.25rem;
@@ -203,7 +203,7 @@ cat(sprintf(
     background: transparent;
     border: none;
     border-bottom: 3px solid transparent;
-    color: rgba(238, 237, 206, 0.75);
+    color: rgba(255, 255, 255, 0.78);
     font-size: 0.95rem;
     font-weight: 400;
     padding: 0 0.85rem;
@@ -219,17 +219,9 @@ cat(sprintf(
   }
 
   .sim-tab-btn.active {
-    color: #EEEDCE;
+    color: #FFFFFF;
     font-weight: 700;
-    border-bottom: 3px solid #EEEDCE;
-  }
-
-  .sim-attribution {
-    color: #EEEDCE;
-    font-size: 0.9rem;
-    font-weight: 400;
-    display: flex;
-    align-items: center;
+    border-bottom: 3px solid #FFFFFF;
   }
 
   .sim-body-container {
@@ -264,7 +256,7 @@ cat(sprintf(
     font-size: 0.92rem;
   }
 
-  .sim-select, .sim-input, .sim-textarea {
+  .sim-input, .sim-textarea {
     width: 100%;
     background-color: #FFFFFF;
     color: #222222;
@@ -272,15 +264,84 @@ cat(sprintf(
     border-radius: 4px;
     padding: 0.45rem 0.65rem;
     font-size: 0.92rem;
-    font-family: 'Assistant', 'Noto Color Emoji', sans-serif !important;
+    font-family: 'Assistant', sans-serif !important;
     letter-spacing: normal !important;
     box-sizing: border-box;
   }
 
-  .sim-select:focus, .sim-input:focus, .sim-textarea:focus {
+  .sim-input:focus, .sim-textarea:focus {
     outline: none;
     border-color: #00747A;
     box-shadow: 0 0 0 2px rgba(0, 116, 122, 0.35);
+  }
+
+  .sim-custom-select {
+    position: relative;
+    width: 100%;
+    user-select: none;
+  }
+
+  .sim-select-trigger {
+    width: 100%;
+    background-color: #FFFFFF;
+    color: #222222;
+    border: 1px solid #CCCCCC;
+    border-radius: 4px;
+    padding: 0.45rem 0.65rem;
+    font-size: 0.92rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    box-sizing: border-box;
+  }
+
+  .sim-select-trigger:after {
+    content: "\25BE";
+    font-size: 0.85rem;
+    color: #444444;
+    margin-left: 0.5rem;
+  }
+
+  .sim-select-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 0;
+    right: 0;
+    background-color: #FFFFFF;
+    border: 1px solid #CCCCCC;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    z-index: 1000;
+    max-height: 240px;
+    overflow-y: auto;
+  }
+
+  .sim-select-menu.open {
+    display: block;
+  }
+
+  .sim-select-option {
+    padding: 0.45rem 0.65rem;
+    font-size: 0.92rem;
+    color: #222222;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    cursor: pointer;
+  }
+
+  .sim-select-option:hover, .sim-select-option.selected {
+    background-color: #00747A;
+    color: #FFFFFF;
+  }
+
+  .sim-flag {
+    font-family: 'Noto Color Emoji', sans-serif !important;
+    font-size: 1.05rem;
+    line-height: 1;
+    display: inline-block;
   }
 
   .sim-divider {
@@ -427,14 +488,17 @@ cat(sprintf(
           <button id="tab-btn-sb" class="sim-tab-btn" onclick="switchSimTab('sb')">Custom Match Sandbox</button>
         </div>
       </div>
-      <div class="sim-attribution">Created by Ian Fleming</div>
     </div>
 
     <div class="sim-body-container">
       <div id="panel-hist" class="sim-grid">
         <div class="sim-card">
-          <label class="sim-label" for="sel-league">Select Competition:</label>
-          <select id="sel-league" class="sim-select"></select>
+          <label class="sim-label">Select Competition:</label>
+          <input type="hidden" id="sel-league" value="NWSL">
+          <div id="league-dropdown" class="sim-custom-select">
+            <div id="league-dropdown-trigger" class="sim-select-trigger"></div>
+            <div id="league-dropdown-menu" class="sim-select-menu"></div>
+          </div>
 
           <hr class="sim-divider">
 
@@ -666,7 +730,6 @@ cat(sprintf(
     const plotW = W - padLeft - padRight;
     const plotH = H - padTop - padBottom;
 
-    // 1. Title & Two-Line Subtitle aligned with vertical Y-axis line (padLeft)
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
     ctx.fillStyle = "#EEEDCE";
@@ -682,7 +745,6 @@ cat(sprintf(
     ctx.fillText(subLine1, padLeft, 96);
     ctx.fillText(subLine2, padLeft, 138);
 
-    // 2. Bars & Data Labels
     const unitW = plotW / (xMax - xMin);
     const barW = unitW * 0.90;
 
@@ -710,7 +772,6 @@ cat(sprintf(
       ctx.fillText(d.perc, centerX, barY - nudgeY);
     }
 
-    // 3. Axes Lines
     ctx.strokeStyle = "#EEEDCE";
     ctx.lineWidth = 2;
     ctx.beginPath();
@@ -719,7 +780,6 @@ cat(sprintf(
     ctx.lineTo(padLeft + plotW, padTop + plotH);
     ctx.stroke();
 
-    // 4. X-Axis Ticks & Integer Labels
     ctx.fillStyle = "#EEEDCE";
     ctx.font = "400 24px 'Assistant', sans-serif";
     ctx.textAlign = "center";
@@ -729,7 +789,6 @@ cat(sprintf(
       ctx.fillText(String(m), tx, padTop + plotH + 14);
     }
 
-    // 5. Axis Titles
     ctx.font = "700 35px 'Assistant', sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "top";
@@ -840,6 +899,35 @@ cat(sprintf(
     updateMatchListUI(league, latestDate, autoRun);
   }
 
+  function renderLeagueDropdown() {
+    const leagues = Array.from(new Set(schedule.map(m => m.competition))).sort();
+    const hiddenInput = document.getElementById("sel-league");
+    const trigger = document.getElementById("league-dropdown-trigger");
+    const menu = document.getElementById("league-dropdown-menu");
+
+    const currentVal = hiddenInput.value || "NWSL";
+    const currentFlag = flagMap[currentVal] || "\uD83C\uDFF3\uFE0F";
+    trigger.innerHTML = `<span style="display:flex;align-items:center;gap:0.45rem;"><span class="sim-flag">${currentFlag}</span><span>${currentVal}</span></span>`;
+
+    menu.innerHTML = "";
+    leagues.forEach(lg => {
+      const flag = flagMap[lg] || "\uD83C\uDFF3\uFE0F";
+      const item = document.createElement("div");
+      item.className = "sim-select-option" + (lg === currentVal ? " selected" : "");
+      item.innerHTML = `<span class="sim-flag">${flag}</span><span>${lg}</span>`;
+      item.addEventListener("click", (e) => {
+        e.stopPropagation();
+        hiddenInput.value = lg;
+        trigger.innerHTML = `<span style="display:flex;align-items:center;gap:0.45rem;"><span class="sim-flag">${flag}</span><span>${lg}</span></span>`;
+        Array.from(menu.children).forEach(c => c.classList.remove("selected"));
+        item.classList.add("selected");
+        menu.classList.remove("open");
+        onLeagueChange(true);
+      });
+      menu.appendChild(item);
+    });
+  }
+
   function formatParquetDate(val) {
     if (val instanceof Date) {
       return val.toISOString().slice(0, 10);
@@ -896,6 +984,7 @@ cat(sprintf(
       shotsMap = newShotsMap;
 
       if (newSched.length !== prevCount) {
+        renderLeagueDropdown();
         onLeagueChange(true);
       }
     } catch (err) {
@@ -904,20 +993,19 @@ cat(sprintf(
   }
 
   function initSimulator() {
-    const leagues = Array.from(new Set(schedule.map(m => m.competition))).sort();
-    const selLeague = document.getElementById("sel-league");
-    selLeague.innerHTML = "";
+    const trigger = document.getElementById("league-dropdown-trigger");
+    const menu = document.getElementById("league-dropdown-menu");
 
-    leagues.forEach(lg => {
-      const opt = document.createElement("option");
-      opt.value = lg;
-      const flag = flagMap[lg] || "\uD83C\uDFF3\uFE0F";
-      opt.textContent = `${flag} ${lg}`;
-      if (lg === "NWSL") opt.selected = true;
-      selLeague.appendChild(opt);
+    trigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      menu.classList.toggle("open");
     });
 
-    selLeague.addEventListener("change", () => onLeagueChange(true));
+    document.addEventListener("click", () => {
+      menu.classList.remove("open");
+    });
+
+    renderLeagueDropdown();
 
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(() => {
