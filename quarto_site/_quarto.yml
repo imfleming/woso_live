@@ -8,6 +8,7 @@ project:
     - bluesky_icon.png
     - twitter_icon.png
     - email_icon.png
+    - logos/*.png
 
 website:
   title: "WoSo.Live"
@@ -23,6 +24,8 @@ website:
         href: rapm-tools.qmd
       - text: "Goalkeepers"
         href: goalkeepers.qmd
+      - text: "Forecasts"
+        href: forecasts.qmd
       - text: "Shot Simulator"
         href: shot-simulator.qmd
       - text: "World Cup Simulator"

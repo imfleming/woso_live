@@ -1,0 +1,912 @@
+---
+title: "Season Forecasts"
+page-layout: custom
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: build-forecasts-payload
+#| results: asis
+
+suppressPackageStartupMessages({
+  library(dplyr)
+  library(jsonlite)
+})
+
+payload_path <- file.path("data", "season_forecasts_payload.rds")
+if (!file.exists(payload_path)) {
+  stop("season_forecasts_payload.rds not found in quarto_site/data/.")
+}
+
+forecast_payload <- readRDS(payload_path)
+
+cat(sprintf(
+  "\n```{=html}\n<script id=\"forecasts-payload\" type=\"application/json\">%s</script>\n```\n",
+  jsonlite::toJSON(forecast_payload, dataframe = "rows", auto_unbox = TRUE)
+))
+```
+
+```{=html}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap');
+
+  .fc-app-wrapper {
+    background-color: #F4F6F8;
+    color: #222222;
+    min-height: calc(100vh - 60px);
+    font-family: 'Assistant', sans-serif;
+    padding-bottom: 3rem;
+  }
+
+  .fc-subnav {
+    background-color: #1D3549;
+    padding: 0 1.5rem;
+    min-height: 56px;
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+
+  .fc-subnav-left {
+    display: flex;
+    align-items: stretch;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .fc-brand-group {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.4rem 0;
+  }
+
+  .fc-brand {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    white-space: nowrap;
+  }
+
+  /* Custom Flag League Selector in Subnav */
+  .fc-custom-select {
+    position: relative;
+    min-width: 175px;
+    user-select: none;
+  }
+
+  .fc-select-trigger {
+    background-color: rgba(255, 255, 255, 0.12);
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 4px;
+    padding: 0.32rem 0.65rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+
+  .fc-select-trigger:after {
+    content: "\25BE";
+    font-size: 0.85rem;
+    color: #FFFFFF;
+    margin-left: 0.5rem;
+  }
+
+  .fc-select-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    min-width: 100%;
+    background-color: #FFFFFF;
+    border: 1px solid #CCCCCC;
+    border-radius: 4px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    z-index: 1050;
+  }
+
+  .fc-select-menu.open {
+    display: block;
+  }
+
+  .fc-select-option {
+    padding: 0.45rem 0.7rem;
+    font-size: 0.92rem;
+    color: #222222;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .fc-select-option:hover, .fc-select-option.selected {
+    background-color: #00747A;
+    color: #FFFFFF;
+  }
+
+  .fc-flag {
+    font-family: 'Noto Color Emoji', sans-serif !important;
+    font-size: 1.05rem;
+    line-height: 1;
+  }
+
+  .fc-tabs {
+    display: flex;
+    align-items: stretch;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .fc-tab-btn {
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.95rem;
+    font-weight: 400;
+    padding: 0 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: all 0.15s ease;
+    font-family: 'Assistant', sans-serif;
+  }
+
+  .fc-tab-btn:hover {
+    color: #FFFFFF;
+  }
+
+  .fc-tab-btn.active {
+    color: #FFFFFF;
+    font-weight: 700;
+    border-bottom: 3px solid #FFFFFF;
+  }
+
+  .fc-updated-badge {
+    display: flex;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.85rem;
+  }
+
+  .fc-container {
+    max-width: 1620px;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+
+  .fc-card {
+    background-color: #FFFFFF;
+    border: 1px solid #E0E4E8;
+    border-radius: 6px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .fc-card-dark {
+    background-color: #00747A;
+    border: 1px solid #005A5E;
+    border-radius: 6px;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .fc-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.85rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .fc-section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111111;
+    margin: 0;
+  }
+
+  .fc-section-sub {
+    font-size: 0.9rem;
+    color: #666666;
+    margin: 0;
+  }
+
+  .fc-btn-dl {
+    background-color: transparent;
+    color: #222222;
+    border: 1px solid #CCCCCC;
+    border-radius: 4px;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: 'Assistant', sans-serif;
+  }
+
+  .fc-btn-dl:hover {
+    background-color: #00747A;
+    color: #FFFFFF;
+    border-color: #00747A;
+  }
+
+  .fc-btn-dl-light {
+    background-color: rgba(0, 0, 0, 0.2);
+    color: #EEEDCE;
+    border: 1px solid rgba(238, 237, 206, 0.45);
+    border-radius: 4px;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: 'Assistant', sans-serif;
+  }
+
+  .fc-btn-dl-light:hover {
+    background-color: #EEEDCE;
+    color: #00747A;
+  }
+
+  /* Reactable-Parity Tables */
+  .fc-table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    background-color: #FFFFFF;
+  }
+
+  .fc-matrix-table {
+    width: 100%;
+    min-width: 1180px;
+    border-collapse: collapse;
+    font-family: 'Assistant', sans-serif;
+    font-size: 15px;
+    background-color: #FFFFFF;
+  }
+
+  .fc-matrix-table th, .fc-matrix-table td {
+    padding: 7px 8px;
+    border-bottom: 1px solid #EFEFEF;
+  }
+
+  .fc-matrix-table thead tr.fc-group-row th {
+    border-bottom: 1px solid #DDDDDD;
+    font-weight: 700;
+    color: #333333;
+    text-align: center;
+    font-size: 15px;
+  }
+
+  .fc-matrix-table thead tr.fc-col-row th {
+    border-bottom: 2px solid #DDDDDD;
+    font-weight: 600;
+    color: #333333;
+    text-align: center;
+  }
+
+  .fc-matrix-table tbody tr:hover {
+    filter: brightness(0.97);
+  }
+
+  .fc-team-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    color: #111111;
+    white-space: nowrap;
+  }
+
+  .fc-team-logo {
+    height: 22px;
+    width: 28px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+
+  .fc-lev-logo {
+    height: 28px;
+    width: 36px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+
+  .fc-canvas-wrap {
+    width: 100%;
+    background-color: #00747A;
+    border-radius: 4px;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .fc-canvas-wrap canvas {
+    max-width: 100%;
+    height: auto !important;
+    display: block;
+    margin: 0 auto;
+  }
+</style>
+
+<div class="fc-app-wrapper">
+  <div class="fc-subnav">
+    <div class="fc-subnav-left">
+      <div class="fc-brand-group">
+        <span class="fc-brand">Season Forecasts</span>
+        <input type="hidden" id="fc-league-val" value="NWSL">
+        <div class="fc-custom-select" id="fc-league-dropdown">
+          <div id="fc-league-trigger" class="fc-select-trigger"></div>
+          <div id="fc-league-menu" class="fc-select-menu"></div>
+        </div>
+      </div>
+
+      <div class="fc-tabs">
+        <button id="fc-tab-btn-standings" class="fc-tab-btn active" onclick="switchFcTab('standings')">Standings &amp; Playoff Odds</button>
+        <button id="fc-tab-btn-leverage" class="fc-tab-btn" onclick="switchFcTab('leverage')">Matchday Playoff Leverage</button>
+        <button id="fc-tab-btn-points" class="fc-tab-btn" onclick="switchFcTab('points')">Points Distribution</button>
+        <button id="fc-tab-btn-cutline" class="fc-tab-btn" onclick="switchFcTab('cutline')">Playoff Cut Lines</button>
+      </div>
+    </div>
+    <div id="fc-updated-text" class="fc-updated-badge"></div>
+  </div>
+
+  <div class="fc-container">
+    <!-- TAB 1: STANDINGS & PLAYOFF PROBABILITY MATRIX -->
+    <div id="fc-panel-standings">
+      <div class="fc-card">
+        <div class="fc-toolbar">
+          <div>
+            <h3 id="standings-title" class="fc-section-title">Final Standings &amp; Playoff Probability Matrix</h3>
+            <p class="fc-section-sub">100,000 Monte Carlo Season Simulations &bull; Dashed Line Indicates Playoff Cutoff</p>
+          </div>
+          <button class="fc-btn-dl" onclick="downloadDomTable('standings-export-box', 'standings_distribution_table.png')">Download Table (PNG)</button>
+        </div>
+        <div class="fc-table-scroll">
+          <div id="standings-export-box" style="background-color: #FFFFFF; padding: 8px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: MATCHDAY PLAYOFF LEVERAGE -->
+    <div id="fc-panel-leverage" style="display: none;">
+      <div class="fc-card">
+        <div class="fc-toolbar">
+          <div>
+            <h3 id="leverage-title" class="fc-section-title">Matchday Playoff Leverage &amp; Viewer's Guide</h3>
+            <p class="fc-section-sub">Conditional Playoff Qualification Odds by 90-Minute Match Outcome (Loss &harr; Win)</p>
+          </div>
+          <button class="fc-btn-dl" onclick="downloadDomTable('leverage-export-box', 'matchday_playoff_leverage.png')">Download Table (PNG)</button>
+        </div>
+        <div class="fc-table-scroll">
+          <div id="leverage-export-box" style="background-color: #FFFFFF; padding: 8px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: SIMULATED POINTS DISTRIBUTION -->
+    <div id="fc-panel-points" style="display: none;">
+      <div class="fc-card-dark">
+        <div class="fc-toolbar" style="margin-bottom: 0.5rem;">
+          <div></div>
+          <button class="fc-btn-dl-light" onclick="downloadFcCanvas('points-dist-canvas', 'standings_points_distribution.png')">Download Plot (PNG)</button>
+        </div>
+        <div class="fc-canvas-wrap">
+          <canvas id="points-dist-canvas" width="2400" height="1350"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: PLAYOFF CUT LINES -->
+    <div id="fc-panel-cutline" style="display: none;">
+      <div class="fc-card-dark">
+        <div class="fc-toolbar" style="margin-bottom: 0.5rem;">
+          <div></div>
+          <button class="fc-btn-dl-light" onclick="downloadFcCanvas('cutline-canvas', 'simulated_playoff_lines.png')">Download Plot (PNG)</button>
+        </div>
+        <div class="fc-canvas-wrap">
+          <canvas id="cutline-canvas" width="2400" height="1350"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const rawJson = document.getElementById("forecasts-payload").textContent;
+  const payload = JSON.parse(rawJson);
+  const leaguesMap = payload.leagues || {};
+
+  const flagMap = {
+    "NWSL": "\uD83C\uDDFA\uD83C\uDDF8",
+    "USL Super League": "\uD83C\uDDFA\uD83C\uDDF8",
+    "WSL": "\uD83C\uDFF4\uDB40\uDC67\uDB40\uDC62\uDB40\uDC65\uDB40\uDC6E\uDB40\uDC67\uDB40\uDC7F",
+    "Liga F": "\uD83C\uDDEA\uD83C\uDDF8",
+    "Premi\u00e8re Ligue": "\uD83C\uDDEB\uD83C\uDDF7",
+    "Frauen-Bundesliga": "\uD83C\uDDE9\uD83C\uDDEA",
+    "Serie A": "\uD83C\uDDEE\uD83C\uDDF9",
+    "A-League": "\uD83C\uDDE6\uD83C\uDDFA"
+  };
+
+  window.switchFcTab = function(tab) {
+    const tabs = ["standings", "leverage", "points", "cutline"];
+    tabs.forEach(t => {
+      document.getElementById("fc-panel-" + t).style.display = (t === tab) ? "block" : "none";
+      document.getElementById("fc-tab-btn-" + t).classList.toggle("active", t === tab);
+    });
+  };
+
+  window.downloadFcCanvas = function(canvasId, filename) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const link = document.createElement("a");
+    link.download = filename;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  };
+
+  window.downloadDomTable = function(boxId, filename) {
+    const el = document.getElementById(boxId);
+    if (!el) return;
+    html2canvas(el, { backgroundColor: "#FFFFFF", scale: 2 }).then(canvas => {
+      const link = document.createElement("a");
+      link.download = filename;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    });
+  };
+
+  // Cube-root teal color scale matching nwsl_predictive_pipeline.R
+  function posColorScale(val) {
+    const v = Number(val);
+    if (isNaN(v) || v <= 0) return { bg: "transparent", fg: "transparent" };
+    const norm = Math.pow(Math.min(Math.max(v / 100, 0), 1), 0.333);
+    const bg = `rgba(0, 116, 122, ${norm.toFixed(4)})`;
+    const fg = (v >= 2.0) ? "#EEEDCE" : "rgba(0, 116, 122, 0.32)";
+    return { bg, fg };
+  }
+
+  function playoffColorScale(pctVal) {
+    const v = Number(pctVal);
+    if (isNaN(v)) return { bg: "transparent", fg: "#00747A" };
+    const norm = Math.min(Math.max(v / 100, 0), 1);
+    const bg = `rgba(0, 116, 122, ${norm.toFixed(4)})`;
+    const fg = (v >= 25.0) ? "#EEEDCE" : "#00747A";
+    return { bg, fg };
+  }
+
+  // 1. Render Standings & Playoff Matrix
+  function renderStandingsMatrix(lgData) {
+    const box = document.getElementById("standings-export-box");
+    const rows = lgData.standings_table || [];
+    const numTeams = Number(lgData.num_teams) || rows.length || 16;
+    const cutSpot  = Number(lgData.playoff_spots) || 8;
+
+    document.getElementById("standings-title").textContent =
+      `${lgData.league_name} ${lgData.season_label || ""} Final Standings & Playoff Probability Matrix`;
+
+    let html = `<ta` + `ble class="fc-matrix-table">
+        <thead>
+          <tr class="fc-group-row">
+            <th></th>
+            <th colspan="${numTeams}">Final Standings Place Probability (%)</th>
+            <th style="border-left: 2.5px solid #00747A;"></th>
+          </tr>
+          <tr class="fc-col-row">
+            <th style="text-align: left; width: 210px;"></th>`;
+
+    for (let p = 1; p <= numTeams; p++) {
+      const cutBorder = (p === cutSpot) ? "border-right: 1px dashed rgba(0, 116, 122, 0.45);" : "";
+      html += `<th style="${cutBorder}">${p}</th>`;
+    }
+    html += `<th style="border-left: 2.5px solid #00747A; width: 105px;">Playoffs (%)</th></tr></thead><tbody>`;
+
+    rows.forEach(r => {
+      const logoImg = r.logo_b64
+        ? `<img class="fc-team-logo" src="${r.logo_b64}" alt="">`
+        : "";
+      html += `<tr><td><div class="fc-team-cell">${logoImg}<span>${r.team}</span></div></td>`;
+
+      for (let p = 1; p <= numTeams; p++) {
+        const val = Number(r[String(p)]) || 0;
+        const cutBorder = (p === cutSpot) ? "border-right: 1px dashed rgba(0, 116, 122, 0.45);" : "";
+        if (val <= 0) {
+          html += `<td style="text-align: center; ${cutBorder}"></td>`;
+        } else {
+          const st = posColorScale(val);
+          html += `<td style="text-align: center; background-color: ${st.bg}; color: ${st.fg}; ${cutBorder}">${val.toFixed(2)}</td>`;
+        }
+      }
+
+      const poSt = playoffColorScale(r.playoff_pct);
+      html += `<td style="text-align: center; font-weight: 700; font-size: 15px; border-left: 2.5px solid #00747A; background-color: ${poSt.bg}; color: ${poSt.fg};">${r.playoff_display}</td></tr>`;
+    });
+
+    html += `</tbody></table>`;
+    box.innerHTML = html;
+  }
+
+  // 2. Render Matchday Playoff Leverage Table
+  function renderLeverageTable(lgData) {
+    const box = document.getElementById("leverage-export-box");
+    const rows = lgData.leverage_table || [];
+
+    document.getElementById("leverage-title").textContent =
+      `${lgData.league_name} Matchday Playoff Leverage & Viewer's Guide`;
+
+    if (rows.length === 0) {
+      box.innerHTML = `<p style="padding: 1.5rem; color: #555555; font-size: 1rem; margin: 0;">All regular-season fixtures for the ${lgData.season_label || ""} ${lgData.league_name} season have been completed.</p>`;
+      return;
+    }
+
+    let maxLev = 1;
+    rows.forEach(r => {
+      const v = Number(r.total_leverage) || 0;
+      if (v > maxLev) maxLev = v;
+    });
+
+    let html = `<ta` + `ble class="fc-matrix-table" style="font-size: 17px;">
+        <thead>
+          <tr class="fc-group-row">
+            <th></th>
+            <th colspan="3">Matchup</th>
+            <th colspan="2">Home Stakes (Loss &harr; Win)</th>
+            <th colspan="2">Away Stakes (Loss &harr; Win)</th>
+            <th style="border-left: 2.5px solid #00747A;">Stakes</th>
+          </tr>
+          <tr class="fc-col-row">
+            <th style="width: 90px;">Date</th>
+            <th style="text-align: left; width: 240px;">Home Club</th>
+            <th style="width: 185px;">Home | Draw | Away</th>
+            <th style="text-align: left; width: 240px;">Away Club</th>
+            <th style="width: 165px;">Playoff Range</th>
+            <th style="width: 95px;">Swing</th>
+            <th style="width: 165px;">Playoff Range</th>
+            <th style="width: 95px;">Swing</th>
+            <th style="border-left: 2.5px solid #00747A; width: 135px;">Total Leverage</th>
+          </tr>
+        </thead>
+        <tbody>`;
+
+    rows.forEach((r, idx) => {
+      const rowBg = (idx % 2 === 1) ? "background-color: #F9FAFB;" : "";
+      const hLogo = r.home_logo_b64 ? `<img class="fc-lev-logo" src="${r.home_logo_b64}" alt="">` : "";
+      const aLogo = r.away_logo_b64 ? `<img class="fc-lev-logo" src="${r.away_logo_b64}" alt="">` : "";
+
+      const hSwingVal = Number(r.h_swing) || 0;
+      const aSwingVal = Number(r.a_swing) || 0;
+      const hSwingStr = hSwingVal > 0 ? `+${hSwingVal.toFixed(1)}%` : "--";
+      const aSwingStr = aSwingVal > 0 ? `+${aSwingVal.toFixed(1)}%` : "--";
+      const hSwingCol = hSwingVal >= 15.0 ? "#00747A" : "#666666";
+      const aSwingCol = aSwingVal >= 15.0 ? "#00747A" : "#666666";
+
+      const totLev = Number(r.total_leverage) || 0;
+      const normLev = Math.min(Math.max(totLev / maxLev, 0), 1);
+      const levBg = totLev > 0 ? `rgba(0, 116, 122, ${(normLev * 0.85).toFixed(4)})` : "transparent";
+      const levFg = normLev > 0.45 ? "#EEEDCE" : "#00747A";
+
+      html += `
+        <tr style="${rowBg}">
+          <td style="text-align: center; color: #444444; padding: 10px 12px;">${r.date}</td>
+          <td style="padding: 10px 12px;"><div class="fc-team-cell" style="font-weight: 700; font-size: 17px;">${hLogo}<span>${r.home}</span></div></td>
+          <td style="text-align: center; color: #555555; font-weight: 500; font-size: 16px; padding: 10px 12px;">${r.match_odds}</td>
+          <td style="padding: 10px 12px;"><div class="fc-team-cell" style="font-weight: 700; font-size: 17px;">${aLogo}<span>${r.away}</span></div></td>
+          <td style="text-align: center; padding: 10px 12px;">${r.h_range}</td>
+          <td style="text-align: center; font-weight: 700; color: ${hSwingCol}; padding: 10px 12px;">${hSwingStr}</td>
+          <td style="text-align: center; padding: 10px 12px;">${r.a_range}</td>
+          <td style="text-align: center; font-weight: 700; color: ${aSwingCol}; padding: 10px 12px;">${aSwingStr}</td>
+          <td style="text-align: center; font-weight: 700; font-size: 18px; border-left: 2.5px solid #00747A; background-color: ${levBg}; color: ${levFg}; padding: 10px 12px;">${totLev.toFixed(1)}%</td>
+        </tr>`;
+    });
+
+    html += `</tbody></table>`;
+    box.innerHTML = html;
+  }
+
+  // 3. Render Simulated Standings Points Distribution Raster Canvas
+  function drawPointsDistCanvas(lgData) {
+    const canvas = document.getElementById("points-dist-canvas");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const W = canvas.width;
+    const H = canvas.height;
+
+    ctx.fillStyle = "#00747A";
+    ctx.fillRect(0, 0, W, H);
+
+    const ptsRows = lgData.points_dist || [];
+    if (ptsRows.length === 0) return;
+
+    const teamsTopDown = Array.isArray(lgData.team_order) && lgData.team_order.length > 0
+      ? lgData.team_order
+      : Array.from(new Set(ptsRows.map(r => r.team)));
+
+    const nTeams = teamsTopDown.length;
+
+    let minPts = Infinity, maxPts = -Infinity, maxCount = 1;
+    const peakByTeam = {};
+
+    ptsRows.forEach(r => {
+      const p = Number(r.total_points);
+      const c = Number(r.count);
+      if (p < minPts) minPts = p;
+      if (p > maxPts) maxPts = p;
+      if (c > maxCount) maxCount = c;
+
+      if (!peakByTeam[r.team] || c > peakByTeam[r.team].count) {
+        peakByTeam[r.team] = { total_points: p, count: c };
+      }
+    });
+
+    const padLeft = 360;
+    const padRight = 50;
+    const padTop = 45;
+    const padBottom = 140;
+    const plotW = W - padLeft - padRight;
+    const plotH = H - padTop - padBottom;
+
+    const nCols = Math.max(1, maxPts - minPts + 1);
+    const cellW = plotW / nCols;
+    const cellH = plotH / nTeams;
+
+    // Interpolate [#00747A (0,116,122) -> #EEEDCE (238,237,206)]
+    function countToColor(c) {
+      const t = Math.min(Math.max(c / maxCount, 0), 1);
+      const r = Math.round(0 + t * 238);
+      const g = Math.round(116 + t * (237 - 116));
+      const b = Math.round(122 + t * (206 - 122));
+      return `rgb(${r},${g},${b})`;
+    }
+
+    // Draw raster cells
+    ptsRows.forEach(r => {
+      const tIdx = teamsTopDown.indexOf(r.team);
+      if (tIdx < 0) return;
+      const p = Number(r.total_points);
+      const c = Number(r.count);
+      const colIdx = p - minPts;
+
+      const x = padLeft + colIdx * cellW;
+      const y = padTop + tIdx * cellH;
+
+      ctx.fillStyle = countToColor(c);
+      ctx.fillRect(x, y, Math.ceil(cellW), Math.ceil(cellH));
+    });
+
+    // Draw modal total_points text on peak cell per team
+    ctx.fillStyle = "#00747A";
+    ctx.font = "700 24px 'Assistant', sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    teamsTopDown.forEach((tm, tIdx) => {
+      const pk = peakByTeam[tm];
+      if (!pk) return;
+      const colIdx = pk.total_points - minPts;
+      const cx = padLeft + (colIdx + 0.5) * cellW;
+      const cy = padTop + (tIdx + 0.5) * cellH;
+      ctx.fillText(String(pk.total_points), cx, cy);
+    });
+
+    // Axes lines
+    ctx.strokeStyle = "#EEEDCE";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(padLeft, padTop);
+    ctx.lineTo(padLeft, padTop + plotH);
+    ctx.lineTo(padLeft + plotW, padTop + plotH);
+    ctx.stroke();
+
+    // Y-axis Team Names
+    ctx.fillStyle = "#EEEDCE";
+    ctx.font = "400 26px 'Assistant', sans-serif";
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    teamsTopDown.forEach((tm, tIdx) => {
+      const cy = padTop + (tIdx + 0.5) * cellH;
+      ctx.fillText(tm, padLeft - 16, cy);
+    });
+
+    // X-axis Ticks & Labels
+    ctx.font = "400 26px 'Assistant', sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    const step = nCols > 25 ? 5 : 2;
+    const firstTick = Math.ceil(minPts / step) * step;
+    for (let p = firstTick; p <= maxPts; p += step) {
+      const colIdx = p - minPts;
+      const tx = padLeft + (colIdx + 0.5) * cellW;
+      ctx.fillText(String(p), tx, padTop + plotH + 14);
+    }
+
+    // X-axis Title
+    ctx.font = "700 32px 'Assistant', sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Simulated Standings Points", padLeft + plotW / 2, padTop + plotH + 62);
+  }
+
+  // 4. Render Playoffs Cut-Line Distribution Bar Chart Canvas
+  function drawCutlineCanvas(lgData) {
+    const canvas = document.getElementById("cutline-canvas");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const W = canvas.width;
+    const H = canvas.height;
+
+    ctx.fillStyle = "#00747A";
+    ctx.fillRect(0, 0, W, H);
+
+    const cutRows = lgData.playoff_lines || [];
+    if (cutRows.length === 0) return;
+
+    let minPts = Infinity, maxPts = -Infinity, maxCount = 1;
+    cutRows.forEach(r => {
+      const p = Number(r.total_points);
+      const c = Number(r.count);
+      if (p < minPts) minPts = p;
+      if (p > maxPts) maxPts = p;
+      if (c > maxCount) maxCount = c;
+    });
+
+    const yMax = maxCount + 2000;
+    const xMin = minPts - 0.5;
+    const xMax = maxPts + 0.5;
+
+    const padLeft = 95;
+    const padRight = 50;
+    const padTop = 175;
+    const padBottom = 135;
+    const plotW = W - padLeft - padRight;
+    const plotH = H - padTop - padBottom;
+
+    // Title & Subtitle
+    ctx.fillStyle = "#EEEDCE";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.font = "700 52px 'Assistant', sans-serif";
+    ctx.fillText(`${lgData.league_name} Playoffs Cut Lines`, padLeft, 28);
+
+    ctx.font = "400 38px 'Assistant', sans-serif";
+    ctx.fillText("Simulating the Season 100,000 Times", padLeft, 95);
+
+    const unitW = plotW / (xMax - xMin);
+    const barW = unitW * 0.90;
+
+    cutRows.forEach(r => {
+      const p = Number(r.total_points);
+      const c = Number(r.count);
+      const centerX = padLeft + ((p - xMin) / (xMax - xMin)) * plotW;
+      const barH = (c / yMax) * plotH;
+      const barX = centerX - barW / 2;
+      const barY = padTop + plotH - barH;
+
+      ctx.fillStyle = "#EEEDCE";
+      ctx.fillRect(barX, barY, barW, barH);
+
+      const nudgeY = (1000 / yMax) * plotH;
+      ctx.font = "400 30px 'Assistant', sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "bottom";
+      ctx.fillText(String(c), centerX, barY - nudgeY);
+    });
+
+    // Axes lines
+    ctx.strokeStyle = "#EEEDCE";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(padLeft, padTop);
+    ctx.lineTo(padLeft, padTop + plotH);
+    ctx.lineTo(padLeft + plotW, padTop + plotH);
+    ctx.stroke();
+
+    // X-axis Integer Labels
+    ctx.fillStyle = "#EEEDCE";
+    ctx.font = "700 32px 'Assistant', sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    for (let p = minPts; p <= maxPts; p++) {
+      const tx = padLeft + ((p - xMin) / (xMax - xMin)) * plotW;
+      ctx.fillText(String(p), tx, padTop + plotH + 16);
+    }
+
+    // X-axis Title
+    ctx.font = "700 38px 'Assistant', sans-serif";
+    ctx.fillText("Final Points Total", padLeft + plotW / 2, padTop + plotH + 70);
+
+    // Y-axis Title
+    ctx.save();
+    ctx.translate(32, padTop + plotH / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    ctx.fillText("Number of Simulations", 0, 0);
+    ctx.restore();
+  }
+
+  function renderActiveLeague() {
+    const lgKey = document.getElementById("fc-league-val").value;
+    const lgData = leaguesMap[lgKey];
+    if (!lgData) return;
+
+    document.getElementById("fc-updated-text").textContent =
+      lgData.updated_at ? `Updated: ${lgData.updated_at}` : "";
+
+    renderStandingsMatrix(lgData);
+    renderLeverageTable(lgData);
+    drawPointsDistCanvas(lgData);
+    drawCutlineCanvas(lgData);
+  }
+
+  function initLeagueSelector() {
+    const keys = Object.keys(leaguesMap);
+    const hiddenEl = document.getElementById("fc-league-val");
+    const trigger  = document.getElementById("fc-league-trigger");
+    const menu     = document.getElementById("fc-league-menu");
+
+    if (keys.length === 0) return;
+    if (!leaguesMap[hiddenEl.value]) hiddenEl.value = keys[0];
+
+    const renderTrigger = (k) => {
+      const flag = flagMap[k] || "\uD83C\uDFF3\uFE0F";
+      trigger.innerHTML = `<span style="display:flex;align-items:center;gap:0.45rem;"><span class="fc-flag">${flag}</span><span>${k}</span></span>`;
+    };
+
+    renderTrigger(hiddenEl.value);
+    menu.innerHTML = "";
+
+    keys.forEach(k => {
+      const flag = flagMap[k] || "\uD83C\uDFF3\uFE0F";
+      const opt = document.createElement("div");
+      opt.className = "fc-select-option" + (k === hiddenEl.value ? " selected" : "");
+      opt.innerHTML = `<span class="fc-flag">${flag}</span><span>${k}</span>`;
+      opt.addEventListener("click", (e) => {
+        e.stopPropagation();
+        hiddenEl.value = k;
+        renderTrigger(k);
+        Array.from(menu.children).forEach(c => c.classList.remove("selected"));
+        opt.classList.add("selected");
+        menu.classList.remove("open");
+        renderActiveLeague();
+      });
+      menu.appendChild(opt);
+    });
+
+    trigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      menu.classList.toggle("open");
+    });
+
+    document.addEventListener("click", () => menu.classList.remove("open"));
+  }
+
+  function initForecastsPage() {
+    initLeagueSelector();
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(renderActiveLeague);
+    } else {
+      renderActiveLeague();
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initForecastsPage);
+  } else {
+    initForecastsPage();
+  }
+})();
+</script>
+```
