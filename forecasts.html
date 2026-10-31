@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Season Forecasts – WoSo.Live</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./favicon.svg" rel="icon" type="image/svg+xml">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-f268a84125b410ce474cd5c5add1996b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-HV5N2DMVZR"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-HV5N2DMVZR', { 'anonymize_ip': true});
+</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">WoSo.Live</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./rapm-tools.html"> 
+<span class="menu-text">RAPM Tools</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./goalkeepers.html"> 
+<span class="menu-text">Goalkeepers</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./forecasts.html" aria-current="page"> 
+<span class="menu-text">Forecasts</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./shot-simulator.html"> 
+<span class="menu-text">Shot Simulator</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./wwc-simulator.html"> 
+<span class="menu-text">World Cup Simulator</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./explainers.html"> 
+<span class="menu-text">Explainers</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-layout-custom page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+<!-- main -->
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Season Forecasts</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<script id="forecasts-payload" type="application/json">{"leagues":{"NWSL":{"league_name":"NWSL","season_label":"2026","updated_at":"October 31, 2026","num_teams":16,"playoff_spots":8,"team_order":["NJ/NY Gotham FC","San Diego Wave FC","Washington Spirit","Kansas City Current","Angel City FC","Portland Thorns","Utah Royals","Seattle Reign FC","North Carolina Courage","Denver Summit FC","Orlando Pride","Houston Dash","Boston Legacy FC","Bay FC","Racing Louisville","Chicago Stars"],"standings_table":[{"team":"NJ/NY Gotham FC","team_color":"#A9F1FD","playoff_sims":100000,"playoff_pct":100,"1":100,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0,"10":0,"11":0,"12":0,"13":0,"14":0,"15":0,"16":0,"playoff_display":"100.00","logo_b64":"logos/Gotham.png"},{"team":"San Diego Wave FC","team_color":"#FC1896","playoff_sims":100000,"playoff_pct":100,"1":0,"2":100,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0,"10":0,"11":0,"12":0,"13":0,"14":0,"15":0,"16":0,"playoff_display":"100.00","logo_b64":"logos/San Diego.png"},{"team":"Washington Spirit","team_color":"#EDE939","playoff_sims":100000,"playoff_pct":100,"1":0,"2":0,"3":83.5,"4":14.08,"5":2.42,"6":0,"7":0,"8":0,"9":0,"10":0,"11":0,"12":0,"13":0,"14":0,"15":0,"16":0,"playoff_display":"100.00","logo_b64":"logos/Washington.png"},{"team":"Kansas City Current","team_color":"#62CBC9","playoff_sims":100000,"playoff_pct":100,"1":0,"2":0,"3":14.22,"4":54.54,"5":31.24,"6":0,"7":0,"8":0,"9":0,"10":0,"11":0,"12":0,"13":0,"14":0,"15":0,"16":0,"playoff_display":"100.00","logo_b64":"logos/Kansas City.png"},{"team":"Angel City FC","team_color":"#F1B1A5","playoff_sims":100000,"playoff_pct":100,"1":0,"2":0,"3":2.28,"4":31.38,"5":52.4,"6":11,"7":2.94,"8":0,"9":0,"10":0,"11":0,"12":0,"13":0,"14":0,"15":0,"16":0,"playoff_display":"100.00","logo_b64":"logos/Angel City.png"},{"team":"Portland Thorns","team_color":"#99242B","playoff_sims":100000,"playoff_pct":100,"1":0,"2":0,"3":0,"4":0,"5":9.49,"6":62.16,"7":28.35,"8":0,"9":0,"10":0,"11":0,"12":0,"13":0,"14":0,"15":0,"16":0,"playoff_display":"100.00","logo_b64":"logos/Portland.png"},{"team":"Utah Royals","team_color":"#FDB71A","playoff_sims":100000,"playoff_pct":100,"1":0,"2":0,"3":0,"4":0,"5":4.46,"6":26.84,"7":68.71,"8":0,"9":0,"10":0,"11":0,"12":0,"13":0,"14":0,"15":0,"16":0,"playoff_display":"100.00","logo_b64":"logos/Utah.png"},{"team":"Seattle Reign FC","team_color":"#5D7BA8","playoff_sims":63368,"playoff_pct":63.368,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":63.37,"9":36.63,"10":0,"11":0,"12":0,"13":0,"14":0,"15":0,"16":0,"playoff_display":"63.37","logo_b64":"logos/Seattle.png"},{"team":"North Carolina Courage","team_color":"#B4A269","playoff_sims":28761,"playoff_pct":28.761,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":28.76,"9":44.11,"10":27.13,"11":0,"12":0,"13":0,"14":0,"15":0,"16":0,"playoff_display":"28.76","logo_b64":"logos/North Carolina.png"},{"team":"Denver Summit FC","team_color":"#20604E","playoff_sims":7871,"playoff_pct":7.871,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":7.87,"9":19.26,"10":72.87,"11":0,"12":0,"13":0,"14":0,"15":0,"16":0,"playoff_display":"7.87","logo_b64":"logos/Denver.png"},{"team":"Orlando Pride","team_color":"#61259E","playoff_sims":0,"playoff_pct":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0,"10":0,"11":84.85,"12":15.15,"13":0,"14":0,"15":0,"16":0,"playoff_display":"0.00","logo_b64":"logos/Orlando.png"},{"team":"Houston Dash","team_color":"#FF6900","playoff_sims":0,"playoff_pct":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0,"10":0,"11":15.15,"12":60.04,"13":24.81,"14":0,"15":0,"16":0,"playoff_display":"0.00","logo_b64":"logos/Houston.png"},{"team":"Boston Legacy FC","team_color":"#36E882","playoff_sims":0,"playoff_pct":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0,"10":0,"11":0,"12":24.81,"13":75.19,"14":0,"15":0,"16":0,"playoff_display":"0.00","logo_b64":"logos/Boston.png"},{"team":"Bay FC","team_color":"#DFDEDE","playoff_sims":0,"playoff_pct":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0,"10":0,"11":0,"12":0,"13":0,"14":100,"15":0,"16":0,"playoff_display":"0.00","logo_b64":"logos/Bay FC.png"},{"team":"Racing Louisville","team_color":"#C5B5F2","playoff_sims":0,"playoff_pct":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0,"10":0,"11":0,"12":0,"13":0,"14":0,"15":100,"16":0,"playoff_display":"0.00","logo_b64":"logos/Louisville.png"},{"team":"Chicago Stars","team_color":"#3AB5E8","playoff_sims":0,"playoff_pct":0,"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0,"10":0,"11":0,"12":0,"13":0,"14":0,"15":0,"16":100,"playoff_display":"0.00","logo_b64":"logos/Chicago.png"}],"leverage_table":[{"date":"Nov 01","home":"Seattle Reign FC","match_odds":"43% | 28% | 30%","away":"Orlando Pride","h_range":"36.1% ↔ 100.0%","h_swing":63.9,"a_range":"0.0% ↔ 0.0%","a_swing":0,"total_leverage":63.9,"home_logo_b64":"logos/Seattle.png","away_logo_b64":"logos/Orlando.png"},{"date":"Nov 01","home":"North Carolina Courage","match_odds":"50% | 23% | 27%","away":"Denver Summit FC","h_range":"0.0% ↔ 43.3%","h_swing":43.3,"a_range":"0.0% ↔ 14.8%","a_swing":14.8,"total_leverage":58.1,"home_logo_b64":"logos/North Carolina.png","away_logo_b64":"logos/Denver.png"},{"date":"Nov 01","home":"Angel City FC","match_odds":"52% | 24% | 24%","away":"Boston Legacy FC","h_range":"100.0% ↔ 100.0%","h_swing":0,"a_range":"0.0% ↔ 0.0%","a_swing":0,"total_leverage":0,"home_logo_b64":"logos/Angel City.png","away_logo_b64":"logos/Boston.png"},{"date":"Nov 01","home":"Bay FC","match_odds":"26% | 26% | 47%","away":"San Diego Wave FC","h_range":"0.0% ↔ 0.0%","h_swing":0,"a_range":"100.0% ↔ 100.0%","a_swing":0,"total_leverage":0,"home_logo_b64":"logos/Bay FC.png","away_logo_b64":"logos/San Diego.png"},{"date":"Nov 01","home":"NJ/NY Gotham FC","match_odds":"42% | 27% | 31%","away":"Utah Royals","h_range":"100.0% ↔ 100.0%","h_swing":0,"a_range":"100.0% ↔ 100.0%","a_swing":0,"total_leverage":0,"home_logo_b64":"logos/Gotham.png","away_logo_b64":"logos/Utah.png"},{"date":"Nov 01","home":"Houston Dash","match_odds":"36% | 24% | 40%","away":"Portland Thorns","h_range":"0.0% ↔ 0.0%","h_swing":0,"a_range":"100.0% ↔ 100.0%","a_swing":0,"total_leverage":0,"home_logo_b64":"logos/Houston.png","away_logo_b64":"logos/Portland.png"},{"date":"Nov 01","home":"Racing Louisville","match_odds":"27% | 21% | 52%","away":"Kansas City Current","h_range":"0.0% ↔ 0.0%","h_swing":0,"a_range":"100.0% ↔ 100.0%","a_swing":0,"total_leverage":0,"home_logo_b64":"logos/Louisville.png","away_logo_b64":"logos/Kansas City.png"},{"date":"Nov 01","home":"Washington Spirit","match_odds":"73% | 18% | 9%","away":"Chicago Stars","h_range":"100.0% ↔ 100.0%","h_swing":0,"a_range":"0.0% ↔ 0.0%","a_swing":0,"total_leverage":0,"home_logo_b64":"logos/Washington.png","away_logo_b64":"logos/Chicago.png"}],"points_dist":[{"team":"Angel City FC","total_points":49,"count":23706,"team_color":"#F1B1A5"},{"team":"Angel City FC","total_points":50,"count":24043,"team_color":"#F1B1A5"},{"team":"Angel City FC","total_points":52,"count":52251,"team_color":"#F1B1A5"},{"team":"Bay FC","total_points":27,"count":47402,"team_color":"#DFDEDE"},{"team":"Bay FC","total_points":28,"count":26215,"team_color":"#DFDEDE"},{"team":"Bay FC","total_points":30,"count":26383,"team_color":"#DFDEDE"},{"team":"Boston Legacy FC","total_points":33,"count":52251,"team_color":"#36E882"},{"team":"Boston Legacy FC","total_points":34,"count":24043,"team_color":"#36E882"},{"team":"Boston Legacy FC","total_points":36,"count":23706,"team_color":"#36E882"},{"team":"Chicago Stars","total_points":17,"count":72859,"team_color":"#3AB5E8"},{"team":"Chicago Stars","total_points":18,"count":18262,"team_color":"#3AB5E8"},{"team":"Chicago Stars","total_points":20,"count":8879,"team_color":"#3AB5E8"},{"team":"Denver Summit FC","total_points":41,"count":50159,"team_color":"#20604E"},{"team":"Denver Summit FC","total_points":42,"count":22709,"team_color":"#20604E"},{"team":"Denver Summit FC","total_points":44,"count":27132,"team_color":"#20604E"},{"team":"Houston Dash","total_points":33,"count":40039,"team_color":"#FF6900"},{"team":"Houston Dash","total_points":34,"count":23869,"team_color":"#FF6900"},{"team":"Houston Dash","total_points":36,"count":36092,"team_color":"#FF6900"},{"team":"Kansas City Current","total_points":50,"count":26373,"team_color":"#62CBC9"},{"team":"Kansas City Current","total_points":51,"count":21182,"team_color":"#62CBC9"},{"team":"Kansas City Current","total_points":53,"count":52445,"team_color":"#62CBC9"},{"team":"NJ/NY Gotham FC","total_points":58,"count":31098,"team_color":"#A9F1FD"},{"team":"NJ/NY Gotham FC","total_points":59,"count":26762,"team_color":"#A9F1FD"},{"team":"NJ/NY Gotham FC","total_points":61,"count":42140,"team_color":"#A9F1FD"},{"team":"North Carolina Courage","total_points":42,"count":27132,"team_color":"#B4A269"},{"team":"North Carolina Courage","total_points":43,"count":22709,"team_color":"#B4A269"},{"team":"North Carolina Courage","total_points":45,"count":50159,"team_color":"#B4A269"},{"team":"Orlando Pride","total_points":36,"count":42700,"team_color":"#61259E"},{"team":"Orlando Pride","total_points":37,"count":27916,"team_color":"#61259E"},{"team":"Orlando Pride","total_points":39,"count":29384,"team_color":"#61259E"},{"team":"Portland Thorns","total_points":47,"count":36092,"team_color":"#99242B"},{"team":"Portland Thorns","total_points":48,"count":23869,"team_color":"#99242B"},{"team":"Portland Thorns","total_points":50,"count":40039,"team_color":"#99242B"},{"team":"Racing Louisville","total_points":24,"count":52445,"team_color":"#C5B5F2"},{"team":"Racing Louisville","total_points":25,"count":21182,"team_color":"#C5B5F2"},{"team":"Racing Louisville","total_points":27,"count":26373,"team_color":"#C5B5F2"},{"team":"San Diego Wave FC","total_points":55,"count":26383,"team_color":"#FC1896"},{"team":"San Diego Wave FC","total_points":56,"count":26215,"team_color":"#FC1896"},{"team":"San Diego Wave FC","total_points":58,"count":47402,"team_color":"#FC1896"},{"team":"Seattle Reign FC","total_points":44,"count":29384,"team_color":"#5D7BA8"},{"team":"Seattle Reign FC","total_points":45,"count":27916,"team_color":"#5D7BA8"},{"team":"Seattle Reign FC","total_points":47,"count":42700,"team_color":"#5D7BA8"},{"team":"Utah Royals","total_points":47,"count":42140,"team_color":"#FDB71A"},{"team":"Utah Royals","total_points":48,"count":26762,"team_color":"#FDB71A"},{"team":"Utah Royals","total_points":50,"count":31098,"team_color":"#FDB71A"},{"team":"Washington Spirit","total_points":52,"count":8879,"team_color":"#EDE939"},{"team":"Washington Spirit","total_points":53,"count":18262,"team_color":"#EDE939"},{"team":"Washington Spirit","total_points":55,"count":72859,"team_color":"#EDE939"}],"playoff_lines":[{"total_points":44,"count":14628},{"total_points":45,"count":42672},{"total_points":47,"count":42700}]}}}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap');
+
+  .fc-app-wrapper {
+    background-color: #F4F6F8;
+    color: #222222;
+    min-height: calc(100vh - 60px);
+    font-family: 'Assistant', sans-serif;
+    padding-bottom: 3rem;
+  }
+
+  .fc-subnav {
+    background-color: #1D3549;
+    padding: 0 1.5rem;
+    min-height: 56px;
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+
+  .fc-subnav-left {
+    display: flex;
+    align-items: stretch;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .fc-brand-group {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.4rem 0;
+  }
+
+  .fc-brand {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    white-space: nowrap;
+  }
+
+  /* Custom Flag League Selector in Subnav */
+  .fc-custom-select {
+    position: relative;
+    min-width: 175px;
+    user-select: none;
+  }
+
+  .fc-select-trigger {
+    background-color: rgba(255, 255, 255, 0.12);
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 4px;
+    padding: 0.32rem 0.65rem;
+    font-size: 0.92rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+
+  .fc-select-trigger:after {
+    content: "\25BE";
+    font-size: 0.85rem;
+    color: #FFFFFF;
+    margin-left: 0.5rem;
+  }
+
+  .fc-select-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    min-width: 100%;
+    background-color: #FFFFFF;
+    border: 1px solid #CCCCCC;
+    border-radius: 4px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    z-index: 1050;
+  }
+
+  .fc-select-menu.open {
+    display: block;
+  }
+
+  .fc-select-option {
+    padding: 0.45rem 0.7rem;
+    font-size: 0.92rem;
+    color: #222222;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .fc-select-option:hover, .fc-select-option.selected {
+    background-color: #00747A;
+    color: #FFFFFF;
+  }
+
+  .fc-flag {
+    font-family: 'Noto Color Emoji', sans-serif !important;
+    font-size: 1.05rem;
+    line-height: 1;
+  }
+
+  .fc-tabs {
+    display: flex;
+    align-items: stretch;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .fc-tab-btn {
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.95rem;
+    font-weight: 400;
+    padding: 0 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: all 0.15s ease;
+    font-family: 'Assistant', sans-serif;
+  }
+
+  .fc-tab-btn:hover {
+    color: #FFFFFF;
+  }
+
+  .fc-tab-btn.active {
+    color: #FFFFFF;
+    font-weight: 700;
+    border-bottom: 3px solid #FFFFFF;
+  }
+
+  .fc-updated-badge {
+    display: flex;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.85rem;
+  }
+
+  .fc-container {
+    max-width: 1620px;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+
+  .fc-card {
+    background-color: #FFFFFF;
+    border: 1px solid #E0E4E8;
+    border-radius: 6px;
+    padding: 1.25rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .fc-card-dark {
+    background-color: #00747A;
+    border: 1px solid #005A5E;
+    border-radius: 6px;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .fc-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.85rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .fc-section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111111;
+    margin: 0;
+  }
+
+  .fc-section-sub {
+    font-size: 0.9rem;
+    color: #666666;
+    margin: 0;
+  }
+
+  .fc-btn-dl {
+    background-color: transparent;
+    color: #222222;
+    border: 1px solid #CCCCCC;
+    border-radius: 4px;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: 'Assistant', sans-serif;
+  }
+
+  .fc-btn-dl:hover {
+    background-color: #00747A;
+    color: #FFFFFF;
+    border-color: #00747A;
+  }
+
+  .fc-btn-dl-light {
+    background-color: rgba(0, 0, 0, 0.2);
+    color: #EEEDCE;
+    border: 1px solid rgba(238, 237, 206, 0.45);
+    border-radius: 4px;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: 'Assistant', sans-serif;
+  }
+
+  .fc-btn-dl-light:hover {
+    background-color: #EEEDCE;
+    color: #00747A;
+  }
+
+  /* Reactable-Parity Tables */
+  .fc-table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    background-color: #FFFFFF;
+  }
+
+  .fc-matrix-table {
+    width: 100%;
+    min-width: 1180px;
+    border-collapse: collapse;
+    font-family: 'Assistant', sans-serif;
+    font-size: 15px;
+    background-color: #FFFFFF;
+  }
+
+  .fc-matrix-table th, .fc-matrix-table td {
+    padding: 7px 8px;
+    border-bottom: 1px solid #EFEFEF;
+  }
+
+  .fc-matrix-table thead tr.fc-group-row th {
+    border-bottom: 1px solid #DDDDDD;
+    font-weight: 700;
+    color: #333333;
+    text-align: center;
+    font-size: 15px;
+  }
+
+  .fc-matrix-table thead tr.fc-col-row th {
+    border-bottom: 2px solid #DDDDDD;
+    font-weight: 600;
+    color: #333333;
+    text-align: center;
+  }
+
+  .fc-matrix-table tbody tr:hover {
+    filter: brightness(0.97);
+  }
+
+  .fc-team-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    color: #111111;
+    white-space: nowrap;
+  }
+
+  .fc-team-logo {
+    height: 22px;
+    width: 28px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+
+  .fc-lev-logo {
+    height: 28px;
+    width: 36px;
+    object-fit: contain;
+    flex-shrink: 0;
+  }
+
+  .fc-canvas-wrap {
+    width: 100%;
+    background-color: #00747A;
+    border-radius: 4px;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .fc-canvas-wrap canvas {
+    max-width: 100%;
+    height: auto !important;
+    display: block;
+    margin: 0 auto;
+  }
+</style>
+
+<div class="fc-app-wrapper">
+  <div class="fc-subnav">
+    <div class="fc-subnav-left">
+      <div class="fc-brand-group">
+        <span class="fc-brand">Season Forecasts</span>
+        <input type="hidden" id="fc-league-val" value="NWSL">
+        <div class="fc-custom-select" id="fc-league-dropdown">
+          <div id="fc-league-trigger" class="fc-select-trigger"></div>
+          <div id="fc-league-menu" class="fc-select-menu"></div>
+        </div>
+      </div>
+
+      <div class="fc-tabs">
+        <button id="fc-tab-btn-standings" class="fc-tab-btn active" onclick="switchFcTab('standings')">Standings &amp; Playoff Odds</button>
+        <button id="fc-tab-btn-leverage" class="fc-tab-btn" onclick="switchFcTab('leverage')">Matchday Playoff Leverage</button>
+        <button id="fc-tab-btn-points" class="fc-tab-btn" onclick="switchFcTab('points')">Points Distribution</button>
+        <button id="fc-tab-btn-cutline" class="fc-tab-btn" onclick="switchFcTab('cutline')">Playoff Cut Lines</button>
+      </div>
+    </div>
+    <div id="fc-updated-text" class="fc-updated-badge"></div>
+  </div>
+
+  <div class="fc-container">
+    <!-- TAB 1: STANDINGS & PLAYOFF PROBABILITY MATRIX -->
+    <div id="fc-panel-standings">
+      <div class="fc-card">
+        <div class="fc-toolbar">
+          <div>
+            <h3 id="standings-title" class="fc-section-title">Final Standings &amp; Playoff Probability Matrix</h3>
+            <p class="fc-section-sub">100,000 Monte Carlo Season Simulations • Dashed Line Indicates Playoff Cutoff</p>
+          </div>
+          <button class="fc-btn-dl" onclick="downloadDomTable('standings-export-box', 'standings_distribution_table.png')">Download Table (PNG)</button>
+        </div>
+        <div class="fc-table-scroll">
+          <div id="standings-export-box" style="background-color: #FFFFFF; padding: 8px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: MATCHDAY PLAYOFF LEVERAGE -->
+    <div id="fc-panel-leverage" style="display: none;">
+      <div class="fc-card">
+        <div class="fc-toolbar">
+          <div>
+            <h3 id="leverage-title" class="fc-section-title">Matchday Playoff Leverage &amp; Viewer's Guide</h3>
+            <p class="fc-section-sub">Conditional Playoff Qualification Odds by 90-Minute Match Outcome (Loss ↔ Win)</p>
+          </div>
+          <button class="fc-btn-dl" onclick="downloadDomTable('leverage-export-box', 'matchday_playoff_leverage.png')">Download Table (PNG)</button>
+        </div>
+        <div class="fc-table-scroll">
+          <div id="leverage-export-box" style="background-color: #FFFFFF; padding: 8px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: SIMULATED POINTS DISTRIBUTION -->
+    <div id="fc-panel-points" style="display: none;">
+      <div class="fc-card-dark">
+        <div class="fc-toolbar" style="margin-bottom: 0.5rem;">
+          <div></div>
+          <button class="fc-btn-dl-light" onclick="downloadFcCanvas('points-dist-canvas', 'standings_points_distribution.png')">Download Plot (PNG)</button>
+        </div>
+        <div class="fc-canvas-wrap">
+          <canvas id="points-dist-canvas" width="2400" height="1350"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: PLAYOFF CUT LINES -->
+    <div id="fc-panel-cutline" style="display: none;">
+      <div class="fc-card-dark">
+        <div class="fc-toolbar" style="margin-bottom: 0.5rem;">
+          <div></div>
+          <button class="fc-btn-dl-light" onclick="downloadFcCanvas('cutline-canvas', 'simulated_playoff_lines.png')">Download Plot (PNG)</button>
+        </div>
+        <div class="fc-canvas-wrap">
+          <canvas id="cutline-canvas" width="2400" height="1350"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const rawJson = document.getElementById("forecasts-payload").textContent;
+  const payload = JSON.parse(rawJson);
+  const leaguesMap = payload.leagues || {};
+
+  const flagMap = {
+    "NWSL": "\uD83C\uDDFA\uD83C\uDDF8",
+    "USL Super League": "\uD83C\uDDFA\uD83C\uDDF8",
+    "WSL": "\uD83C\uDFF4\uDB40\uDC67\uDB40\uDC62\uDB40\uDC65\uDB40\uDC6E\uDB40\uDC67\uDB40\uDC7F",
+    "Liga F": "\uD83C\uDDEA\uD83C\uDDF8",
+    "Premi\u00e8re Ligue": "\uD83C\uDDEB\uD83C\uDDF7",
+    "Frauen-Bundesliga": "\uD83C\uDDE9\uD83C\uDDEA",
+    "Serie A": "\uD83C\uDDEE\uD83C\uDDF9",
+    "A-League": "\uD83C\uDDE6\uD83C\uDDFA"
+  };
+
+  window.switchFcTab = function(tab) {
+    const tabs = ["standings", "leverage", "points", "cutline"];
+    tabs.forEach(t => {
+      document.getElementById("fc-panel-" + t).style.display = (t === tab) ? "block" : "none";
+      document.getElementById("fc-tab-btn-" + t).classList.toggle("active", t === tab);
+    });
+  };
+
+  window.downloadFcCanvas = function(canvasId, filename) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const link = document.createElement("a");
+    link.download = filename;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  };
+
+  window.downloadDomTable = function(boxId, filename) {
+    const el = document.getElementById(boxId);
+    if (!el) return;
+    html2canvas(el, { backgroundColor: "#FFFFFF", scale: 2 }).then(canvas => {
+      const link = document.createElement("a");
+      link.download = filename;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    });
+  };
+
+  // Cube-root teal color scale matching nwsl_predictive_pipeline.R
+  function posColorScale(val) {
+    const v = Number(val);
+    if (isNaN(v) || v <= 0) return { bg: "transparent", fg: "transparent" };
+    const norm = Math.pow(Math.min(Math.max(v / 100, 0), 1), 0.333);
+    const bg = `rgba(0, 116, 122, ${norm.toFixed(4)})`;
+    const fg = (v >= 2.0) ? "#EEEDCE" : "rgba(0, 116, 122, 0.32)";
+    return { bg, fg };
+  }
+
+  function playoffColorScale(pctVal) {
+    const v = Number(pctVal);
+    if (isNaN(v)) return { bg: "transparent", fg: "#00747A" };
+    const norm = Math.min(Math.max(v / 100, 0), 1);
+    const bg = `rgba(0, 116, 122, ${norm.toFixed(4)})`;
+    const fg = (v >= 25.0) ? "#EEEDCE" : "#00747A";
+    return { bg, fg };
+  }
+
+  // 1. Render Standings & Playoff Matrix
+  function renderStandingsMatrix(lgData) {
+    const box = document.getElementById("standings-export-box");
+    const rows = lgData.standings_table || [];
+    const numTeams = Number(lgData.num_teams) || rows.length || 16;
+    const cutSpot  = Number(lgData.playoff_spots) || 8;
+
+    document.getElementById("standings-title").textContent =
+      `${lgData.league_name} ${lgData.season_label || ""} Final Standings & Playoff Probability Matrix`;
+
+    let html = `<ta` + `ble class="fc-matrix-table">
+        <thead>
+          <tr class="fc-group-row">
+            <th></th>
+            <th colspan="${numTeams}">Final Standings Place Probability (%)</th>
+            <th style="border-left: 2.5px solid #00747A;"></th>
+          </tr>
+          <tr class="fc-col-row">
+            <th style="text-align: left; width: 210px;"></th>`;
+
+    for (let p = 1; p <= numTeams; p++) {
+      const cutBorder = (p === cutSpot) ? "border-right: 1px dashed rgba(0, 116, 122, 0.45);" : "";
+      html += `<th style="${cutBorder}">${p}</th>`;
+    }
+    html += `<th style="border-left: 2.5px solid #00747A; width: 105px;">Playoffs (%)</th></tr></thead><tbody>`;
+
+    rows.forEach(r => {
+      const logoImg = r.logo_b64
+        ? `<img class="fc-team-logo" src="${r.logo_b64}" alt="">`
+        : "";
+      html += `<tr><td><div class="fc-team-cell">${logoImg}<span>${r.team}</span></div></td>`;
+
+      for (let p = 1; p <= numTeams; p++) {
+        const val = Number(r[String(p)]) || 0;
+        const cutBorder = (p === cutSpot) ? "border-right: 1px dashed rgba(0, 116, 122, 0.45);" : "";
+        if (val <= 0) {
+          html += `<td style="text-align: center; ${cutBorder}"></td>`;
+        } else {
+          const st = posColorScale(val);
+          html += `<td style="text-align: center; background-color: ${st.bg}; color: ${st.fg}; ${cutBorder}">${val.toFixed(2)}</td>`;
+        }
+      }
+
+      const poSt = playoffColorScale(r.playoff_pct);
+      html += `<td style="text-align: center; font-weight: 700; font-size: 15px; border-left: 2.5px solid #00747A; background-color: ${poSt.bg}; color: ${poSt.fg};">${r.playoff_display}</td></tr>`;
+    });
+
+    html += `</tbody></table>`;
+    box.innerHTML = html;
+  }
+
+  // 2. Render Matchday Playoff Leverage Table
+  function renderLeverageTable(lgData) {
+    const box = document.getElementById("leverage-export-box");
+    const rows = lgData.leverage_table || [];
+
+    document.getElementById("leverage-title").textContent =
+      `${lgData.league_name} Matchday Playoff Leverage & Viewer's Guide`;
+
+    if (rows.length === 0) {
+      box.innerHTML = `<p style="padding: 1.5rem; color: #555555; font-size: 1rem; margin: 0;">All regular-season fixtures for the ${lgData.season_label || ""} ${lgData.league_name} season have been completed.</p>`;
+      return;
+    }
+
+    let maxLev = 1;
+    rows.forEach(r => {
+      const v = Number(r.total_leverage) || 0;
+      if (v > maxLev) maxLev = v;
+    });
+
+    let html = `<ta` + `ble class="fc-matrix-table" style="font-size: 17px;">
+        <thead>
+          <tr class="fc-group-row">
+            <th></th>
+            <th colspan="3">Matchup</th>
+            <th colspan="2">Home Stakes (Loss &harr; Win)</th>
+            <th colspan="2">Away Stakes (Loss &harr; Win)</th>
+            <th style="border-left: 2.5px solid #00747A;">Stakes</th>
+          </tr>
+          <tr class="fc-col-row">
+            <th style="width: 90px;">Date</th>
+            <th style="text-align: left; width: 240px;">Home Club</th>
+            <th style="width: 185px;">Home | Draw | Away</th>
+            <th style="text-align: left; width: 240px;">Away Club</th>
+            <th style="width: 165px;">Playoff Range</th>
+            <th style="width: 95px;">Swing</th>
+            <th style="width: 165px;">Playoff Range</th>
+            <th style="width: 95px;">Swing</th>
+            <th style="border-left: 2.5px solid #00747A; width: 135px;">Total Leverage</th>
+          </tr>
+        </thead>
+        <tbody>`;
+
+    rows.forEach((r, idx) => {
+      const rowBg = (idx % 2 === 1) ? "background-color: #F9FAFB;" : "";
+      const hLogo = r.home_logo_b64 ? `<img class="fc-lev-logo" src="${r.home_logo_b64}" alt="">` : "";
+      const aLogo = r.away_logo_b64 ? `<img class="fc-lev-logo" src="${r.away_logo_b64}" alt="">` : "";
+
+      const hSwingVal = Number(r.h_swing) || 0;
+      const aSwingVal = Number(r.a_swing) || 0;
+      const hSwingStr = hSwingVal > 0 ? `+${hSwingVal.toFixed(1)}%` : "--";
+      const aSwingStr = aSwingVal > 0 ? `+${aSwingVal.toFixed(1)}%` : "--";
+      const hSwingCol = hSwingVal >= 15.0 ? "#00747A" : "#666666";
+      const aSwingCol = aSwingVal >= 15.0 ? "#00747A" : "#666666";
+
+      const totLev = Number(r.total_leverage) || 0;
+      const normLev = Math.min(Math.max(totLev / maxLev, 0), 1);
+      const levBg = totLev > 0 ? `rgba(0, 116, 122, ${(normLev * 0.85).toFixed(4)})` : "transparent";
+      const levFg = normLev > 0.45 ? "#EEEDCE" : "#00747A";
+
+      html += `
+        <tr style="${rowBg}">
+          <td style="text-align: center; color: #444444; padding: 10px 12px;">${r.date}</td>
+          <td style="padding: 10px 12px;"><div class="fc-team-cell" style="font-weight: 700; font-size: 17px;">${hLogo}<span>${r.home}</span></div></td>
+          <td style="text-align: center; color: #555555; font-weight: 500; font-size: 16px; padding: 10px 12px;">${r.match_odds}</td>
+          <td style="padding: 10px 12px;"><div class="fc-team-cell" style="font-weight: 700; font-size: 17px;">${aLogo}<span>${r.away}</span></div></td>
+          <td style="text-align: center; padding: 10px 12px;">${r.h_range}</td>
+          <td style="text-align: center; font-weight: 700; color: ${hSwingCol}; padding: 10px 12px;">${hSwingStr}</td>
+          <td style="text-align: center; padding: 10px 12px;">${r.a_range}</td>
+          <td style="text-align: center; font-weight: 700; color: ${aSwingCol}; padding: 10px 12px;">${aSwingStr}</td>
+          <td style="text-align: center; font-weight: 700; font-size: 18px; border-left: 2.5px solid #00747A; background-color: ${levBg}; color: ${levFg}; padding: 10px 12px;">${totLev.toFixed(1)}%</td>
+        </tr>`;
+    });
+
+    html += `</tbody></table>`;
+    box.innerHTML = html;
+  }
+
+  // 3. Render Simulated Standings Points Distribution Raster Canvas
+  function drawPointsDistCanvas(lgData) {
+    const canvas = document.getElementById("points-dist-canvas");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const W = canvas.width;
+    const H = canvas.height;
+
+    ctx.fillStyle = "#00747A";
+    ctx.fillRect(0, 0, W, H);
+
+    const ptsRows = lgData.points_dist || [];
+    if (ptsRows.length === 0) return;
+
+    const teamsTopDown = Array.isArray(lgData.team_order) && lgData.team_order.length > 0
+      ? lgData.team_order
+      : Array.from(new Set(ptsRows.map(r => r.team)));
+
+    const nTeams = teamsTopDown.length;
+
+    let minPts = Infinity, maxPts = -Infinity, maxCount = 1;
+    const peakByTeam = {};
+
+    ptsRows.forEach(r => {
+      const p = Number(r.total_points);
+      const c = Number(r.count);
+      if (p < minPts) minPts = p;
+      if (p > maxPts) maxPts = p;
+      if (c > maxCount) maxCount = c;
+
+      if (!peakByTeam[r.team] || c > peakByTeam[r.team].count) {
+        peakByTeam[r.team] = { total_points: p, count: c };
+      }
+    });
+
+    const padLeft = 360;
+    const padRight = 50;
+    const padTop = 45;
+    const padBottom = 140;
+    const plotW = W - padLeft - padRight;
+    const plotH = H - padTop - padBottom;
+
+    const nCols = Math.max(1, maxPts - minPts + 1);
+    const cellW = plotW / nCols;
+    const cellH = plotH / nTeams;
+
+    // Interpolate [#00747A (0,116,122) -> #EEEDCE (238,237,206)]
+    function countToColor(c) {
+      const t = Math.min(Math.max(c / maxCount, 0), 1);
+      const r = Math.round(0 + t * 238);
+      const g = Math.round(116 + t * (237 - 116));
+      const b = Math.round(122 + t * (206 - 122));
+      return `rgb(${r},${g},${b})`;
+    }
+
+    // Draw raster cells
+    ptsRows.forEach(r => {
+      const tIdx = teamsTopDown.indexOf(r.team);
+      if (tIdx < 0) return;
+      const p = Number(r.total_points);
+      const c = Number(r.count);
+      const colIdx = p - minPts;
+
+      const x = padLeft + colIdx * cellW;
+      const y = padTop + tIdx * cellH;
+
+      ctx.fillStyle = countToColor(c);
+      ctx.fillRect(x, y, Math.ceil(cellW), Math.ceil(cellH));
+    });
+
+    // Draw modal total_points text on peak cell per team
+    ctx.fillStyle = "#00747A";
+    ctx.font = "700 24px 'Assistant', sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    teamsTopDown.forEach((tm, tIdx) => {
+      const pk = peakByTeam[tm];
+      if (!pk) return;
+      const colIdx = pk.total_points - minPts;
+      const cx = padLeft + (colIdx + 0.5) * cellW;
+      const cy = padTop + (tIdx + 0.5) * cellH;
+      ctx.fillText(String(pk.total_points), cx, cy);
+    });
+
+    // Axes lines
+    ctx.strokeStyle = "#EEEDCE";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(padLeft, padTop);
+    ctx.lineTo(padLeft, padTop + plotH);
+    ctx.lineTo(padLeft + plotW, padTop + plotH);
+    ctx.stroke();
+
+    // Y-axis Team Names
+    ctx.fillStyle = "#EEEDCE";
+    ctx.font = "400 26px 'Assistant', sans-serif";
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    teamsTopDown.forEach((tm, tIdx) => {
+      const cy = padTop + (tIdx + 0.5) * cellH;
+      ctx.fillText(tm, padLeft - 16, cy);
+    });
+
+    // X-axis Ticks & Labels
+    ctx.font = "400 26px 'Assistant', sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    const step = nCols > 25 ? 5 : 2;
+    const firstTick = Math.ceil(minPts / step) * step;
+    for (let p = firstTick; p <= maxPts; p += step) {
+      const colIdx = p - minPts;
+      const tx = padLeft + (colIdx + 0.5) * cellW;
+      ctx.fillText(String(p), tx, padTop + plotH + 14);
+    }
+
+    // X-axis Title
+    ctx.font = "700 32px 'Assistant', sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Simulated Standings Points", padLeft + plotW / 2, padTop + plotH + 62);
+  }
+
+  // 4. Render Playoffs Cut-Line Distribution Bar Chart Canvas
+  function drawCutlineCanvas(lgData) {
+    const canvas = document.getElementById("cutline-canvas");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const W = canvas.width;
+    const H = canvas.height;
+
+    ctx.fillStyle = "#00747A";
+    ctx.fillRect(0, 0, W, H);
+
+    const cutRows = lgData.playoff_lines || [];
+    if (cutRows.length === 0) return;
+
+    let minPts = Infinity, maxPts = -Infinity, maxCount = 1;
+    cutRows.forEach(r => {
+      const p = Number(r.total_points);
+      const c = Number(r.count);
+      if (p < minPts) minPts = p;
+      if (p > maxPts) maxPts = p;
+      if (c > maxCount) maxCount = c;
+    });
+
+    const yMax = maxCount + 2000;
+    const xMin = minPts - 0.5;
+    const xMax = maxPts + 0.5;
+
+    const padLeft = 95;
+    const padRight = 50;
+    const padTop = 175;
+    const padBottom = 135;
+    const plotW = W - padLeft - padRight;
+    const plotH = H - padTop - padBottom;
+
+    // Title & Subtitle
+    ctx.fillStyle = "#EEEDCE";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.font = "700 52px 'Assistant', sans-serif";
+    ctx.fillText(`${lgData.league_name} Playoffs Cut Lines`, padLeft, 28);
+
+    ctx.font = "400 38px 'Assistant', sans-serif";
+    ctx.fillText("Simulating the Season 100,000 Times", padLeft, 95);
+
+    const unitW = plotW / (xMax - xMin);
+    const barW = unitW * 0.90;
+
+    cutRows.forEach(r => {
+      const p = Number(r.total_points);
+      const c = Number(r.count);
+      const centerX = padLeft + ((p - xMin) / (xMax - xMin)) * plotW;
+      const barH = (c / yMax) * plotH;
+      const barX = centerX - barW / 2;
+      const barY = padTop + plotH - barH;
+
+      ctx.fillStyle = "#EEEDCE";
+      ctx.fillRect(barX, barY, barW, barH);
+
+      const nudgeY = (1000 / yMax) * plotH;
+      ctx.font = "400 30px 'Assistant', sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "bottom";
+      ctx.fillText(String(c), centerX, barY - nudgeY);
+    });
+
+    // Axes lines
+    ctx.strokeStyle = "#EEEDCE";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(padLeft, padTop);
+    ctx.lineTo(padLeft, padTop + plotH);
+    ctx.lineTo(padLeft + plotW, padTop + plotH);
+    ctx.stroke();
+
+    // X-axis Integer Labels
+    ctx.fillStyle = "#EEEDCE";
+    ctx.font = "700 32px 'Assistant', sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    for (let p = minPts; p <= maxPts; p++) {
+      const tx = padLeft + ((p - xMin) / (xMax - xMin)) * plotW;
+      ctx.fillText(String(p), tx, padTop + plotH + 16);
+    }
+
+    // X-axis Title
+    ctx.font = "700 38px 'Assistant', sans-serif";
+    ctx.fillText("Final Points Total", padLeft + plotW / 2, padTop + plotH + 70);
+
+    // Y-axis Title
+    ctx.save();
+    ctx.translate(32, padTop + plotH / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    ctx.fillText("Number of Simulations", 0, 0);
+    ctx.restore();
+  }
+
+  function renderActiveLeague() {
+    const lgKey = document.getElementById("fc-league-val").value;
+    const lgData = leaguesMap[lgKey];
+    if (!lgData) return;
+
+    document.getElementById("fc-updated-text").textContent =
+      lgData.updated_at ? `Updated: ${lgData.updated_at}` : "";
+
+    renderStandingsMatrix(lgData);
+    renderLeverageTable(lgData);
+    drawPointsDistCanvas(lgData);
+    drawCutlineCanvas(lgData);
+  }
+
+  function initLeagueSelector() {
+    const keys = Object.keys(leaguesMap);
+    const hiddenEl = document.getElementById("fc-league-val");
+    const trigger  = document.getElementById("fc-league-trigger");
+    const menu     = document.getElementById("fc-league-menu");
+
+    if (keys.length === 0) return;
+    if (!leaguesMap[hiddenEl.value]) hiddenEl.value = keys[0];
+
+    const renderTrigger = (k) => {
+      const flag = flagMap[k] || "\uD83C\uDFF3\uFE0F";
+      trigger.innerHTML = `<span style="display:flex;align-items:center;gap:0.45rem;"><span class="fc-flag">${flag}</span><span>${k}</span></span>`;
+    };
+
+    renderTrigger(hiddenEl.value);
+    menu.innerHTML = "";
+
+    keys.forEach(k => {
+      const flag = flagMap[k] || "\uD83C\uDFF3\uFE0F";
+      const opt = document.createElement("div");
+      opt.className = "fc-select-option" + (k === hiddenEl.value ? " selected" : "");
+      opt.innerHTML = `<span class="fc-flag">${flag}</span><span>${k}</span>`;
+      opt.addEventListener("click", (e) => {
+        e.stopPropagation();
+        hiddenEl.value = k;
+        renderTrigger(k);
+        Array.from(menu.children).forEach(c => c.classList.remove("selected"));
+        opt.classList.add("selected");
+        menu.classList.remove("open");
+        renderActiveLeague();
+      });
+      menu.appendChild(opt);
+    });
+
+    trigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      menu.classList.toggle("open");
+    });
+
+    document.addEventListener("click", () => menu.classList.remove("open"));
+  }
+
+  function initForecastsPage() {
+    initLeagueSelector();
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(renderActiveLeague);
+    } else {
+      renderActiveLeague();
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initForecastsPage);
+  } else {
+    initForecastsPage();
+  }
+})();
+</script>
+
+
+
+
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/woso\.live");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

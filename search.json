@@ -1,33 +1,5 @@
 [
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "WoSo.Live hosts a suite of advanced quantitative tools and interactive applications dedicated to women’s soccer analytics. Featuring custom Regularized Adjusted Plus-Minus (RAPM) modeling, expected goals (xG) shot simulations, and comprehensive tournament forecasting, the platform aims to bridge the gap between complex data science and accessible visual insights for the global women’s game."
-  },
-  {
-    "objectID": "about.html#about-the-site",
-    "href": "about.html#about-the-site",
-    "title": "About",
-    "section": "",
-    "text": "WoSo.Live hosts a suite of advanced quantitative tools and interactive applications dedicated to women’s soccer analytics. Featuring custom Regularized Adjusted Plus-Minus (RAPM) modeling, expected goals (xG) shot simulations, and comprehensive tournament forecasting, the platform aims to bridge the gap between complex data science and accessible visual insights for the global women’s game."
-  },
-  {
-    "objectID": "about.html#about-ian",
-    "href": "about.html#about-ian",
-    "title": "About",
-    "section": "About Ian",
-    "text": "About Ian\nIan Fleming is a FIFA-licensed agent and the former General Manager and Director of Soccer Operations of the Orlando Pride of the National Women’s Soccer League, as well as previously serving as the Director of Strategy and Analytics for the Houston Dynamo and Houston Dash, and Director of Analytics and Strategy for the San Jose Earthquakes.\nIan is a Chicago-Kent College of Law graduate, having focused on corporate law, by way of a Bachelor of Science degree in Economics from the University of South Carolina. In a previous life, he played collegiate soccer at the Division II level."
-  },
-  {
-    "objectID": "about.html#connect-with-ian",
-    "href": "about.html#connect-with-ian",
-    "title": "About",
-    "section": "Connect with Ian",
-    "text": "Connect with Ian\n    ianmichaelfleming [at] gmail [dot] com"
-  },
-  {
     "objectID": "explainers.html",
     "href": "explainers.html",
     "title": "Analytics Primer",
@@ -75,5 +47,33 @@
     "title": "Analytics Primer",
     "section": "6. Wins Above Replacement (WAR): Converting Talent into Standings Value",
     "text": "6. Wins Above Replacement (WAR): Converting Talent into Standings Value\nA rate metric like Net RAPM/90 measures per-minute efficiency, but it does not account for availability. A substitute who plays 150 elite minutes off the bench provides less aggregate value to a club over a season than a reliable starter logging 2,500 minutes at an above-average level.\nThe Wins Above Replacement (WAR) framework connects per-minute performance with playing time to evaluate a player’s total contribution to her team’s standings position.\n\nThe Valuation Chain\n\n\n\n\n\n\n\n\n\nStep\nMetric\nMathematical Formula\nPractical Meaning\n\n\n\n\n1. Per-Minute Talent\nNet RAPM / 90\nSingle-Stage Ridge Regression\nIsolated player rate impact per 90 minutes.\n\n\n2. Average Baseline\nGoals Above Average (GAA)\n(Net xG per 90 × Nineties) + Finishing Talent\nNet goals produced relative to an average player over the same minutes.\n\n\n3. Replacement Baseline\nGoals Above Replacement (GAR)\nGAA − (Replacement Floor × Nineties)\nNet goals produced relative to an accessible bench or reserve replacement.\n\n\n4. Standings Impact\nPoints Above Replacement (PAR)\nGAR × 0.65\nLeague table standings points delivered to the team.\n\n\n5. Match Victories\nWins Above Replacement (WAR)\nGAR / 3.65\nTotal match victories directly added by the player.\n\n\n6. Season Efficiency\nPaced WAR (WAR/30)\n(WAR / Nineties) × 30\nValue paced to a full 30-match season (minimum 450 minutes).\n\n\n\n\n\nCore Valuation Concepts\n\nThe “Replacement Level” Benchmark\nAverage talent (GAA = 0.0) is not the baseline of value. If a starting central defender suffers an injury, her club cannot sign a league-average starter mid-season; they must rely on a replacement player - a reserve from the back end of the squad or a youth call-up.\n\nOutfield Replacement Floors: Defined by the bottom 15th percentile of active rotation players in each position group (Center Back, Fullback, Midfielder, Forward), bounded between −0.25 and −0.12 goals per 90 minutes.\nGoalkeeper Replacement Floor: Anchored to −0.104 goals per 90 minutes to prevent small backup samples from distorting starter ratings.\n\n\n\nGoals to Points (PAR) and Wins (WAR)\n\nPoints Above Replacement (PAR): In professional soccer, each +1.0 in net goal differential historically yields approximately 0.65 standings points (PAR = GAR × 0.65).\nWins Above Replacement (WAR): It takes approximately 3.65 net goals above replacement to produce one additional team victory (WAR = GAR / 3.65).\n\n\n\n\n\n\n\n\n\nWAR Range\nProduction Tier\nTypical Profile\n\n\n\n\n+3.0 to +4.5 WAR\nMVP Contender\nDominant league leader responsible for 3 to 4 team victories over replacement.\n\n\n+1.5 to +2.5 WAR\nHigh-End Starter\nAll-League caliber player who consistently swings matches.\n\n\n+0.8 to +1.4 WAR\nSolid Starter\nDependable everyday starter playing above replacement level.\n\n\n0.0 to +0.5 WAR\nRotational Depth\nBench contributor providing replacement-level support.\n\n\n&lt; 0.0 WAR\nBelow Replacement\nPlayer performing below readily available reserve options.\n\n\n\n\n\nPaced WAR (WAR/30)\nBecause injuries or transfers limit total minutes, Paced WAR (WAR/30) standardizes performance to a full 30-match season (2,700 minutes) to display per-game efficiency.\nTo prevent small-sample cameos from distorting the leaderboard, Paced WAR enforces a strict 450-minute qualification floor (five full matches). Players below 450 minutes receive an NA rating, preventing a player who logged 20 fortunate minutes from displaying an unearned 7.0 WAR pace."
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "WoSo.Live hosts a suite of advanced quantitative tools and interactive applications dedicated to women’s soccer analytics. Featuring custom Regularized Adjusted Plus-Minus (RAPM) modeling, expected goals (xG) shot simulations, and comprehensive tournament forecasting, the platform aims to bridge the gap between complex data science and accessible visual insights for the global women’s game."
+  },
+  {
+    "objectID": "about.html#about-the-site",
+    "href": "about.html#about-the-site",
+    "title": "About",
+    "section": "",
+    "text": "WoSo.Live hosts a suite of advanced quantitative tools and interactive applications dedicated to women’s soccer analytics. Featuring custom Regularized Adjusted Plus-Minus (RAPM) modeling, expected goals (xG) shot simulations, and comprehensive tournament forecasting, the platform aims to bridge the gap between complex data science and accessible visual insights for the global women’s game."
+  },
+  {
+    "objectID": "about.html#about-ian",
+    "href": "about.html#about-ian",
+    "title": "About",
+    "section": "About Ian",
+    "text": "About Ian\nIan Fleming is a FIFA-licensed agent and the former General Manager and Director of Soccer Operations of the Orlando Pride of the National Women’s Soccer League, as well as previously serving as the Director of Strategy and Analytics for the Houston Dynamo and Houston Dash, and Director of Analytics and Strategy for the San Jose Earthquakes.\nIan is a Chicago-Kent College of Law graduate, having focused on corporate law, by way of a Bachelor of Science degree in Economics from the University of South Carolina. In a previous life, he played collegiate soccer at the Division II level."
+  },
+  {
+    "objectID": "about.html#connect-with-ian",
+    "href": "about.html#connect-with-ian",
+    "title": "About",
+    "section": "Connect with Ian",
+    "text": "Connect with Ian\n    ianmichaelfleming [at] gmail [dot] com"
   }
 ]
