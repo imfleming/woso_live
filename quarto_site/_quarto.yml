@@ -10,6 +10,7 @@ project:
     - email_icon.png
     - logos/*.png
     - data/rapm/*
+    - data/wwc/*
 
 website:
   title: "WoSo.Live"

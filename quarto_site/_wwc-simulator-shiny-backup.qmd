@@ -1,0 +1,10 @@
+---
+title: "2027 Women's World Cup Simulator"
+page-layout: full
+---
+
+<iframe 
+  src="https://ianmichaelfleming.shinyapps.io/wwc_app/" 
+  style="border: none; width: 100%; height: 1200px;"
+  title="Women's World Cup Simulator">
+</iframe>

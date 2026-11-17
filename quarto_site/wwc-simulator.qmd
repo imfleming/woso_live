@@ -1,10 +1,3004 @@
 ---
 title: "2027 Women's World Cup Simulator"
-page-layout: full
+page-layout: custom
+format:
+  html:
+    html-table-processing: none
+execute:
+  echo: false
+  warning: false
+  message: false
 ---
 
-<iframe 
-  src="https://ianmichaelfleming.shinyapps.io/wwc_app/" 
-  style="border: none; width: 100%; height: 1200px;"
-  title="Women's World Cup Simulator">
-</iframe>
+```{=html}
+<!--| quarto-html-table-processing: none -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+  .wwc-app-wrapper {
+    background-color: #FFFFFF;
+    color: #222222;
+    min-height: calc(100vh - 60px);
+    font-family: 'Assistant', sans-serif;
+    padding-bottom: 3rem;
+  }
+
+  .wwc-subnav {
+    background-color: #1D3549;
+    padding: 0 1.5rem;
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .wwc-subnav-left {
+    display: flex;
+    align-items: stretch;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    min-height: 56px;
+  }
+
+  .wwc-brand {
+    font-size: 1.22rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+
+  .wwc-tabs {
+    display: flex;
+    align-items: stretch;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
+  }
+
+  .wwc-tab-btn {
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.95rem;
+    font-weight: 400;
+    padding: 0.75rem 0.95rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: all 0.15s ease;
+    font-family: 'Assistant', sans-serif;
+    white-space: nowrap;
+  }
+
+  .wwc-tab-btn:hover {
+    color: #FFFFFF;
+  }
+
+  .wwc-tab-btn.active {
+    color: #FFFFFF;
+    font-weight: 700;
+    border-bottom: 3px solid #FFFFFF;
+  }
+
+  .wwc-status-pill {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.85);
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    white-space: nowrap;
+  }
+
+  .wwc-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #20C997;
+    display: inline-block;
+  }
+
+  .wwc-status-dot.loading { background-color: #FDB71A; }
+  .wwc-status-dot.error { background-color: #E74C3C; }
+
+  .wwc-body-container {
+    max-width: 1680px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .wwc-alert {
+    background-color: #FFF8E6;
+    border: 1px solid #F5C26B;
+    border-left: 4px solid #D97706;
+    border-radius: 4px;
+    color: #7C2D12;
+    padding: 0.85rem 1rem;
+    margin-bottom: 1.25rem;
+    font-size: 0.92rem;
+    display: none;
+    line-height: 1.45;
+  }
+
+  .wwc-alert.visible { display: block; }
+
+  /* Buttons */
+  .wwc-btn {
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 0.44rem 0.9rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: 'Assistant', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    line-height: 1.25;
+  }
+
+  .wwc-btn:disabled {
+    opacity: 0.52;
+    cursor: not-allowed;
+  }
+
+  .wwc-btn-primary {
+    background-color: #00747A;
+    color: #FFFFFF;
+  }
+  .wwc-btn-primary:hover:not(:disabled) { background-color: #005A5F; }
+
+  .wwc-btn-dark {
+    background-color: #1D3549;
+    color: #FFFFFF;
+  }
+  .wwc-btn-dark:hover:not(:disabled) { background-color: #122433; }
+
+  .wwc-btn-mint {
+    background-color: #A5CCD1;
+    color: #111111;
+    font-weight: 700;
+  }
+  .wwc-btn-mint:hover:not(:disabled) { background-color: #8FBEC4; }
+
+  .wwc-btn-outline {
+    background-color: #FFFFFF;
+    color: #1D3549;
+    border-color: #CED4DA;
+  }
+  .wwc-btn-outline:hover:not(:disabled) {
+    background-color: #F1F5F8;
+    border-color: #1D3549;
+  }
+
+  /* Toolbar & Status Banner */
+  .wwc-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1rem;
+    background-color: #F8F9FA;
+    border: 1px solid #DEE2E6;
+    border-radius: 6px;
+    padding: 0.85rem 1.1rem;
+    margin-bottom: 1.15rem;
+  }
+
+  .wwc-toolbar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.55rem;
+  }
+
+  .wwc-cycle-badge {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #00747A;
+    background-color: #E6F4F4;
+    border: 1px solid #B6E0E2;
+    border-radius: 999px;
+    padding: 0.25rem 0.7rem;
+  }
+
+  .wwc-settled-card {
+    background-color: #FFFFFF;
+    border: 1px solid #DEE2E6;
+    border-radius: 6px;
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+  }
+
+  .wwc-card-header-teal {
+    background-color: #BCD4DE;
+    color: #111111;
+    font-weight: 700;
+    padding: 0.65rem 1rem;
+    font-size: 0.96rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .wwc-card-header-mint {
+    background-color: #A5CCD1;
+    color: #111111;
+    font-weight: 700;
+    padding: 0.5rem 0.85rem;
+    font-size: 0.92rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .wwc-card-body {
+    padding: 1rem;
+  }
+
+  .wwc-settled-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .wwc-settled-box {
+    background-color: #F8F9FA;
+    border: 1px solid #E9ECEF;
+    border-left: 3px solid #00747A;
+    border-radius: 4px;
+    padding: 0.55rem 0.75rem;
+  }
+
+  .wwc-settled-title {
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: #1D3549;
+    margin-bottom: 0.3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .wwc-settled-list {
+    font-size: 0.86rem;
+    color: #222222;
+    line-height: 1.4;
+  }
+
+  .wwc-stage-section {
+    margin-bottom: 1.4rem;
+  }
+
+  .wwc-stage-head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .wwc-stage-head h4 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1D3549;
+  }
+
+  .wwc-stage-note {
+    font-size: 0.84rem;
+    color: #555555;
+  }
+
+  /* Grids & Matchup Cards */
+  .wwc-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .wwc-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .wwc-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  @media (max-width: 1100px) {
+    .wwc-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .wwc-grid-3 { grid-template-columns: 1fr; }
+    .wwc-grid-2 { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 640px) {
+    .wwc-grid-4 { grid-template-columns: 1fr; }
+  }
+
+  .wwc-col-title {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: #555555;
+    text-align: center;
+    margin-bottom: 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .wwc-matchup-card {
+    background-color: #F8F9FA;
+    border: 1px solid #DEE2E6;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    margin-bottom: 0.45rem;
+    overflow: hidden;
+  }
+
+  .wwc-matchup-card.is-final {
+    border-color: #F5B041;
+    background-color: #FFF9E6;
+  }
+
+  .wwc-team-node {
+    padding: 0.38rem 0.65rem;
+    font-size: 0.86rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .wwc-team-node.team-top {
+    border-bottom: 1px solid #DEE2E6;
+  }
+
+  .wwc-team-node.winner {
+    font-weight: 700;
+    color: #111111;
+    background-color: rgba(0, 116, 122, 0.06);
+  }
+
+  .wwc-team-score {
+    font-variant-numeric: tabular-nums;
+    font-size: 0.84rem;
+    color: #333333;
+    white-space: nowrap;
+  }
+
+  .wwc-pen-tag {
+    font-size: 0.72rem;
+    color: #00747A;
+    font-weight: 700;
+    margin-left: 0.2rem;
+  }
+
+  .wwc-chip-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    padding-top: 0.7rem;
+    border-top: 1px dashed #DEE2E6;
+    align-items: center;
+    font-size: 0.84rem;
+  }
+
+  .wwc-chip {
+    display: inline-block;
+    padding: 0.16rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    background-color: #E6F4F4;
+    color: #005A5F;
+    border: 1px solid #B6E0E2;
+  }
+
+  .wwc-chip.playoff {
+    background-color: #FFF4E5;
+    color: #9A4E00;
+    border-color: #FAD2A2;
+  }
+
+  /* Knockout Bracket Grid */
+  .wwc-bracket-wrap {
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+
+  .wwc-bracket-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(215px, 1fr));
+    gap: 1rem;
+    min-width: 880px;
+  }
+
+  .wwc-bracket-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    min-height: 580px;
+  }
+
+  .wwc-bracket-final-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1.5rem;
+    min-height: 580px;
+  }
+
+  .wwc-champ-box {
+    background-color: #D1E7DD;
+    border: 1px solid #BADBCC;
+    color: #0F5132;
+    padding: 0.9rem 1rem;
+    border-radius: 6px;
+    font-weight: 800;
+    text-align: center;
+    font-size: 1.15rem;
+  }
+
+  .wwc-group-card {
+    background-color: #FFFFFF;
+    border: 1px solid #DEE2E6;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  table.wwc-mini-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.83rem;
+  }
+
+  table.wwc-mini-table th {
+    background-color: #F8F9FA;
+    border-bottom: 1px solid #DEE2E6;
+    padding: 0.35rem 0.45rem;
+    font-weight: 700;
+    text-align: left;
+    color: #333333;
+  }
+
+  table.wwc-mini-table th.num,
+  table.wwc-mini-table td.num {
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  table.wwc-mini-table td {
+    padding: 0.36rem 0.45rem;
+    border-bottom: 1px solid #F0F2F4;
+  }
+
+  table.wwc-mini-table tr.adv-row td:first-child {
+    font-weight: 700;
+    color: #005A5F;
+  }
+
+  .wwc-matchlog-trigger {
+    cursor: pointer;
+    border-bottom: 1px dotted #888888;
+  }
+
+  .wwc-matchlog-drawer {
+    background-color: #F8F9FA;
+    border-top: 1px solid #DEE2E6;
+    padding: 0.55rem 0.7rem;
+    font-size: 0.79rem;
+    color: #333333;
+    display: none;
+  }
+
+  .wwc-matchlog-drawer.open {
+    display: block;
+  }
+
+  /* Match Predictor Layout & Combobox */
+  .wwc-sidebar-layout {
+    display: grid;
+    grid-template-columns: 330px minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  @media (max-width: 992px) {
+    .wwc-sidebar-layout { grid-template-columns: 1fr; }
+  }
+
+  .wwc-sidebar {
+    background-color: #F8F9FA;
+    border: 1px solid #DEE2E6;
+    border-radius: 6px;
+    padding: 1.25rem;
+  }
+
+  .wwc-sidebar h4 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1D3549;
+    margin-top: 0;
+    margin-bottom: 0.4rem;
+  }
+
+  .wwc-label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #222222;
+    margin-bottom: 0.35rem;
+  }
+
+  .wwc-select {
+    width: 100%;
+    background-color: #FFFFFF;
+    color: #222222;
+    border: 1px solid #CED4DA;
+    border-radius: 4px;
+    padding: 0.42rem 0.6rem;
+    font-size: 0.9rem;
+    font-family: 'Assistant', sans-serif;
+    box-sizing: border-box;
+  }
+
+  .wwc-select:focus {
+    outline: none;
+    border-color: #00747A;
+    box-shadow: 0 0 0 2px rgba(0, 116, 122, 0.2);
+  }
+
+  .wwc-search-wrap {
+    position: relative;
+    width: 100%;
+    margin-bottom: 0.9rem;
+  }
+
+  .wwc-search-input {
+    width: 100%;
+    background-color: #FFFFFF;
+    color: #222222;
+    border: 1px solid #CED4DA;
+    border-radius: 4px;
+    padding: 0.45rem 2rem 0.45rem 0.65rem;
+    font-size: 0.92rem;
+    font-family: 'Assistant', sans-serif;
+    box-sizing: border-box;
+    cursor: pointer;
+  }
+
+  .wwc-search-input:focus {
+    outline: none;
+    border-color: #00747A;
+    box-shadow: 0 0 0 2px rgba(0, 116, 122, 0.25);
+    cursor: text;
+  }
+
+  .wwc-search-chevron {
+    position: absolute;
+    right: 0.65rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 0.8rem;
+    color: #555555;
+  }
+
+  .wwc-search-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 0;
+    right: 0;
+    background-color: #FFFFFF;
+    border: 1px solid #CED4DA;
+    border-radius: 4px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+    max-height: 280px;
+    overflow-y: auto;
+    z-index: 1050;
+  }
+
+  .wwc-search-menu.open { display: block; }
+
+  .wwc-search-option {
+    padding: 0.42rem 0.65rem;
+    font-size: 0.9rem;
+    color: #222222;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .wwc-search-option-sub {
+    font-size: 0.78rem;
+    color: #6C757D;
+    white-space: nowrap;
+  }
+
+  .wwc-search-option:hover,
+  .wwc-search-option.active {
+    background-color: #00747A;
+    color: #FFFFFF;
+  }
+
+  .wwc-search-option:hover .wwc-search-option-sub,
+  .wwc-search-option.active .wwc-search-option-sub {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .wwc-search-empty {
+    padding: 0.5rem 0.65rem;
+    font-size: 0.88rem;
+    color: #777777;
+    font-style: italic;
+  }
+
+  /* Probability Stacked Bars */
+  .wwc-prob-bar {
+    display: flex;
+    height: 26px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 0.65rem 0 0.75rem 0;
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+
+  .wwc-prob-seg-home {
+    background-color: #00747A;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .wwc-prob-seg-draw {
+    background-color: #D5DCE2;
+    color: #1D3549;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .wwc-prob-seg-away {
+    background-color: #1D3549;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  /* KPI Strip & Data Tables (aligned with rapm-tools.qmd) */
+  .wwc-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.9rem;
+    margin-bottom: 1.15rem;
+  }
+
+  @media (max-width: 1100px) {
+    .wwc-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 576px) {
+    .wwc-kpi-grid { grid-template-columns: 1fr; }
+  }
+
+  .wwc-kpi-card {
+    background-color: #F8F9FA;
+    border: 1px solid #E9ECEF;
+    border-left: 4px solid #00747A;
+    border-radius: 4px;
+    padding: 0.8rem 1rem;
+  }
+
+  .wwc-kpi-sub {
+    font-size: 0.76rem;
+    color: #666666;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.25rem;
+  }
+
+  .wwc-kpi-val {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #111111;
+  }
+
+  .wwc-dt-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .wwc-dt-search {
+    border: 1px solid #CED4DA;
+    border-radius: 4px;
+    padding: 0.35rem 0.6rem;
+    font-size: 0.88rem;
+    font-family: 'Assistant', sans-serif;
+    min-width: 210px;
+  }
+
+  .wwc-dt-search:focus {
+    outline: none;
+    border-color: #00747A;
+  }
+
+  .wwc-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  table.wwc-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.86rem;
+  }
+
+  table.wwc-table thead th {
+    background-color: #F8F9FA;
+    color: #222222;
+    font-weight: 700;
+    text-align: left;
+    padding: 7px 9px;
+    border-bottom: 2px solid #DEE2E6;
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  table.wwc-table thead th.sortable { cursor: pointer; }
+  table.wwc-table thead th.sortable:hover { background-color: #EEF2F5; }
+
+  table.wwc-table thead th.num,
+  table.wwc-table tbody td.num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  table.wwc-table tbody td {
+    padding: 6px 9px;
+    border-bottom: 1px solid #EDF0F2;
+    color: #222222;
+    white-space: nowrap;
+  }
+
+  table.wwc-table tbody tr:hover { background-color: #F4F9FA; }
+
+  .wwc-dt-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+    font-size: 0.84rem;
+    color: #555555;
+  }
+
+  .wwc-page-btns {
+    display: flex;
+    gap: 0.3rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .wwc-page-btn {
+    background: #FFFFFF;
+    border: 1px solid #CED4DA;
+    border-radius: 3px;
+    padding: 0.22rem 0.58rem;
+    font-size: 0.82rem;
+    font-family: 'Assistant', sans-serif;
+    cursor: pointer;
+    color: #222222;
+  }
+
+  .wwc-page-btn:hover:not(:disabled) {
+    background-color: #00747A;
+    color: #FFFFFF;
+    border-color: #00747A;
+  }
+
+  .wwc-page-btn.active {
+    background-color: #1D3549;
+    color: #FFFFFF;
+    border-color: #1D3549;
+    font-weight: 700;
+  }
+
+  .wwc-page-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .wwc-inline-bar-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.45rem;
+  }
+
+  .wwc-inline-bar-track {
+    width: 58px;
+    height: 7px;
+    background-color: #E9ECEF;
+    border-radius: 4px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .wwc-inline-bar-fill {
+    height: 100%;
+    background-color: #00747A;
+  }
+
+  .wwc-inline-bar-fill.gold { background-color: #D97706; }
+
+  .wwc-confed-pill {
+    display: inline-block;
+    padding: 0.08rem 0.42rem;
+    border-radius: 3px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    background-color: #EDF2F7;
+    color: #1D3549;
+  }
+
+  .wwc-divider {
+    border: 0;
+    border-top: 1px solid #DEE2E6;
+    margin: 0.9rem 0;
+  }
+
+  .wwc-placeholder-box {
+    border: 1px dashed #CED4DA;
+    border-radius: 6px;
+    background-color: #FAFAFA;
+    padding: 1rem 1.2rem;
+    font-size: 0.9rem;
+    color: #666666;
+  }
+</style>
+
+<div class="wwc-app-wrapper">
+  <div class="wwc-subnav">
+    <div class="wwc-subnav-left">
+      <span class="wwc-brand">2027 Women's World Cup Simulator</span>
+      <div class="wwc-tabs" role="tablist">
+        <button id="wwc-tab-btn-sim" class="wwc-tab-btn active" role="tab" aria-selected="true" data-tab="sim" type="button">Tournament Simulator</button>
+        <button id="wwc-tab-btn-odds" class="wwc-tab-btn" role="tab" aria-selected="false" data-tab="odds" type="button">Tournament Odds</button>
+        <button id="wwc-tab-btn-pred" class="wwc-tab-btn" role="tab" aria-selected="false" data-tab="pred" type="button">Match Predictor</button>
+        <button id="wwc-tab-btn-rank" class="wwc-tab-btn" role="tab" aria-selected="false" data-tab="rank" type="button">Rankings</button>
+      </div>
+    </div>
+    <div class="wwc-status-pill" id="wwc_status_pill">
+      <span class="wwc-status-dot loading" id="wwc_status_dot"></span>
+      <span id="wwc_status_text">Loading tournament engine...</span>
+    </div>
+  </div>
+
+  <div class="wwc-body-container">
+    <div id="wwc_error_banner" class="wwc-alert" role="alert"></div>
+
+    <!-- TAB 1: TOURNAMENT SIMULATOR -->
+    <div id="wwc-panel-sim">
+      <div class="wwc-toolbar">
+        <div class="wwc-toolbar-actions">
+          <button id="btn_quick_sim" class="wwc-btn wwc-btn-mint" type="button">Quick Sim All Tournaments</button>
+          <button id="btn_reset_sim" class="wwc-btn wwc-btn-outline" type="button">Reset</button>
+          <button id="btn_download_bracket" class="wwc-btn wwc-btn-dark" type="button" disabled>Download World Cup Bracket (PNG)</button>
+        </div>
+        <span class="wwc-cycle-badge" id="wwc_cycle_label">Post-WAFCON 2026 Cycle</span>
+      </div>
+
+      <div class="wwc-settled-card">
+        <div class="wwc-card-header-teal">
+          <span>Confirmed Qualifiers &amp; Confederation Slot Allocation (32 Teams Total)</span>
+          <span style="font-size:0.82rem; font-weight:600;" id="wwc_settled_count">18 Direct + 2 ICPO Settled</span>
+        </div>
+        <div class="wwc-card-body">
+          <div class="wwc-settled-grid" id="wwc_settled_grid"></div>
+        </div>
+      </div>
+
+      <!-- 1. UEFA -->
+      <div class="wwc-stage-section">
+        <div class="wwc-stage-head">
+          <h4 id="uefa_heading">UEFA Play-offs (October-December 2026)</h4>
+          <button id="btn_uefa" class="wwc-btn wwc-btn-primary" type="button">Simulate UEFA</button>
+          <span class="wwc-stage-note" id="uefa_note">Two-legged aggregate ties; top 7 Round 2 winners by UEFA ranking qualify directly, 8th enters Inter-Confed Play-offs.</span>
+        </div>
+        <div id="uefa_ui">
+          <div class="wwc-placeholder-box">Click <strong>Simulate UEFA</strong> (or <strong>Quick Sim All Tournaments</strong>) to run all Round 1 &amp; Round 2 two-legged ties.</div>
+        </div>
+      </div>
+
+      <!-- 2. CONCACAF -->
+      <div class="wwc-stage-section">
+        <div class="wwc-stage-head">
+          <h4 id="concacaf_heading">CONCACAF W Championship (November-December 2026)</h4>
+          <button id="btn_concacaf" class="wwc-btn wwc-btn-primary" type="button">Simulate CONCACAF</button>
+          <span class="wwc-stage-note" id="concacaf_note">United States receives home-field advantage; QF winners qualify directly, QF losers contest 2 Play-In slots.</span>
+        </div>
+        <div id="concacaf_ui">
+          <div class="wwc-placeholder-box">Click <strong>Simulate CONCACAF</strong> (or <strong>Quick Sim All Tournaments</strong>) to simulate Quarter-Finals, Semi-Finals, Final &amp; Play-In matches.</div>
+        </div>
+      </div>
+
+      <!-- 3. INTER-CONFED -->
+      <div class="wwc-stage-section">
+        <div class="wwc-stage-head">
+          <h4 id="global_heading">Inter-Confederation Play-offs (Nov-Dec 2026 &amp; Feb 2027)</h4>
+          <button id="btn_global" class="wwc-btn wwc-btn-primary" type="button" disabled>Simulate Inter-Confed</button>
+          <span class="wwc-stage-note" id="global_note">Top 2 from the 6-team Preliminary Group join 4 seeded/direct entrants in 3 confederation-separated Final Knockouts.</span>
+        </div>
+        <div id="global_ui">
+          <div class="wwc-placeholder-box">Simulate UEFA &amp; CONCACAF first (or click <strong>Quick Sim All Tournaments</strong>) to populate the 10-team Inter-Confederation Play-offs.</div>
+        </div>
+      </div>
+
+      <!-- 4. FINAL WWC -->
+      <div class="wwc-stage-section">
+        <div class="wwc-stage-head">
+          <h4 id="final_heading">Final World Cup Draw &amp; Bracket (Brazil 2027)</h4>
+          <button id="btn_draw" class="wwc-btn wwc-btn-dark" type="button" disabled>Simulate World Cup</button>
+          <span class="wwc-stage-note">Pots seeded by Net Strength ranking (Brazil anchored in Pot 1 / Group A); max 2 UEFA &amp; max 1 non-UEFA per group.</span>
+        </div>
+        <div id="wwc_wrapper_ui">
+          <div class="wwc-placeholder-box">Resolve Inter-Confederation Play-offs (or click <strong>Quick Sim All Tournaments</strong>) to execute the 32-team Draw, Group Stage &amp; Knockout Bracket.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: TOURNAMENT ODDS -->
+    <div id="wwc-panel-odds" style="display:none;">
+      <div class="wwc-toolbar">
+        <div class="wwc-toolbar-actions">
+          <label class="wwc-label" for="odds_mode_select" style="margin:0;">Source:</label>
+          <select id="odds_mode_select" class="wwc-select" style="width:auto; min-width:250px;">
+            <option value="live" selected>Live Conditioned Monte Carlo (Browser)</option>
+            <option value="precomputed">Precomputed Baseline (.qs2 Export)</option>
+          </select>
+          <span id="odds_iter_wrap" style="display:inline-flex; align-items:center; gap:0.45rem;">
+            <label class="wwc-label" for="odds_iter_select" style="margin:0;">Iterations:</label>
+            <select id="odds_iter_select" class="wwc-select" style="width:auto; min-width:95px;">
+              <option value="1000">1,000</option>
+              <option value="2500" selected>2,500</option>
+              <option value="5000">5,000</option>
+              <option value="10000">10,000</option>
+              <option value="25000">25,000</option>
+            </select>
+            <button id="btn_run_mc" class="wwc-btn wwc-btn-primary" type="button">Run Simulations</button>
+          </span>
+          <button id="btn_export_odds_csv" class="wwc-btn wwc-btn-outline" type="button">Export Odds (CSV)</button>
+        </div>
+        <span style="font-size:0.84rem; color:#555555;" id="odds_mode_note"></span>
+      </div>
+
+      <div class="wwc-kpi-grid">
+        <div class="wwc-kpi-card">
+          <div class="wwc-kpi-sub">Monte Carlo Basis</div>
+          <div class="wwc-kpi-val" id="odds_kpi_basis">—</div>
+        </div>
+        <div class="wwc-kpi-card">
+          <div class="wwc-kpi-sub">Runtime / Coverage</div>
+          <div class="wwc-kpi-val" id="odds_kpi_time">—</div>
+        </div>
+        <div class="wwc-kpi-card">
+          <div class="wwc-kpi-sub">Title Favorite</div>
+          <div class="wwc-kpi-val" id="odds_kpi_fav">—</div>
+        </div>
+        <div class="wwc-kpi-card">
+          <div class="wwc-kpi-sub">Top Qualifier Prospect</div>
+          <div class="wwc-kpi-val" id="odds_kpi_qual">—</div>
+        </div>
+      </div>
+
+      <div class="wwc-settled-card">
+        <div class="wwc-card-header-teal">
+          <span>Full Qualification &amp; Knockout Advancement Odds</span>
+          <span style="font-size:0.82rem; font-weight:600;" id="odds_subtitle">Click any column header to sort</span>
+        </div>
+        <div class="wwc-card-body">
+          <div class="wwc-dt-controls">
+            <div style="display:flex; align-items:center; gap:0.65rem; flex-wrap:wrap;">
+              <label style="font-size:0.84rem; color:#555555;">Confed:
+                <select id="odds_confed_filter" class="wwc-select" style="width:auto; display:inline-block; margin-left:0.25rem; padding:0.25rem 0.45rem;">
+                  <option value="ALL" selected>All Confederations</option>
+                  <option value="AFC">AFC</option>
+                  <option value="CAF">CAF</option>
+                  <option value="CONCACAF">CONCACAF</option>
+                  <option value="CONMEBOL">CONMEBOL</option>
+                  <option value="OFC">OFC</option>
+                  <option value="UEFA">UEFA</option>
+                </select>
+              </label>
+              <label style="font-size:0.84rem; color:#555555;">Show
+                <select id="odds_page_len" class="wwc-select" style="width:auto; display:inline-block; margin:0 0.25rem; padding:0.25rem 0.45rem;">
+                  <option value="25">25</option>
+                  <option value="50" selected>50</option>
+                  <option value="100">100</option>
+                  <option value="99999">All</option>
+                </select> entries
+              </label>
+            </div>
+            <input id="odds_table_search" class="wwc-dt-search" type="search" placeholder="Search team or status...">
+          </div>
+          <div class="wwc-table-wrap">
+            <table class="wwc-table" id="odds_master_table">
+              <thead id="odds_table_head"></thead>
+              <tbody id="odds_table_body"></tbody>
+            </table>
+          </div>
+          <div class="wwc-dt-footer">
+            <span id="odds_table_info">Showing 0 entries</span>
+            <div class="wwc-page-btns" id="odds_table_pager"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: MATCH PREDICTOR -->
+    <div id="wwc-panel-pred" class="wwc-sidebar-layout" style="display:none;">
+      <div class="wwc-sidebar">
+        <h4>Head-to-Head Predictor</h4>
+        <p style="font-size:0.88rem; color:#555555; margin-bottom:1rem; line-height:1.45;">
+          Compare win, draw, expected goals, and scoreline probabilities under both WWR Ordered Logit and time-weighted Poisson Net Strength.
+        </p>
+
+        <label class="wwc-label" for="pred_home_search">Team 1 (Home / Neutral):</label>
+        <input type="hidden" id="pred_home">
+        <div class="wwc-search-wrap" id="wrap_pred_home">
+          <input type="text" id="pred_home_search" class="wwc-search-input" placeholder="Search any national team..." autocomplete="off">
+          <span class="wwc-search-chevron">&#9662;</span>
+          <div id="pred_home_menu" class="wwc-search-menu"></div>
+        </div>
+
+        <label class="wwc-label" for="pred_away_search">Team 2 (Away / Neutral):</label>
+        <input type="hidden" id="pred_away">
+        <div class="wwc-search-wrap" id="wrap_pred_away">
+          <input type="text" id="pred_away_search" class="wwc-search-input" placeholder="Search any national team..." autocomplete="off">
+          <span class="wwc-search-chevron">&#9662;</span>
+          <div id="pred_away_menu" class="wwc-search-menu"></div>
+        </div>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.9rem; gap:0.5rem;">
+          <label style="display:inline-flex; align-items:center; gap:0.45rem; font-size:0.9rem; cursor:pointer; font-weight:600;">
+            <input type="checkbox" id="is_neutral" checked style="accent-color:#00747A; width:16px; height:16px;">
+            Neutral Venue
+          </label>
+          <button id="btn_swap_teams" class="wwc-btn wwc-btn-outline" type="button" style="padding:0.3rem 0.65rem; font-size:0.82rem;">&#8645; Swap Teams</button>
+        </div>
+
+        <button id="run_prediction" class="wwc-btn wwc-btn-primary" style="width:100%; justify-content:center;" type="button">Analyze Match</button>
+      </div>
+
+      <div>
+        <div class="wwc-settled-card">
+          <div class="wwc-card-header-teal">
+            <span id="pred_match_header">Prediction Results</span>
+            <span style="font-size:0.82rem; font-weight:600;" id="pred_venue_badge">Neutral Venue</span>
+          </div>
+          <div class="wwc-card-body">
+            <div class="wwc-grid-2" id="pred_models_grid"></div>
+            <hr class="wwc-divider">
+            <h5 style="font-size:1.02rem; font-weight:700; color:#1D3549; margin-bottom:0.65rem;">Top 10 Exact Scorelines (Net Strength Poisson Model)</h5>
+            <div class="wwc-table-wrap">
+              <table class="wwc-table" id="scoreline_table">
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Scoreline</th>
+                    <th>Outcome</th>
+                    <th class="num">Probability</th>
+                  </tr>
+                </thead>
+                <tbody id="scoreline_tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: RANKINGS -->
+    <div id="wwc-panel-rank" style="display:none;">
+      <div class="wwc-grid-2">
+        <div class="wwc-settled-card">
+          <div class="wwc-card-header-teal">
+            <span>Unofficial FIFA World Rankings (WWR)</span>
+            <button id="btn_export_wwr_csv" class="wwc-btn wwc-btn-outline" type="button" style="padding:0.2rem 0.55rem; font-size:0.78rem;">Export CSV</button>
+          </div>
+          <div class="wwc-card-body">
+            <div class="wwc-dt-controls">
+              <label style="font-size:0.84rem; color:#555555;">Show
+                <select id="wwr_page_len" class="wwc-select" style="width:auto; display:inline-block; margin:0 0.25rem; padding:0.25rem 0.45rem;">
+                  <option value="20" selected>20</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                  <option value="99999">All</option>
+                </select> entries
+              </label>
+              <input id="wwr_search" class="wwc-dt-search" type="search" placeholder="Search team or rank...">
+            </div>
+            <div class="wwc-table-wrap">
+              <table class="wwc-table">
+                <thead id="wwr_thead"></thead>
+                <tbody id="wwr_tbody"></tbody>
+              </table>
+            </div>
+            <div class="wwc-dt-footer">
+              <span id="wwr_info"></span>
+              <div class="wwc-page-btns" id="wwr_pager"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="wwc-settled-card">
+          <div class="wwc-card-header-teal">
+            <span>Net Strength Model (Weighted Poisson GLM)</span>
+            <button id="btn_export_adv_csv" class="wwc-btn wwc-btn-outline" type="button" style="padding:0.2rem 0.55rem; font-size:0.78rem;">Export CSV</button>
+          </div>
+          <div class="wwc-card-body">
+            <div class="wwc-dt-controls">
+              <label style="font-size:0.84rem; color:#555555;">Show
+                <select id="adv_page_len" class="wwc-select" style="width:auto; display:inline-block; margin:0 0.25rem; padding:0.25rem 0.45rem;">
+                  <option value="20" selected>20</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                  <option value="99999">All</option>
+                </select> entries
+              </label>
+              <input id="adv_search" class="wwc-dt-search" type="search" placeholder="Search team or rank...">
+            </div>
+            <div class="wwc-table-wrap">
+              <table class="wwc-table">
+                <thead id="adv_thead"></thead>
+                <tbody id="adv_tbody"></tbody>
+              </table>
+            </div>
+            <div class="wwc-dt-footer">
+              <span id="adv_info"></span>
+              <div class="wwc-page-btns" id="adv_pager"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script id="wwc-app-engine">
+(function() {
+  "use strict";
+
+  // ---------------------------------------------------------------------------
+  // 1. PURE MATH, PROBABILITY & TOURNAMENT ENGINE (UNIT-TESTED IN NODE)
+  // ---------------------------------------------------------------------------
+  function normSearch(str) {
+    return String(str || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+  }
+
+  function escapeHtml(str) {
+    return String(str ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function expit(x) {
+    if (x >= 0) {
+      const z = Math.exp(-x);
+      return 1 / (1 + z);
+    }
+    const z = Math.exp(x);
+    return z / (1 + z);
+  }
+
+  function samplePoisson(lam) {
+    if (!Number.isFinite(lam) || lam <= 0) return 0;
+    if (lam < 30) {
+      const L = Math.exp(-lam);
+      let k = 0;
+      let p = 1.0;
+      do {
+        k++;
+        p *= Math.random();
+      } while (p > L);
+      return k - 1;
+    }
+    // PTRS transformed rejection for larger lambda
+    const b = 0.931 + 2.53 * Math.sqrt(lam);
+    const a = -0.059 + 0.02483 * b;
+    const invAlpha = 1.1239 + 1.1328 / (b - 3.4);
+    const vR = 0.9277 - 3.6224 / (b - 2);
+    while (true) {
+      const u = Math.random() - 0.5;
+      const v = Math.random();
+      const us = 0.5 - Math.abs(u);
+      const k = Math.floor((2 * a / us + b) * u + lam + 0.43);
+      if (k < 0) continue;
+      if (us >= 0.07 && v <= vR) return k;
+      if (us < 0.013 && v > us) continue;
+      const lhs = Math.log(v * invAlpha / (a / (us * us) + b));
+      let logFact = 0;
+      if (k > 1) {
+        // Stirling approximation with high accuracy for k >= 10
+        logFact = (k + 0.5) * Math.log(k) - k + 0.9189385332046727 + 1 / (12 * k);
+      }
+      const rhs = -lam + k * Math.log(lam) - logFact;
+      if (lhs <= rhs) return k;
+    }
+  }
+
+  function buildEngineContext(payload) {
+    const cfg = (payload && payload.config) || {};
+    const models = (payload && payload.models) || {};
+    const poisson = models.poisson || {};
+    const polr = models.wwr_polr || {};
+    const teamsMap = poisson.teams || {};
+    const ratingsMap = polr.ratings || {};
+    const uefaMap = (payload && payload.uefa_rankings) || {};
+    const rawAliases = Object.assign({}, cfg.aliases || {}, (payload && payload.aliases) || {});
+    const reverseAliases = {};
+    Object.keys(rawAliases).forEach(k => {
+      const target = rawAliases[k];
+      if (target && !reverseAliases[target]) reverseAliases[target] = k;
+    });
+
+    const wwrRows = ((payload && payload.rankings && payload.rankings.wwr) || []).slice();
+    const advRows = ((payload && payload.rankings && payload.rankings.net_strength) || []).slice();
+
+    const advRankMap = Object.create(null);
+    advRows.forEach(r => {
+      if (r && r.team) advRankMap[r.team] = Number(r.rank);
+    });
+
+    const wwrRankMap = Object.create(null);
+    wwrRows.forEach(r => {
+      if (r && r.team) wwrRankMap[r.team] = Number(r.rank);
+    });
+
+    // Build complete confederation lookup (checking direct names and aliases)
+    const confedMap = Object.create(null);
+    const confedsCfg = cfg.confed_teams || {};
+    Object.keys(confedsCfg).forEach(rawConfed => {
+      const stdConfed = rawConfed === "UEFA_EXTRA" ? "UEFA" : rawConfed;
+      const list = confedsCfg[rawConfed] || [];
+      list.forEach(t => {
+        confedMap[t] = stdConfed;
+        if (rawAliases[t]) confedMap[rawAliases[t]] = stdConfed;
+        if (reverseAliases[t]) confedMap[reverseAliases[t]] = stdConfed;
+      });
+    });
+    Object.keys(uefaMap).forEach(t => {
+      confedMap[t] = "UEFA";
+      if (rawAliases[t]) confedMap[rawAliases[t]] = "UEFA";
+      if (reverseAliases[t]) confedMap[reverseAliases[t]] = "UEFA";
+    });
+
+    const lamCache = new Map();
+    const probCache = new Map();
+
+    function resolveKey(name, mapObj) {
+      if (!name || !mapObj) return null;
+      if (Object.prototype.hasOwnProperty.call(mapObj, name)) return name;
+      const a1 = rawAliases[name];
+      if (a1 && Object.prototype.hasOwnProperty.call(mapObj, a1)) return a1;
+      const a2 = reverseAliases[name];
+      if (a2 && Object.prototype.hasOwnProperty.call(mapObj, a2)) return a2;
+      return null;
+    }
+
+    function getTeamConfed(team) {
+      if (!team) return "UNKNOWN";
+      if (confedMap[team]) return confedMap[team];
+      const a1 = rawAliases[team];
+      if (a1 && confedMap[a1]) return confedMap[a1];
+      const a2 = reverseAliases[team];
+      if (a2 && confedMap[a2]) return confedMap[a2];
+      return "UNKNOWN";
+    }
+
+    function getAdvRank(team) {
+      const key = resolveKey(team, advRankMap);
+      return key ? advRankMap[key] : Infinity;
+    }
+
+    function getUefaRank(team) {
+      const key = resolveKey(team, uefaMap);
+      return key ? Number(uefaMap[key]) : 999;
+    }
+
+    function getWwrRating(team) {
+      const key = resolveKey(team, ratingsMap);
+      if (key) return Number(ratingsMap[key]);
+      const row = wwrRows.find(r => r.team === team || r.team === rawAliases[team] || r.team === reverseAliases[team]);
+      if (row) return Number(row.rating);
+      return Number(polr.fallback_rating ?? cfg.fallback_wwr ?? 1300);
+    }
+
+    function getPoissonPair(t1, t2, hostTeam) {
+      const hFlag = !hostTeam ? 0 : (t1 === hostTeam ? 1 : (t2 === hostTeam ? 2 : 0));
+      const cKey = `${t1}\0${t2}\0${hFlag}`;
+      const cached = lamCache.get(cKey);
+      if (cached) return cached;
+
+      const fb = Number(poisson.fallback_lambda ?? cfg.fallback_lambda ?? 1.25);
+      const k1 = resolveKey(t1, teamsMap);
+      const k2 = resolveKey(t2, teamsMap);
+      let lambda = fb;
+      let mu = fb;
+      if (k1 && k2) {
+        const b0 = Number(poisson.intercept);
+        const ha = Number(poisson.home_adv);
+        const tm1 = teamsMap[k1];
+        const tm2 = teamsMap[k2];
+        lambda = Math.exp(b0 + Number(tm1.a) + Number(tm2.d) + (hFlag === 1 ? ha : 0));
+        mu = Math.exp(b0 + Number(tm2.a) + Number(tm1.d) + (hFlag === 2 ? ha : 0));
+      }
+      const res = { lambda, mu, known: Boolean(k1 && k2) };
+      lamCache.set(cKey, res);
+      return res;
+    }
+
+    function dpoisArr11(lam) {
+      const arr = new Array(11);
+      arr[0] = Math.exp(-lam);
+      for (let k = 1; k <= 10; k++) arr[k] = (arr[k - 1] * lam) / k;
+      return arr;
+    }
+
+    function getPoissonOutcomeProbs(t1, t2, hostTeam) {
+      const hFlag = !hostTeam ? 0 : (t1 === hostTeam ? 1 : (t2 === hostTeam ? 2 : 0));
+      const cKey = `${t1}\0${t2}\0${hFlag}`;
+      const cached = probCache.get(cKey);
+      if (cached) return cached;
+
+      const { lambda, mu } = getPoissonPair(t1, t2, hostTeam);
+      const p1 = dpoisArr11(lambda);
+      const p2 = dpoisArr11(mu);
+      let homeWin = 0;
+      let draw = 0;
+      let awayWin = 0;
+      for (let g1 = 0; g1 <= 10; g1++) {
+        for (let g2 = 0; g2 <= 10; g2++) {
+          const p = p1[g1] * p2[g2];
+          if (g1 > g2) homeWin += p;
+          else if (g2 > g1) awayWin += p;
+          else draw += p;
+        }
+      }
+      const total = homeWin + draw + awayWin || 1;
+      const out = {
+        HomeWin: homeWin / total,
+        Draw: draw / total,
+        AwayWin: awayWin / total,
+        lambda,
+        mu
+      };
+      probCache.set(cKey, out);
+      return out;
+    }
+
+    function predictWwrPolr(hTeam, aTeam, isNeutral) {
+      const rHome = getWwrRating(hTeam);
+      const rAway = getWwrRating(aTeam);
+      const hBonus = isNeutral ? 0 : Number(polr.home_bonus ?? 100);
+      const diffAdj = rHome - rAway + hBonus;
+      const eta = Number(polr.beta) * diffAdj;
+      const pAway = expit(Number(polr.zeta_away_draw) - eta);
+      const pDraw = Math.max(0, expit(Number(polr.zeta_draw_home) - eta) - pAway);
+      const pHome = Math.max(0, 1 - expit(Number(polr.zeta_draw_home) - eta));
+      return { HomeWin: pHome, Draw: pDraw, AwayWin: pAway, rHome, rAway, diffAdj };
+    }
+
+    function predictMatchFull(hTeam, aTeam, isNeutral) {
+      const hostTeam = isNeutral ? null : hTeam;
+      const wwr = predictWwrPolr(hTeam, aTeam, isNeutral);
+      const { lambda, mu, known } = getPoissonPair(hTeam, aTeam, hostTeam);
+      const p1 = dpoisArr11(lambda);
+      const p2 = dpoisArr11(mu);
+      let homeWin = 0;
+      let draw = 0;
+      let awayWin = 0;
+      const scorelines = [];
+      for (let g1 = 0; g1 <= 10; g1++) {
+        for (let g2 = 0; g2 <= 10; g2++) {
+          const p = p1[g1] * p2[g2];
+          if (g1 > g2) homeWin += p;
+          else if (g2 > g1) awayWin += p;
+          else draw += p;
+          scorelines.push({ g1, g2, p });
+        }
+      }
+      const total = homeWin + draw + awayWin || 1;
+      scorelines.forEach(s => { s.prob = s.p / total; });
+      scorelines.sort((a, b) => b.prob - a.prob);
+      const hk = resolveKey(hTeam, teamsMap);
+      const ak = resolveKey(aTeam, teamsMap);
+      return {
+        hTeam,
+        aTeam,
+        isNeutral,
+        wwr,
+        poissonKnown: known,
+        homeStats: hk ? teamsMap[hk] : null,
+        awayStats: ak ? teamsMap[ak] : null,
+        lambda,
+        mu,
+        adv: { HomeWin: homeWin / total, Draw: draw / total, AwayWin: awayWin / total },
+        topScorelines: scorelines.slice(0, 10)
+      };
+    }
+
+    function simFastMatch(t1, t2, hostTeam, isKnockout) {
+      const probs = getPoissonOutcomeProbs(t1, t2, hostTeam);
+      const u = Math.random();
+      let outcome = u < probs.HomeWin ? "HomeWin" : (u < probs.HomeWin + probs.Draw ? "Draw" : "AwayWin");
+      if (isKnockout && outcome === "Draw") {
+        outcome = Math.random() < 0.5 ? "HomeWin" : "AwayWin";
+      }
+      if (outcome === "HomeWin") return { winner: t1, loser: t2, pts1: 3, pts2: 0 };
+      if (outcome === "AwayWin") return { winner: t2, loser: t1, pts1: 0, pts2: 3 };
+      return { winner: "Draw", loser: "Draw", pts1: 1, pts2: 1 };
+    }
+
+    function simVisualKo(t1, t2, hostTeam, twoLegged) {
+      if (twoLegged) {
+        const { lambda: l1a, mu: m1a } = getPoissonPair(t1, t2, t1);
+        const { lambda: l2b, mu: m2b } = getPoissonPair(t2, t1, t2);
+        // Leg 1: t1 home vs t2; Leg 2: t2 home vs t1 (or neutral aggregate if hostTeam === null)
+        // Keeping parity with visual global.R aggregate semantics (neutral aggregate) while supporting 2 legs cleanly
+        const { lambda, mu } = getPoissonPair(t1, t2, hostTeam);
+        const leg1g1 = samplePoisson(lambda);
+        const leg1g2 = samplePoisson(mu);
+        const leg2g1 = samplePoisson(lambda);
+        const leg2g2 = samplePoisson(mu);
+        const agg1 = leg1g1 + leg2g1;
+        const agg2 = leg1g2 + leg2g2;
+        const pens = agg1 === agg2;
+        const w = agg1 > agg2 ? t1 : (agg2 > agg1 ? t2 : (Math.random() < 0.5 ? t1 : t2));
+        const l = w === t1 ? t2 : t1;
+        return {
+          t1, t2, w, l, pens, twoLegged: true,
+          g1: agg1, g2: agg2,
+          legs1: [leg1g1, leg2g1],
+          legs2: [leg1g2, leg2g2],
+          unused_meta: l1a + m1a + l2b + m2b
+        };
+      }
+      const { lambda, mu } = getPoissonPair(t1, t2, hostTeam);
+      const g1 = samplePoisson(lambda);
+      const g2 = samplePoisson(mu);
+      const pens = g1 === g2;
+      const w = g1 > g2 ? t1 : (g2 > g1 ? t2 : (Math.random() < 0.5 ? t1 : t2));
+      const l = w === t1 ? t2 : t1;
+      return { t1, t2, g1, g2, w, l, pens, twoLegged: false };
+    }
+
+    function simCafStage(fastMode) {
+      const cafCfg = cfg.caf || {};
+      if (cafCfg.status === "completed" && Array.isArray(cafCfg.direct) && Array.isArray(cafCfg.playoff)) {
+        return {
+          direct: cafCfg.direct.slice(),
+          playoff: cafCfg.playoff.slice(),
+          completed: true
+        };
+      }
+      const host = cafCfg.host || "Morocco";
+      const groups = cafCfg.groups || {};
+      const gOrder = Object.keys(groups);
+      const groupAdv = {};
+      gOrder.forEach(gName => {
+        const teams = groups[gName] || [];
+        const pts = new Array(teams.length).fill(0);
+        for (let i = 0; i < teams.length; i++) {
+          for (let j = i + 1; j < teams.length; j++) {
+            const res = simFastMatch(teams[i], teams[j], host, false);
+            pts[i] += res.pts1;
+            pts[j] += res.pts2;
+          }
+        }
+        const indexed = teams.map((t, idx) => ({ t, score: pts[idx] + Math.random() * 0.1 }));
+        indexed.sort((a, b) => b.score - a.score);
+        groupAdv[gName] = indexed.map(x => x.t);
+      });
+      const qf1 = simFastMatch(groupAdv.A[0], groupAdv.B[1], host, true);
+      const qf2 = simFastMatch(groupAdv.B[0], groupAdv.A[1], host, true);
+      const qf3 = simFastMatch(groupAdv.C[0], groupAdv.D[1], host, true);
+      const qf4 = simFastMatch(groupAdv.D[0], groupAdv.C[1], host, true);
+      const pi1 = simFastMatch(qf1.loser, qf3.loser, host, true);
+      const pi2 = simFastMatch(qf2.loser, qf4.loser, host, true);
+      return {
+        direct: [qf1.winner, qf2.winner, qf3.winner, qf4.winner],
+        playoff: [pi1.winner, pi2.winner],
+        completed: false,
+        fastMode: Boolean(fastMode)
+      };
+    }
+
+    function simUefaStage(fastMode) {
+      const uCfg = cfg.uefa || {};
+      if (uCfg.status === "completed" && Array.isArray(uCfg.direct) && uCfg.playoff) {
+        const poList = Array.isArray(uCfg.playoff) ? uCfg.playoff : [uCfg.playoff];
+        return {
+          direct: uCfg.direct.slice(),
+          playoff: poList[0],
+          completed: true,
+          r1_p1: uCfg.r1_p1_results || [],
+          r1_p2: uCfg.r1_p2_results || [],
+          r2: uCfg.r2_results || []
+        };
+      }
+      const p1Pairs = uCfg.r1_path1 || [];
+      const p2Pairs = uCfg.r1_path2 || [];
+      const r2Pairs = uCfg.r2_pairings || [];
+      const twoLeg = Boolean(uCfg.two_legged ?? true);
+
+      function playUefaTie(pair) {
+        if (!Array.isArray(pair) && pair && pair.winner) {
+          return {
+            t1: pair.home || pair.t1,
+            t2: pair.away || pair.t2,
+            w: pair.winner,
+            l: pair.winner === (pair.home || pair.t1) ? (pair.away || pair.t2) : (pair.home || pair.t1),
+            g1: pair.g1 ?? 0,
+            g2: pair.g2 ?? 0,
+            pens: Boolean(pair.pens),
+            twoLegged: false
+          };
+        }
+        const t1 = pair[0], t2 = pair[1];
+        if (fastMode) {
+          const r = simFastMatch(t1, t2, null, true);
+          return { w: r.winner, l: r.loser };
+        }
+        return simVisualKo(t1, t2, null, twoLeg);
+      }
+
+      const r1_p1 = p1Pairs.map(playUefaTie);
+      const r1_p2 = p2Pairs.map(playUefaTie);
+      const r2 = r2Pairs.map(([i2, i1]) => playUefaTie([r1_p2[i2].w, r1_p1[i1].w]));
+
+      const winners = r2.map(m => m.w).slice().sort((a, b) => getUefaRank(a) - getUefaRank(b));
+      return {
+        direct: winners.slice(0, 7),
+        playoff: winners[7],
+        completed: false,
+        r1_p1,
+        r1_p2,
+        r2
+      };
+    }
+
+    function simConcacafStage(fastMode) {
+      const cCfg = cfg.concacaf || {};
+      if (cCfg.status === "completed" && Array.isArray(cCfg.direct) && Array.isArray(cCfg.playoff)) {
+        return {
+          direct: cCfg.direct.slice(),
+          playoff: cCfg.playoff.slice(),
+          completed: true,
+          qf: cCfg.qf_results || [],
+          sf: cCfg.sf_results || [],
+          finalMatch: cCfg.final_result || null,
+          pi: cCfg.pi_results || []
+        };
+      }
+      const host = cCfg.host || "United States";
+      const qfPairs = cCfg.qf || [];
+      const sfIdx = cCfg.sf_pairings || [[0, 3], [1, 2]];
+      const piIdx = cCfg.pi_pairings || [[0, 3], [1, 2]];
+
+      function playTie(t1, t2) {
+        if (fastMode) {
+          const r = simFastMatch(t1, t2, host, true);
+          return { w: r.winner, l: r.loser };
+        }
+        return simVisualKo(t1, t2, host, false);
+      }
+
+      const qf = qfPairs.map(p => playTie(p[0], p[1]));
+      const pi = piIdx.map(([i, j]) => playTie(qf[i].l, qf[j].l));
+      let sf = [];
+      let finalMatch = null;
+      if (!fastMode) {
+        sf = sfIdx.map(([i, j]) => playTie(qf[i].w, qf[j].w));
+        finalMatch = playTie(sf[0].w, sf[1].w);
+      }
+      return {
+        direct: qf.map(m => m.w),
+        playoff: pi.map(m => m.w),
+        champion: finalMatch ? finalMatch.w : null,
+        completed: false,
+        qf,
+        sf,
+        finalMatch,
+        pi
+      };
+    }
+
+    function simGlobalPlayoffsStage(cafPlayoff, concacafPlayoff, uefaPlayoff, fastMode) {
+      const icCfg = cfg.inter_confed || {};
+      if (icCfg.status === "completed" && Array.isArray(icCfg.qualifiers)) {
+        return {
+          qualifiers: icCfg.qualifiers.slice(),
+          completed: true,
+          prelimStandings: icCfg.prelim_standings || [],
+          finals: icCfg.final_results || []
+        };
+      }
+      const afc = icCfg.afc || ["Taiwan", "Uzbekistan"];
+      const conmebol = icCfg.conmebol || ["Ecuador", "Venezuela"];
+      const ofc = icCfg.ofc || "Papua New Guinea";
+
+      const cSorted = conmebol.slice().sort((a, b) => getAdvRank(a) - getAdvRank(b));
+      const conmebolHigher = cSorted[0];
+      const conmebolLower = cSorted[1];
+
+      const prelimTeams = [afc[0], afc[1], cafPlayoff[0], cafPlayoff[1], ofc, conmebolLower];
+      const sched = icCfg.prelim_schedule || [
+        [0, 2], [0, 3], [0, 4],
+        [1, 2], [1, 3], [1, 5],
+        [2, 5], [3, 4], [4, 5]
+      ];
+
+      const stats = Object.create(null);
+      prelimTeams.forEach(t => {
+        stats[t] = { team: t, pts: 0, gd: 0, gs: 0, logs: [], rand: Math.random() };
+      });
+
+      sched.forEach(([i1, i2]) => {
+        const t1 = prelimTeams[i1];
+        const t2 = prelimTeams[i2];
+        if (fastMode) {
+          const res = simFastMatch(t1, t2, null, false);
+          stats[t1].pts += res.pts1;
+          stats[t2].pts += res.pts2;
+        } else {
+          const { lambda, mu } = getPoissonPair(t1, t2, null);
+          const g1 = samplePoisson(lambda);
+          const g2 = samplePoisson(mu);
+          const s1 = stats[t1], s2 = stats[t2];
+          s1.gs += g1; s2.gs += g2;
+          s1.gd += (g1 - g2); s2.gd += (g2 - g1);
+          if (g1 > g2) s1.pts += 3;
+          else if (g2 > g1) s2.pts += 3;
+          else { s1.pts += 1; s2.pts += 1; }
+          const str = `${t1} ${g1} - ${g2} ${t2}`;
+          s1.logs.push(str); s2.logs.push(str);
+        }
+      });
+
+      const standingsList = prelimTeams.map(t => stats[t]);
+      standingsList.sort((a, b) => (b.pts - a.pts) || (b.gd - a.gd) || (b.gs - a.gs) || (b.rand - a.rand));
+      const prelimAdv = (Array.isArray(icCfg.prelim_advancers) && icCfg.prelim_advancers.length === 2)
+        ? icCfg.prelim_advancers.slice()
+        : [standingsList[0].team, standingsList[1].team];
+
+      const uefaSlot = Array.isArray(uefaPlayoff) ? uefaPlayoff[0] : uefaPlayoff;
+      const finalPool = [...prelimAdv, ...concacafPlayoff, uefaSlot, conmebolHigher]
+        .slice()
+        .sort((a, b) => getAdvRank(a) - getAdvRank(b));
+
+      const seeds = finalPool.slice(0, 3);
+      const unseeded = finalPool.slice(3, 6);
+      const perms = [[0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]];
+      const validPerms = perms.filter(p =>
+        getTeamConfed(seeds[0]) !== getTeamConfed(unseeded[p[0]]) &&
+        getTeamConfed(seeds[1]) !== getTeamConfed(unseeded[p[1]]) &&
+        getTeamConfed(seeds[2]) !== getTeamConfed(unseeded[p[2]])
+      );
+      const chosenPerm = validPerms.length > 0
+        ? validPerms[Math.floor(Math.random() * validPerms.length)]
+        : [0, 1, 2];
+
+      const finals = [0, 1, 2].map(i => {
+        const sTeam = seeds[i];
+        const uTeam = unseeded[chosenPerm[i]];
+        if (fastMode) {
+          const r = simFastMatch(sTeam, uTeam, null, true);
+          return { w: r.winner, l: r.loser };
+        }
+        return simVisualKo(sTeam, uTeam, null, false);
+      });
+
+      return {
+        qualifiers: finals.map(m => m.w),
+        prelimStandings: standingsList,
+        prelimAdvancers: prelimAdv,
+        finals,
+        completed: false
+      };
+    }
+
+    function assembleField32(cafDirect, concacafDirect, uefaDirect, globalQuals) {
+      const dq = cfg.direct_qualifiers || {};
+      const field = [
+        ...(dq.host || ["Brazil"]),
+        ...(dq.afc || []),
+        ...(dq.ofc || []),
+        ...(dq.conmebol || []),
+        ...(dq.uefa_direct || []),
+        ...cafDirect,
+        ...concacafDirect,
+        ...uefaDirect,
+        ...globalQuals
+      ];
+      return field;
+    }
+
+    function assignPots(field32) {
+      const wf = cfg.wwc_final || {};
+      if (wf.pots && wf.pots.Pot1 && wf.pots.Pot2 && wf.pots.Pot3 && wf.pots.Pot4) {
+        return {
+          Pot1: wf.pots.Pot1.slice(),
+          Pot2: wf.pots.Pot2.slice(),
+          Pot3: wf.pots.Pot3.slice(),
+          Pot4: wf.pots.Pot4.slice()
+        };
+      }
+      const host = cfg.host_team || "Brazil";
+      const sorted = field32
+        .filter(t => t !== host)
+        .map(t => ({ t, r: getAdvRank(t) }))
+        .sort((a, b) => (a.r - b.r))
+        .map(x => x.t);
+      return {
+        Pot1: [host, ...sorted.slice(0, 7)],
+        Pot2: sorted.slice(7, 15),
+        Pot3: sorted.slice(15, 23),
+        Pot4: sorted.slice(23, 31)
+      };
+    }
+
+    function shuffleInPlace(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const tmp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = tmp;
+      }
+      return arr;
+    }
+
+    function simulateGroupDraw(pots) {
+      const wf = cfg.wwc_final || {};
+      if (wf.groups && wf.groups.A && wf.groups.H) {
+        const out = {};
+        Object.keys(wf.groups).forEach(k => { out[k] = wf.groups[k].slice(); });
+        return out;
+      }
+      const rules = cfg.draw_rules || {};
+      const gNames = rules.groups || ["A", "B", "C", "D", "E", "F", "G", "H"];
+      const hostTeam = cfg.host_team || "Brazil";
+      const hostGroup = rules.host_group || "A";
+      const uefaMax = Number(rules.uefa_max_per_group ?? 2);
+      const nonUefaMax = Number(rules.non_uefa_max_per_group ?? 1);
+      const maxRetries = Number(rules.max_retries ?? 200);
+
+      for (let attempt = 0; attempt < maxRetries; attempt++) {
+        const groups = {};
+        gNames.forEach(g => { groups[g] = []; });
+        groups[hostGroup].push(hostTeam);
+
+        const p1Rest = shuffleInPlace(pots.Pot1.filter(t => t !== hostTeam));
+        const otherGroups = gNames.filter(g => g !== hostGroup);
+        for (let i = 0; i < otherGroups.length && i < p1Rest.length; i++) {
+          groups[otherGroups[i]].push(p1Rest[i]);
+        }
+
+        let success = true;
+        for (let potNum = 2; potNum <= 4; potNum++) {
+          const potTeams = shuffleInPlace((pots["Pot" + potNum] || []).slice());
+          for (let ti = 0; ti < potTeams.length; ti++) {
+            const team = potTeams[ti];
+            const tConf = getTeamConfed(team);
+            const tryGroups = shuffleInPlace(gNames.slice());
+            let placed = false;
+            for (let gi = 0; gi < tryGroups.length; gi++) {
+              const g = tryGroups[gi];
+              if (groups[g].length >= potNum) continue;
+              const confeds = groups[g].map(getTeamConfed);
+              if (tConf === "UEFA") {
+                let uCnt = 0;
+                for (let c = 0; c < confeds.length; c++) if (confeds[c] === "UEFA") uCnt++;
+                if (uCnt >= uefaMax) continue;
+              } else if (tConf !== "UNKNOWN") {
+                let cCnt = 0;
+                for (let c = 0; c < confeds.length; c++) if (confeds[c] === tConf) cCnt++;
+                if (cCnt >= nonUefaMax) continue;
+              }
+              groups[g].push(team);
+              placed = true;
+              break;
+            }
+            if (!placed) {
+              success = false;
+              break;
+            }
+          }
+          if (!success) break;
+        }
+        if (success) return groups;
+      }
+
+      // Safe fallback ignoring confed collisions only if constraints are mathematically impossible
+      const fallback = {};
+      gNames.forEach(g => { fallback[g] = []; });
+      fallback[hostGroup].push(hostTeam);
+      const p1r = pots.Pot1.filter(t => t !== hostTeam);
+      gNames.filter(g => g !== hostGroup).forEach((g, idx) => { if (p1r[idx]) fallback[g].push(p1r[idx]); });
+      [2, 3, 4].forEach(pNum => {
+        const list = shuffleInPlace((pots["Pot" + pNum] || []).slice());
+        gNames.forEach((g, idx) => { if (list[idx]) fallback[g].push(list[idx]); });
+      });
+      return fallback;
+    }
+
+    function simWwcGroupStage(groups) {
+      const gNames = Object.keys(groups);
+      const advancing = {};
+      const standings = {};
+      const pairs = [[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]];
+
+      gNames.forEach(g => {
+        const teams = groups[g];
+        const rows = teams.map(t => ({ team: t, pts: 0, gd: 0, gs: 0, logs: [], rand: Math.random() }));
+        for (let p = 0; p < pairs.length; p++) {
+          const i1 = pairs[p][0], i2 = pairs[p][1];
+          const r1 = rows[i1], r2 = rows[i2];
+          const { lambda, mu } = getPoissonPair(r1.team, r2.team, null);
+          const g1 = samplePoisson(lambda);
+          const g2 = samplePoisson(mu);
+          r1.gs += g1; r2.gs += g2;
+          r1.gd += (g1 - g2); r2.gd += (g2 - g1);
+          if (g1 > g2) r1.pts += 3;
+          else if (g2 > g1) r2.pts += 3;
+          else { r1.pts += 1; r2.pts += 1; }
+          const mStr = `${r1.team} ${g1} - ${g2} ${r2.team}`;
+          r1.logs.push(mStr);
+          r2.logs.push(mStr);
+        }
+        rows.sort((a, b) => (b.pts - a.pts) || (b.gd - a.gd) || (b.gs - a.gs) || (b.rand - a.rand));
+        advancing[g + "1"] = rows[0].team;
+        advancing[g + "2"] = rows[1].team;
+        standings[g] = rows;
+      });
+      return { advancing, standings };
+    }
+
+    function simWwcKnockoutStage(adv) {
+      const koOrder = (cfg.wwc_final && cfg.wwc_final.knockout_order) || [
+        ["A1", "B2"], ["C1", "D2"], ["E1", "F2"], ["G1", "H2"],
+        ["B1", "A2"], ["D1", "C2"], ["F1", "E2"], ["H1", "G2"]
+      ];
+      const r16 = koOrder.map(([s1, s2]) => simVisualKo(adv[s1], adv[s2], null, false));
+      const qf = [
+        simVisualKo(r16[0].w, r16[1].w, null, false),
+        simVisualKo(r16[2].w, r16[3].w, null, false),
+        simVisualKo(r16[4].w, r16[5].w, null, false),
+        simVisualKo(r16[6].w, r16[7].w, null, false)
+      ];
+      const sf = [
+        simVisualKo(qf[0].w, qf[1].w, null, false),
+        simVisualKo(qf[2].w, qf[3].w, null, false)
+      ];
+      const fin = simVisualKo(sf[0].w, sf[1].w, null, false);
+      return { r16, qf, sf, fin, champion: fin.w };
+    }
+
+    function simulateSingleFullVisual(manualOverrides) {
+      const man = manualOverrides || {};
+      const caf = simCafStage(false);
+      const uefa = man.uefa || simUefaStage(false);
+      const concacaf = man.concacaf || simConcacafStage(false);
+      const global = man.global || simGlobalPlayoffsStage(caf.playoff, concacaf.playoff, uefa.playoff, false);
+      const field32 = assembleField32(caf.direct, concacaf.direct, uefa.direct, global.qualifiers);
+      const pots = assignPots(field32);
+      const groups = simulateGroupDraw(pots);
+      const groupStage = simWwcGroupStage(groups);
+      const bracket = simWwcKnockoutStage(groupStage.advancing);
+      return { caf, uefa, concacaf, global, field32, pots, groups, groupStage, bracket };
+    }
+
+    function runMonteCarlo(iterations) {
+      const t0 = typeof performance !== "undefined" ? performance.now() : Date.now();
+      const tally = Object.create(null);
+      function bump(team, field) {
+        if (!team) return;
+        let rec = tally[team];
+        if (!rec) {
+          rec = { team, qual: 0, playoff: 0, r16: 0, qf: 0, sf: 0, fin: 0, champ: 0 };
+          tally[team] = rec;
+        }
+        rec[field]++;
+      }
+
+      for (let it = 0; it < iterations; it++) {
+        const caf = simCafStage(true);
+        const uefa = simUefaStage(true);
+        const concacaf = simConcacafStage(true);
+        const icpo = simGlobalPlayoffsStage(caf.playoff, concacaf.playoff, uefa.playoff, true);
+
+        const ic = cfg.inter_confed || {};
+        const icParticipants = [
+          ...(ic.afc || []),
+          ...(ic.conmebol || []),
+          ic.ofc,
+          ...caf.playoff,
+          ...concacaf.playoff,
+          uefa.playoff
+        ];
+        for (let i = 0; i < icParticipants.length; i++) bump(icParticipants[i], "playoff");
+
+        const field32 = assembleField32(caf.direct, concacaf.direct, uefa.direct, icpo.qualifiers);
+        for (let i = 0; i < field32.length; i++) bump(field32[i], "qual");
+
+        const pots = assignPots(field32);
+        const groups = simulateGroupDraw(pots);
+        const groupRes = simWwcGroupStage(groups);
+        const bracket = simWwcKnockoutStage(groupRes.advancing);
+
+        bracket.r16.forEach(m => { bump(m.t1, "r16"); bump(m.t2, "r16"); });
+        bracket.qf.forEach(m => { bump(m.t1, "qf"); bump(m.t2, "qf"); });
+        bracket.sf.forEach(m => { bump(m.t1, "sf"); bump(m.t2, "sf"); });
+        bump(bracket.fin.t1, "fin");
+        bump(bracket.fin.t2, "fin");
+        bump(bracket.champion, "champ");
+      }
+
+      const elapsedMs = (typeof performance !== "undefined" ? performance.now() : Date.now()) - t0;
+      const rows = Object.values(tally).map(r => ({
+        team: r.team,
+        confed: getTeamConfed(r.team),
+        qualPct: (r.qual / iterations) * 100,
+        playoffPct: (r.playoff / iterations) * 100,
+        r16Pct: (r.r16 / iterations) * 100,
+        qfPct: (r.qf / iterations) * 100,
+        sfPct: (r.sf / iterations) * 100,
+        finPct: (r.fin / iterations) * 100,
+        champPct: (r.champ / iterations) * 100
+      }));
+      rows.sort((a, b) => (b.champPct - a.champPct) || (b.qualPct - a.qualPct) || a.team.localeCompare(b.team));
+      return { iterations, elapsedMs, rows };
+    }
+
+    return {
+      cfg,
+      rawAliases,
+      reverseAliases,
+      wwrRows,
+      advRows,
+      getTeamConfed,
+      getAdvRank,
+      getUefaRank,
+      getWwrRating,
+      getPoissonPair,
+      getPoissonOutcomeProbs,
+      predictWwrPolr,
+      predictMatchFull,
+      simCafStage,
+      simUefaStage,
+      simConcacafStage,
+      simGlobalPlayoffsStage,
+      assembleField32,
+      assignPots,
+      simulateGroupDraw,
+      simWwcGroupStage,
+      simWwcKnockoutStage,
+      simulateSingleFullVisual,
+      runMonteCarlo
+    };
+  }
+
+  // Export pure test API for Node verification without touching DOM
+  if (typeof globalThis !== "undefined") {
+    globalThis.__WWC_TEST_API__ = {
+      normSearch,
+      escapeHtml,
+      expit,
+      samplePoisson,
+      buildEngineContext
+    };
+  }
+  if (typeof document === "undefined") return;
+
+  // ---------------------------------------------------------------------------
+  // 2. BROWSER STATE & RENDERERS
+  // ---------------------------------------------------------------------------
+  const STATE = {
+    payload: null,
+    ctx: null,
+    activeTab: "sim",
+    sim: { uefa: null, concacaf: null, global: null, finalSim: null },
+    odds: {
+      mode: "live",
+      iterations: 2500,
+      liveCache: null,
+      search: "",
+      confed: "ALL",
+      sortCol: "champPct",
+      sortDir: "desc",
+      page: 1,
+      pageLen: 50
+    },
+    rank: {
+      wwrSearch: "", wwrSortCol: "rank", wwrSortDir: "asc", wwrPage: 1, wwrPageLen: 20,
+      advSearch: "", advSortCol: "rank", advSortDir: "asc", advPage: 1, advPageLen: 20
+    },
+    combos: {}
+  };
+
+  function setStatus(type, text) {
+    const dot = document.getElementById("wwc_status_dot");
+    const lbl = document.getElementById("wwc_status_text");
+    if (!dot || !lbl) return;
+    dot.className = "wwc-status-dot" + (type === "loading" ? " loading" : (type === "error" ? " error" : ""));
+    lbl.textContent = text;
+  }
+
+  function showError(msg) {
+    const el = document.getElementById("wwc_error_banner");
+    if (!el) return;
+    if (!msg) {
+      el.classList.remove("visible");
+      el.innerHTML = "";
+    } else {
+      el.innerHTML = msg;
+      el.classList.add("visible");
+    }
+  }
+
+  function renderKoCardHtml(m, isFinal) {
+    if (!m) return "";
+    const w1 = m.w === m.t1;
+    const w2 = m.w === m.t2;
+    const s1 = m.twoLegged
+      ? `(${m.legs1[0]}) (${m.legs1[1]}) ${m.g1}${m.pens && w1 ? ' <span class="wwc-pen-tag">P</span>' : ""}`
+      : `(${m.g1})${m.pens && w1 ? ' <span class="wwc-pen-tag">P</span>' : ""}`;
+    const s2 = m.twoLegged
+      ? `(${m.legs2[0]}) (${m.legs2[1]}) ${m.g2}${m.pens && w2 ? ' <span class="wwc-pen-tag">P</span>' : ""}`
+      : `(${m.g2})${m.pens && w2 ? ' <span class="wwc-pen-tag">P</span>' : ""}`;
+    return `<div class="wwc-matchup-card${isFinal ? " is-final" : ""}">` +
+      `<div class="wwc-team-node team-top${w1 ? " winner" : ""}"><span>${escapeHtml(m.t1)}</span><span class="wwc-team-score">${s1}</span></div>` +
+      `<div class="wwc-team-node${w2 ? " winner" : ""}"><span>${escapeHtml(m.t2)}</span><span class="wwc-team-score">${s2}</span></div>` +
+      `</div>`;
+  }
+
+  function renderSettledSection() {
+    const ctx = STATE.ctx;
+    const cfg = ctx.cfg;
+    const dq = cfg.direct_qualifiers || {};
+    const caf = cfg.caf || {};
+
+    const boxes = [
+      { title: "Host (1)", teams: dq.host || ["Brazil"] },
+      { title: `AFC (${(dq.afc || []).length})`, teams: dq.afc || [] },
+      { title: `CONMEBOL (${(dq.conmebol || []).length})`, teams: dq.conmebol || [] },
+      { title: `OFC (${(dq.ofc || []).length})`, teams: dq.ofc || [] },
+      { title: `UEFA Direct (${(dq.uefa_direct || []).length})`, teams: dq.uefa_direct || [] }
+    ];
+    if (caf.status === "completed") {
+      boxes.push({ title: `CAF Direct (${(caf.direct || []).length})`, teams: caf.direct || [] });
+      boxes.push({ title: `CAF Play-off (${(caf.playoff || []).length})`, teams: caf.playoff || [], isPlayoff: true });
+    }
+
+    const totalDirect = boxes.filter(b => !b.isPlayoff).reduce((acc, b) => acc + b.teams.length, 0);
+    const totalPo = boxes.filter(b => b.isPlayoff).reduce((acc, b) => acc + b.teams.length, 0);
+    document.getElementById("wwc_settled_count").textContent = `${totalDirect} Direct + ${totalPo} Inter-Confed Play-off Settled`;
+    document.getElementById("wwc_cycle_label").textContent = cfg.as_of_label || "2027 WWC Cycle";
+
+    const grid = document.getElementById("wwc_settled_grid");
+    grid.innerHTML = boxes.map(b => {
+      const style = b.isPlayoff ? ' style="border-left-color:#D97706;"' : "";
+      const tag = b.isPlayoff ? '<span style="color:#9A4E00;">ICPO</span>' : '<span style="color:#00747A;">QUALIFIED</span>';
+      return `<div class="wwc-settled-box"${style}>` +
+        `<div class="wwc-settled-title"><span>${escapeHtml(b.title)}</span>${tag}</div>` +
+        `<div class="wwc-settled-list">${b.teams.map(escapeHtml).join(", ")}</div>` +
+        `</div>`;
+    }).join("");
+  }
+
+  function renderUefaSection() {
+    const u = STATE.sim.uefa;
+    const el = document.getElementById("uefa_ui");
+    if (!u) {
+      el.innerHTML = `<div class="wwc-placeholder-box">Click <strong>Simulate UEFA</strong> (or <strong>Quick Sim All Tournaments</strong>) to run all Round 1 &amp; Round 2 two-legged ties.</div>`;
+      return;
+    }
+    const directChips = (u.direct || []).map(t => `<span class="wwc-chip">${escapeHtml(t)}</span>`).join("");
+    const poChip = `<span class="wwc-chip playoff">${escapeHtml(u.playoff)} (Inter-Confed PO)</span>`;
+
+    if (u.completed && (!u.r1_p1 || u.r1_p1.length === 0)) {
+      el.innerHTML = `<div class="wwc-settled-card"><div class="wwc-card-header-teal"><span>UEFA Play-offs (Settled)</span></div><div class="wwc-card-body"><div class="wwc-chip-bar" style="margin-top:0; border-top:none; padding-top:0;"><strong>Direct (7):</strong> ${directChips} <strong>Play-off (1):</strong> ${poChip}</div></div></div>`;
+      return;
+    }
+
+    el.innerHTML = `<div class="wwc-settled-card">` +
+      `<div class="wwc-card-header-teal"><span>UEFA Play-offs Results</span><span style="font-size:0.82rem; font-weight:600;">Scores: Team (Leg 1) (Leg 2) Agg</span></div>` +
+      `<div class="wwc-card-body">` +
+        `<div class="wwc-grid-3">` +
+          `<div><div class="wwc-col-title">Round 1 (Path 1)</div>${u.r1_p1.map(m => renderKoCardHtml(m, false)).join("")}</div>` +
+          `<div><div class="wwc-col-title">Round 1 (Path 2)</div>${u.r1_p2.map(m => renderKoCardHtml(m, false)).join("")}</div>` +
+          `<div><div class="wwc-col-title">Round 2 Finals</div>${u.r2.map(m => renderKoCardHtml(m, false)).join("")}</div>` +
+        `</div>` +
+        `<div class="wwc-chip-bar"><strong>Direct Qualifiers (7):</strong> ${directChips} <strong style="margin-left:0.5rem;">Play-off Slot:</strong> ${poChip}</div>` +
+      `</div></div>`;
+  }
+
+  function renderConcacafSection() {
+    const c = STATE.sim.concacaf;
+    const el = document.getElementById("concacaf_ui");
+    if (!c) {
+      el.innerHTML = `<div class="wwc-placeholder-box">Click <strong>Simulate CONCACAF</strong> (or <strong>Quick Sim All Tournaments</strong>) to simulate Quarter-Finals, Semi-Finals, Final &amp; Play-In matches.</div>`;
+      return;
+    }
+    const directChips = (c.direct || []).map(t => `<span class="wwc-chip">${escapeHtml(t)}</span>`).join("");
+    const poChips = (c.playoff || []).map(t => `<span class="wwc-chip playoff">${escapeHtml(t)} (Inter-Confed PO)</span>`).join("");
+    el.innerHTML = `<div class="wwc-settled-card">` +
+      `<div class="wwc-card-header-teal"><span>CONCACAF W Championship Results</span><span style="font-size:0.82rem; font-weight:600;">${c.champion ? "Champion: " + escapeHtml(c.champion) : ""}</span></div>` +
+      `<div class="wwc-card-body">` +
+        `<div class="wwc-grid-4">` +
+          `<div><div class="wwc-col-title">Quarter-Finals</div>${(c.qf || []).map(m => renderKoCardHtml(m, false)).join("")}</div>` +
+          `<div><div class="wwc-col-title">Semi-Finals</div>${(c.sf || []).map(m => renderKoCardHtml(m, false)).join("")}</div>` +
+          `<div><div class="wwc-col-title">Final</div>${c.finalMatch ? renderKoCardHtml(c.finalMatch, true) : ""}</div>` +
+          `<div><div class="wwc-col-title">Inter-Confed Play-Ins</div>${(c.pi || []).map(m => renderKoCardHtml(m, false)).join("")}</div>` +
+        `</div>` +
+        `<div class="wwc-chip-bar"><strong>Direct Qualifiers (4):</strong> ${directChips} <strong style="margin-left:0.5rem;">Play-off Slots (2):</strong> ${poChips}</div>` +
+      `</div></div>`;
+  }
+
+  function renderMatchLogsTable(rows, drawerPrefix) {
+    return `<table class="wwc-mini-table"><thead><tr><th>Team</th><th class="num">Pts</th><th class="num">GD</th><th class="num">GF</th></tr></thead><tbody>` +
+      rows.map((r, idx) => {
+        const logStr = r.logs.join("\n");
+        return `<tr class="${idx < 2 ? "adv-row" : ""}">` +
+          `<td><span class="wwc-matchlog-trigger" data-drawer="${escapeHtml(drawerPrefix)}" data-team="${escapeHtml(r.team)}" data-log="${escapeHtml(logStr)}" title="${escapeHtml(logStr)}">${escapeHtml(r.team)}</span></td>` +
+          `<td class="num">${r.pts}</td>` +
+          `<td class="num">${r.gd > 0 ? "+" + r.gd : r.gd}</td>` +
+          `<td class="num">${r.gs}</td>` +
+          `</tr>`;
+      }).join("") +
+      `</tbody></table>` +
+      `<div class="wwc-matchlog-drawer" id="${escapeHtml(drawerPrefix)}_drawer"></div>`;
+  }
+
+  function renderGlobalSection() {
+    const g = STATE.sim.global;
+    const el = document.getElementById("global_ui");
+    if (!g) {
+      el.innerHTML = `<div class="wwc-placeholder-box">Simulate UEFA &amp; CONCACAF first (or click <strong>Quick Sim All Tournaments</strong>) to populate the 10-team Inter-Confederation Play-offs.</div>`;
+      return;
+    }
+    const qChips = (g.qualifiers || []).map(t => `<span class="wwc-chip">${escapeHtml(t)}</span>`).join("");
+    el.innerHTML = `<div class="wwc-settled-card">` +
+      `<div class="wwc-card-header-teal"><span>Inter-Confederation Play-offs Results</span><span style="font-size:0.82rem; font-weight:600;">Hover or click any team to inspect match scores</span></div>` +
+      `<div class="wwc-card-body">` +
+        `<div class="wwc-grid-2">` +
+          `<div class="wwc-group-card"><div class="wwc-card-header-mint">Preliminary 6-Team Group</div>${renderMatchLogsTable(g.prelimStandings || [], "icpo_prelim")}</div>` +
+          `<div><div class="wwc-col-title">Final Knockouts (3 World Cup Berths)</div>${(g.finals || []).map(m => renderKoCardHtml(m, false)).join("")}</div>` +
+        `</div>` +
+        `<div class="wwc-chip-bar"><strong>Inter-Confederation Qualifiers (3):</strong> ${qChips}</div>` +
+      `</div></div>`;
+  }
+
+  function renderFinalWwcSection() {
+    const f = STATE.sim.finalSim;
+    const el = document.getElementById("wwc_wrapper_ui");
+    if (!f) {
+      el.innerHTML = `<div class="wwc-placeholder-box">Resolve Inter-Confederation Play-offs (or click <strong>Quick Sim All Tournaments</strong>) to execute the 32-team Draw, Group Stage &amp; Knockout Bracket.</div>`;
+      return;
+    }
+    const potsHtml = [1, 2, 3, 4].map(pNum => {
+      const teams = f.pots["Pot" + pNum] || [];
+      return `<div class="wwc-group-card">` +
+        `<div class="wwc-card-header-mint">Pot ${pNum}</div>` +
+        `<div style="padding:0.55rem 0.7rem; text-align:center; font-size:0.88rem; line-height:1.55;">${teams.map(escapeHtml).join("<br>")}</div>` +
+        `</div>`;
+    }).join("");
+
+    const gNames = Object.keys(f.groupStage.standings);
+    const groupsHtml = gNames.map(g => {
+      return `<div class="wwc-group-card">` +
+        `<div class="wwc-card-header-teal" style="padding:0.42rem 0.7rem; font-size:0.9rem;"><span>Group ${escapeHtml(g)}</span></div>` +
+        renderMatchLogsTable(f.groupStage.standings[g], "grp_" + g) +
+        `</div>`;
+    }).join("");
+
+    const b = f.bracket;
+    el.innerHTML = `<div id="wwc_export_area" style="background:#FFFFFF; padding:0.75rem; border-radius:6px;">` +
+      `<h5 style="font-weight:700; color:#1D3549; margin:0 0 0.65rem 0;">Draw Pots</h5>` +
+      `<div class="wwc-grid-4" style="margin-bottom:1.15rem;">${potsHtml}</div>` +
+      `<h5 style="font-weight:700; color:#1D3549; margin:0 0 0.65rem 0;">Group Stage Standings <span style="font-size:0.8rem; font-weight:400; color:#666666;">(hover or click a team to view match scores)</span></h5>` +
+      `<div class="wwc-grid-4" style="margin-bottom:1.25rem;">${groupsHtml}</div>` +
+      `<h5 style="font-weight:700; color:#1D3549; margin:0 0 0.65rem 0;">Knockout Bracket</h5>` +
+      `<div class="wwc-bracket-wrap"><div class="wwc-bracket-grid">` +
+        `<div><div class="wwc-col-title">Round of 16</div><div class="wwc-bracket-col">${b.r16.map(m => renderKoCardHtml(m, false)).join("")}</div></div>` +
+        `<div><div class="wwc-col-title">Quarter-Finals</div><div class="wwc-bracket-col">${b.qf.map(m => renderKoCardHtml(m, false)).join("")}</div></div>` +
+        `<div><div class="wwc-col-title">Semi-Finals</div><div class="wwc-bracket-col">${b.sf.map(m => renderKoCardHtml(m, false)).join("")}</div></div>` +
+        `<div><div class="wwc-col-title">Final &amp; Champion</div><div class="wwc-bracket-final-col">` +
+          `<div>${renderKoCardHtml(b.fin, true)}</div>` +
+          `<div><div class="wwc-col-title" style="color:#0F5132; margin-bottom:0.4rem;">2027 World Champion</div><div class="wwc-champ-box">${escapeHtml(b.champion)}</div></div>` +
+        `</div></div>` +
+      `</div></div>` +
+    `</div>`;
+  }
+
+  function syncSimButtons() {
+    const ctx = STATE.ctx;
+    if (!ctx) return;
+    const uDone = Boolean(STATE.sim.uefa || (ctx.cfg.uefa && ctx.cfg.uefa.status === "completed"));
+    const cDone = Boolean(STATE.sim.concacaf || (ctx.cfg.concacaf && ctx.cfg.concacaf.status === "completed"));
+    const gDone = Boolean(STATE.sim.global || (ctx.cfg.inter_confed && ctx.cfg.inter_confed.status === "completed"));
+
+    const btnUefa = document.getElementById("btn_uefa");
+    const btnCon = document.getElementById("btn_concacaf");
+    const btnGlob = document.getElementById("btn_global");
+    const btnDraw = document.getElementById("btn_draw");
+    const btnPng = document.getElementById("btn_download_bracket");
+
+    if (ctx.cfg.uefa && ctx.cfg.uefa.status === "completed") btnUefa.disabled = true;
+    else btnUefa.disabled = false;
+
+    if (ctx.cfg.concacaf && ctx.cfg.concacaf.status === "completed") btnCon.disabled = true;
+    else btnCon.disabled = false;
+
+    btnGlob.disabled = !(uDone && cDone);
+    btnDraw.disabled = !(uDone && cDone && gDone);
+    btnPng.disabled = !STATE.sim.finalSim;
+  }
+
+  function renderTab1All() {
+    renderSettledSection();
+    renderUefaSection();
+    renderConcacafSection();
+    renderGlobalSection();
+    renderFinalWwcSection();
+    syncSimButtons();
+  }
+
+  // ---------------------------------------------------------------------------
+  // 3. TAB 2: TOURNAMENT ODDS (LIVE CONDITIONED MONTE CARLO + PRECOMPUTED)
+  // ---------------------------------------------------------------------------
+  function getTeamStatusBadge(team) {
+    const cfg = STATE.ctx.cfg;
+    const dq = cfg.direct_qualifiers || {};
+    const allDirect = [
+      ...(dq.host || []), ...(dq.afc || []), ...(dq.ofc || []),
+      ...(dq.conmebol || []), ...(dq.uefa_direct || []),
+      ...((cfg.caf && cfg.caf.status === "completed" && cfg.caf.direct) || []),
+      ...((cfg.uefa && cfg.uefa.status === "completed" && cfg.uefa.direct) || []),
+      ...((cfg.concacaf && cfg.concacaf.status === "completed" && cfg.concacaf.direct) || []),
+      ...((cfg.inter_confed && cfg.inter_confed.status === "completed" && cfg.inter_confed.qualifiers) || [])
+    ];
+    if (allDirect.includes(team)) return "Qualified";
+    const icPo = [...((cfg.caf && cfg.caf.status === "completed" && cfg.caf.playoff) || []),
+                  ...((cfg.inter_confed && cfg.inter_confed.afc) || []),
+                  ...((cfg.inter_confed && cfg.inter_confed.conmebol) || []),
+                  (cfg.inter_confed && cfg.inter_confed.ofc)].filter(Boolean);
+    if (icPo.includes(team)) return "Inter-Confed PO";
+    if (STATE.ctx.getTeamConfed(team) === "UEFA") return "UEFA Play-offs";
+    if (STATE.ctx.getTeamConfed(team) === "CONCACAF") return "CONCACAF W Champ";
+    return "Eliminated";
+  }
+
+  function buildPrecomputedOddsRows() {
+    const pre = STATE.payload.precomputed_odds || {};
+    const byTeam = Object.create(null);
+    function ensure(t) {
+      if (!byTeam[t]) {
+        byTeam[t] = {
+          team: t,
+          confed: STATE.ctx.getTeamConfed(t),
+          qualPct: null,
+          playoffPct: null,
+          r16Pct: null,
+          qfPct: null,
+          sfPct: null,
+          finPct: null,
+          champPct: 0
+        };
+      }
+      return byTeam[t];
+    }
+    (pre.playoff_3slots || []).forEach(r => { ensure(r.team).playoffPct = Number(r.prob) * 100; });
+    (pre.qual_32slots || []).forEach(r => { ensure(r.team).qualPct = Number(r.prob) * 100; });
+    (pre.champions || []).forEach(r => { ensure(r.team).champPct = Number(r.win_prob) * 100; });
+    const rows = Object.values(byTeam);
+    rows.sort((a, b) => (b.champPct - a.champPct) || ((b.playoffPct || 0) - (a.playoffPct || 0)));
+    return rows;
+  }
+
+  function fmtPctCell(val, barColor) {
+    if (val === null || val === undefined || !Number.isFinite(val)) return '<span style="color:#999999;">—</span>';
+    const pct = Math.max(0, Math.min(100, val));
+    const txt = pct >= 99.95 ? "100.0%" : (pct > 0 && pct < 0.05 ? "<0.1%" : pct.toFixed(1) + "%");
+    return `<div class="wwc-inline-bar-wrap"><span>${txt}</span><span class="wwc-inline-bar-track"><span class="wwc-inline-bar-fill${barColor ? " " + barColor : ""}" style="width:${pct.toFixed(1)}%;"></span></span></div>`;
+  }
+
+  function renderOddsTab(forceRunLive) {
+    if (!STATE.ctx) return;
+    const mode = STATE.odds.mode;
+    const isLive = mode === "live";
+    document.getElementById("odds_iter_wrap").style.display = isLive ? "inline-flex" : "none";
+
+    let dataRows = [];
+    if (isLive) {
+      if (!STATE.odds.liveCache || forceRunLive) {
+        STATE.odds.liveCache = STATE.ctx.runMonteCarlo(STATE.odds.iterations);
+      }
+      const res = STATE.odds.liveCache;
+      dataRows = res.rows.map(r => Object.assign({}, r, { status: getTeamStatusBadge(r.team) }));
+      document.getElementById("odds_kpi_basis").textContent = `${res.iterations.toLocaleString()} Conditioned Sims`;
+      document.getElementById("odds_kpi_time").textContent = `${Math.round(res.elapsedMs)} ms (${dataRows.length} teams)`;
+      document.getElementById("odds_mode_note").textContent = `Conditioned on ${STATE.ctx.cfg.as_of_label || "active config"}`;
+    } else {
+      dataRows = buildPrecomputedOddsRows().map(r => Object.assign({}, r, { status: getTeamStatusBadge(r.team) }));
+      document.getElementById("odds_kpi_basis").textContent = "Precomputed .qs2 Baseline";
+      document.getElementById("odds_kpi_time").textContent = `${dataRows.length} tracked nations`;
+      document.getElementById("odds_mode_note").textContent = "Static priors saved inside wwc_app_data.qs2";
+    }
+
+    const favChamp = dataRows.slice().sort((a, b) => b.champPct - a.champPct)[0];
+    document.getElementById("odds_kpi_fav").textContent = favChamp ? `${favChamp.team} (${favChamp.champPct.toFixed(1)}%)` : "—";
+    const nonQualTop = dataRows.filter(r => r.status !== "Qualified" && r.qualPct !== null).sort((a, b) => b.qualPct - a.qualPct)[0];
+    document.getElementById("odds_kpi_qual").textContent = nonQualTop ? `${nonQualTop.team} (${nonQualTop.qualPct.toFixed(1)}%)` : "All Settled";
+
+    // Filter
+    const q = normSearch(STATE.odds.search);
+    const cf = STATE.odds.confed;
+    const filtered = dataRows.filter(r => {
+      if (cf !== "ALL" && r.confed !== cf) return false;
+      if (q && !normSearch(r.team).includes(q) && !normSearch(r.status).includes(q) && !normSearch(r.confed).includes(q)) return false;
+      return true;
+    });
+
+    // Sort
+    const sCol = STATE.odds.sortCol;
+    const dir = STATE.odds.sortDir === "asc" ? 1 : -1;
+    filtered.sort((a, b) => {
+      if (sCol === "team" || sCol === "confed" || sCol === "status") {
+        return dir * String(a[sCol]).localeCompare(String(b[sCol]));
+      }
+      const va = a[sCol] === null || a[sCol] === undefined ? -1 : Number(a[sCol]);
+      const vb = b[sCol] === null || b[sCol] === undefined ? -1 : Number(b[sCol]);
+      return dir * (va - vb);
+    });
+
+    const cols = [
+      { key: "team", label: "Team", num: false },
+      { key: "confed", label: "Confed", num: false },
+      { key: "status", label: "Path / Status", num: false },
+      { key: "qualPct", label: "Qualify %", num: true },
+      { key: "playoffPct", label: "ICPO Slot %", num: true },
+      { key: "r16Pct", label: "R16 %", num: true },
+      { key: "qfPct", label: "QF %", num: true },
+      { key: "sfPct", label: "SF %", num: true },
+      { key: "finPct", label: "Final %", num: true },
+      { key: "champPct", label: "Champion %", num: true }
+    ];
+
+    const thead = document.getElementById("odds_table_head");
+    thead.innerHTML = `<tr><th class="num">#</th>` + cols.map(c => {
+      const arrow = STATE.odds.sortCol === c.key ? (STATE.odds.sortDir === "asc" ? " ▲" : " ▼") : "";
+      return `<th class="sortable${c.num ? " num" : ""}" data-col="${c.key}">${escapeHtml(c.label)}${arrow}</th>`;
+    }).join("") + `</tr>`;
+
+    const total = filtered.length;
+    const pLen = STATE.odds.pageLen;
+    const totalPages = Math.max(1, Math.ceil(total / pLen));
+    if (STATE.odds.page > totalPages) STATE.odds.page = totalPages;
+    const startIdx = (STATE.odds.page - 1) * pLen;
+    const slice = filtered.slice(startIdx, startIdx + pLen);
+
+    const tbody = document.getElementById("odds_table_body");
+    tbody.innerHTML = slice.length === 0
+      ? `<tr><td colspan="11" style="text-align:center; padding:1rem; color:#777777;">No matching nations found.</td></tr>`
+      : slice.map((r, i) => {
+          return `<tr>` +
+            `<td class="num">${startIdx + i + 1}</td>` +
+            `<td style="font-weight:700;">${escapeHtml(r.team)}</td>` +
+            `<td><span class="wwc-confed-pill">${escapeHtml(r.confed)}</span></td>` +
+            `<td style="font-size:0.82rem; color:#444444;">${escapeHtml(r.status)}</td>` +
+            `<td class="num">${fmtPctCell(r.qualPct)}</td>` +
+            `<td class="num">${fmtPctCell(r.playoffPct)}</td>` +
+            `<td class="num">${fmtPctCell(r.r16Pct)}</td>` +
+            `<td class="num">${fmtPctCell(r.qfPct)}</td>` +
+            `<td class="num">${fmtPctCell(r.sfPct)}</td>` +
+            `<td class="num">${fmtPctCell(r.finPct)}</td>` +
+            `<td class="num">${fmtPctCell(r.champPct, "gold")}</td>` +
+            `</tr>`;
+        }).join("");
+
+    renderPager("odds_table_info", "odds_table_pager", total, startIdx, slice.length, STATE.odds.page, totalPages, (newP) => {
+      STATE.odds.page = newP;
+      renderOddsTab(false);
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // 4. TAB 3: MATCH PREDICTOR + FULL SEARCHABLE COMBOBOX
+  // ---------------------------------------------------------------------------
+  function buildAllPredictorTeams() {
+    const ctx = STATE.ctx;
+    const set = new Map();
+    ctx.wwrRows.forEach(r => set.set(r.team, { name: r.team, sub: `WWR #${r.rank}`, norm: normSearch(r.team) }));
+    ctx.advRows.forEach(r => {
+      if (!set.has(r.team)) {
+        set.set(r.team, { name: r.team, sub: `Net #${r.rank}`, norm: normSearch(r.team) });
+      }
+    });
+    const list = Array.from(set.values());
+    list.sort((a, b) => a.name.localeCompare(b.name));
+    return list;
+  }
+
+  function setupTeamCombo(baseId, items, defaultTeam, onChange) {
+    const hiddenEl = document.getElementById(baseId);
+    const inputEl = document.getElementById(baseId + "_search");
+    const menuEl = document.getElementById(baseId + "_menu");
+    const wrapEl = document.getElementById("wrap_" + baseId);
+
+    const state = {
+      items,
+      filtered: items,
+      selected: defaultTeam || (items[0] ? items[0].name : ""),
+      hiIdx: 0
+    };
+
+    function setValue(teamName, fire) {
+      state.selected = teamName;
+      hiddenEl.value = teamName;
+      inputEl.value = teamName;
+      if (fire && onChange) onChange();
+    }
+
+    function renderMenu(qStr) {
+      const q = normSearch(qStr);
+      state.filtered = q ? state.items.filter(x => x.norm.includes(q)) : state.items;
+      menuEl.innerHTML = "";
+      if (state.filtered.length === 0) {
+        menuEl.innerHTML = `<div class="wwc-search-empty">No matching national teams</div>`;
+        return;
+      }
+      state.hiIdx = Math.max(0, state.filtered.findIndex(x => x.name === state.selected));
+      const frag = document.createDocumentFragment();
+      state.filtered.forEach((it, idx) => {
+        const div = document.createElement("div");
+        div.className = "wwc-search-option" + (idx === state.hiIdx ? " active" : "");
+        div.innerHTML = `<span>${escapeHtml(it.name)}</span><span class="wwc-search-option-sub">${escapeHtml(it.sub)}</span>`;
+        div.addEventListener("mousedown", (e) => {
+          e.preventDefault();
+          setValue(it.name, true);
+          closeMenu();
+        });
+        frag.appendChild(div);
+      });
+      menuEl.appendChild(frag);
+      const act = menuEl.children[state.hiIdx];
+      if (act && typeof act.scrollIntoView === "function") act.scrollIntoView({ block: "nearest" });
+    }
+
+    function openMenu() {
+      Object.keys(STATE.combos).forEach(k => { if (k !== baseId) STATE.combos[k].closeMenu(); });
+      inputEl.value = "";
+      renderMenu("");
+      menuEl.classList.add("open");
+    }
+
+    function closeMenu() {
+      menuEl.classList.remove("open");
+      inputEl.value = state.selected;
+    }
+
+    inputEl.addEventListener("focus", openMenu);
+    inputEl.addEventListener("click", () => { if (!menuEl.classList.contains("open")) openMenu(); });
+    inputEl.addEventListener("input", () => {
+      if (!menuEl.classList.contains("open")) menuEl.classList.add("open");
+      renderMenu(inputEl.value);
+    });
+    inputEl.addEventListener("keydown", (e) => {
+      if (!menuEl.classList.contains("open")) return;
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        if (state.filtered.length > 0) {
+          state.hiIdx = (state.hiIdx + 1) % state.filtered.length;
+          updateHi();
+        }
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        if (state.filtered.length > 0) {
+          state.hiIdx = (state.hiIdx - 1 + state.filtered.length) % state.filtered.length;
+          updateHi();
+        }
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        const pick = state.filtered[state.hiIdx] || state.filtered[0];
+        if (pick) setValue(pick.name, true);
+        closeMenu();
+        inputEl.blur();
+      } else if (e.key === "Escape") {
+        closeMenu();
+        inputEl.blur();
+      }
+    });
+
+    function updateHi() {
+      Array.from(menuEl.children).forEach((el, idx) => el.classList.toggle("active", idx === state.hiIdx));
+      const act = menuEl.children[state.hiIdx];
+      if (act && typeof act.scrollIntoView === "function") act.scrollIntoView({ block: "nearest" });
+    }
+
+    document.addEventListener("mousedown", (e) => {
+      if (!wrapEl.contains(e.target)) closeMenu();
+    });
+
+    setValue(state.selected, false);
+    const api = { getValue: () => state.selected, setValue, closeMenu };
+    STATE.combos[baseId] = api;
+    return api;
+  }
+
+  function renderProbBarHtml(hTeam, aTeam, probs) {
+    const ph = probs.HomeWin * 100;
+    const pd = probs.Draw * 100;
+    const pa = probs.AwayWin * 100;
+    return `<div class="wwc-prob-bar">` +
+      `<div class="wwc-prob-seg-home" style="width:${ph.toFixed(2)}%;">${ph >= 11 ? ph.toFixed(1) + "%" : ""}</div>` +
+      `<div class="wwc-prob-seg-draw" style="width:${pd.toFixed(2)}%;">${pd >= 10 ? pd.toFixed(1) + "%" : ""}</div>` +
+      `<div class="wwc-prob-seg-away" style="width:${pa.toFixed(2)}%;">${pa >= 11 ? pa.toFixed(1) + "%" : ""}</div>` +
+      `</div>` +
+      `<div style="display:flex; justify-content:space-between; font-size:0.86rem; color:#222222;">` +
+      `<span><strong>${escapeHtml(hTeam)}:</strong> ${ph.toFixed(1)}%</span>` +
+      `<span><strong>Draw:</strong> ${pd.toFixed(1)}%</span>` +
+      `<span><strong>${escapeHtml(aTeam)}:</strong> ${pa.toFixed(1)}%</span>` +
+      `</div>`;
+  }
+
+  function renderPredictionTab() {
+    if (!STATE.ctx || !STATE.combos.pred_home || !STATE.combos.pred_away) return;
+    const hTeam = STATE.combos.pred_home.getValue();
+    const aTeam = STATE.combos.pred_away.getValue();
+    const isNeutral = document.getElementById("is_neutral").checked;
+    const res = STATE.ctx.predictMatchFull(hTeam, aTeam, isNeutral);
+
+    document.getElementById("pred_match_header").textContent = `${hTeam} vs ${aTeam}`;
+    document.getElementById("pred_venue_badge").textContent = isNeutral ? "Neutral Venue" : `Home: ${hTeam}`;
+
+    const grid = document.getElementById("pred_models_grid");
+    grid.innerHTML =
+      `<div class="wwc-kpi-card">` +
+        `<div class="wwc-kpi-sub">Model 1: Unofficial FIFA World Rankings (Ordered Logit)</div>` +
+        `<div style="font-size:0.86rem; color:#444444; margin-bottom:0.25rem;">WWR Rating: <strong>${escapeHtml(hTeam)} ${res.wwr.rHome.toFixed(1)}</strong> vs <strong>${escapeHtml(aTeam)} ${res.wwr.rAway.toFixed(1)}</strong>${isNeutral ? "" : " (+100 Home Adj)"}</div>` +
+        renderProbBarHtml(hTeam, aTeam, res.wwr) +
+      `</div>` +
+      `<div class="wwc-kpi-card" style="border-left-color:#1D3549;">` +
+        `<div class="wwc-kpi-sub">Model 2: Net Strength (Weighted Poisson GLM)</div>` +
+        `<div style="font-size:0.86rem; color:#444444; margin-bottom:0.25rem;">Expected Goals (xG): <strong>${escapeHtml(hTeam)} ${res.lambda.toFixed(2)} – ${res.mu.toFixed(2)} ${escapeHtml(aTeam)}</strong>${res.poissonKnown ? "" : " (Fallback rate)"}</div>` +
+        renderProbBarHtml(hTeam, aTeam, res.adv) +
+      `</div>`;
+
+    const tbody = document.getElementById("scoreline_tbody");
+    tbody.innerHTML = res.topScorelines.map((s, idx) => {
+      const outcomeLabel = s.g1 > s.g2 ? `${hTeam} Win` : (s.g2 > s.g1 ? `${aTeam} Win` : "Draw");
+      const pct = s.prob * 100;
+      return `<tr>` +
+        `<td style="color:#666666;">${idx + 1}</td>` +
+        `<td style="font-weight:700;">${s.g1} - ${s.g2}</td>` +
+        `<td>${escapeHtml(outcomeLabel)}</td>` +
+        `<td class="num">${fmtPctCell(pct)}</td>` +
+        `</tr>`;
+    }).join("");
+  }
+
+  // ---------------------------------------------------------------------------
+  // 5. TAB 4: RANKINGS & SHARED TABLE/PAGINATION HELPERS
+  // ---------------------------------------------------------------------------
+  function renderPager(infoId, pagerId, total, startIdx, sliceLen, page, totalPages, onPage) {
+    document.getElementById(infoId).textContent = total === 0
+      ? "Showing 0 entries"
+      : `Showing ${startIdx + 1} to ${startIdx + sliceLen} of ${total} entries`;
+    const pager = document.getElementById(pagerId);
+    pager.innerHTML = "";
+    if (totalPages <= 1) return;
+
+    function addBtn(label, target, disabled, active) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "wwc-page-btn" + (active ? " active" : "");
+      b.textContent = label;
+      b.disabled = disabled;
+      if (!disabled) b.addEventListener("click", () => onPage(target));
+      pager.appendChild(b);
+    }
+
+    addBtn("Prev", page - 1, page === 1, false);
+    const maxBtns = 5;
+    let lo = Math.max(1, page - 2);
+    let hi = Math.min(totalPages, lo + maxBtns - 1);
+    lo = Math.max(1, hi - maxBtns + 1);
+    for (let p = lo; p <= hi; p++) addBtn(String(p), p, false, p === page);
+    addBtn("Next", page + 1, page === totalPages, false);
+  }
+
+  function renderRankingsTab() {
+    if (!STATE.ctx) return;
+    // WWR Table
+    const wq = normSearch(STATE.rank.wwrSearch);
+    const wRows = STATE.ctx.wwrRows.filter(r => !wq || normSearch(r.team).includes(wq) || String(r.rank).includes(wq));
+    const wd = STATE.rank.wwrSortDir === "asc" ? 1 : -1;
+    const wc = STATE.rank.wwrSortCol;
+    wRows.sort((a, b) => wc === "team" ? wd * a.team.localeCompare(b.team) : wd * (Number(a[wc]) - Number(b[wc])));
+
+    document.getElementById("wwr_thead").innerHTML = `<tr>` +
+      `<th class="sortable num" data-table="wwr" data-col="rank">Rank${wc === "rank" ? (wd === 1 ? " ▲" : " ▼") : ""}</th>` +
+      `<th class="sortable" data-table="wwr" data-col="team">Team${wc === "team" ? (wd === 1 ? " ▲" : " ▼") : ""}</th>` +
+      `<th class="sortable num" data-table="wwr" data-col="rating">WWR Rating${wc === "rating" ? (wd === 1 ? " ▲" : " ▼") : ""}</th>` +
+      `</tr>`;
+
+    const wLen = STATE.rank.wwrPageLen;
+    const wPages = Math.max(1, Math.ceil(wRows.length / wLen));
+    if (STATE.rank.wwrPage > wPages) STATE.rank.wwrPage = wPages;
+    const wStart = (STATE.rank.wwrPage - 1) * wLen;
+    const wSlice = wRows.slice(wStart, wStart + wLen);
+
+    document.getElementById("wwr_tbody").innerHTML = wSlice.map(r =>
+      `<tr><td class="num">${r.rank}</td><td style="font-weight:600;">${escapeHtml(r.team)}</td><td class="num">${Number(r.rating).toFixed(1)}</td></tr>`
+    ).join("");
+    renderPager("wwr_info", "wwr_pager", wRows.length, wStart, wSlice.length, STATE.rank.wwrPage, wPages, (p) => {
+      STATE.rank.wwrPage = p;
+      renderRankingsTab();
+    });
+
+    // Adv Table
+    const aq = normSearch(STATE.rank.advSearch);
+    const aRows = STATE.ctx.advRows.filter(r => !aq || normSearch(r.team).includes(aq) || String(r.rank).includes(aq));
+    const ad = STATE.rank.advSortDir === "asc" ? 1 : -1;
+    const ac = STATE.rank.advSortCol;
+    aRows.sort((a, b) => ac === "team" ? ad * a.team.localeCompare(b.team) : ad * (Number(a[ac]) - Number(b[ac])));
+
+    document.getElementById("adv_thead").innerHTML = `<tr>` +
+      `<th class="sortable num" data-table="adv" data-col="rank">Rank${ac === "rank" ? (ad === 1 ? " ▲" : " ▼") : ""}</th>` +
+      `<th class="sortable" data-table="adv" data-col="team">Team${ac === "team" ? (ad === 1 ? " ▲" : " ▼") : ""}</th>` +
+      `<th class="sortable num" data-table="adv" data-col="net_strength">Net Strength${ac === "net_strength" ? (ad === 1 ? " ▲" : " ▼") : ""}</th>` +
+      `<th class="sortable num" data-table="adv" data-col="attack">Attack${ac === "attack" ? (ad === 1 ? " ▲" : " ▼") : ""}</th>` +
+      `<th class="sortable num" data-table="adv" data-col="defense">Defense${ac === "defense" ? (ad === 1 ? " ▲" : " ▼") : ""}</th>` +
+      `</tr>`;
+
+    const aLen = STATE.rank.advPageLen;
+    const aPages = Math.max(1, Math.ceil(aRows.length / aLen));
+    if (STATE.rank.advPage > aPages) STATE.rank.advPage = aPages;
+    const aStart = (STATE.rank.advPage - 1) * aLen;
+    const aSlice = aRows.slice(aStart, aStart + aLen);
+
+    document.getElementById("adv_tbody").innerHTML = aSlice.map(r => {
+      const ns = Number(r.net_strength);
+      const nsCls = ns >= 0 ? "color:#00747A; font-weight:700;" : "color:#B2182B; font-weight:700;";
+      return `<tr>` +
+        `<td class="num">${r.rank}</td>` +
+        `<td style="font-weight:600;">${escapeHtml(r.team)}</td>` +
+        `<td class="num" style="${nsCls}">${(ns >= 0 ? "+" : "") + ns.toFixed(2)}</td>` +
+        `<td class="num">${Number(r.attack).toFixed(2)}</td>` +
+        `<td class="num">${Number(r.defense).toFixed(2)}</td>` +
+        `</tr>`;
+    }).join("");
+    renderPager("adv_info", "adv_pager", aRows.length, aStart, aSlice.length, STATE.rank.advPage, aPages, (p) => {
+      STATE.rank.advPage = p;
+      renderRankingsTab();
+    });
+  }
+
+  function downloadCsv(filename, headers, rows) {
+    const csvCell = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
+    const lines = [headers.map(csvCell).join(",")];
+    rows.forEach(r => lines.push(r.map(csvCell).join(",")));
+    const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  // ---------------------------------------------------------------------------
+  // 6. EVENT WIRING & BOOTSTRAP
+  // ---------------------------------------------------------------------------
+  function switchTab(tab) {
+    STATE.activeTab = tab;
+    ["sim", "odds", "pred", "rank"].forEach(p => {
+      const panel = document.getElementById(`wwc-panel-${p}`);
+      panel.style.display = p === tab ? (p === "pred" ? "grid" : "block") : "none";
+      const btn = document.getElementById(`wwc-tab-btn-${p}`);
+      btn.classList.toggle("active", p === tab);
+      btn.setAttribute("aria-selected", p === tab ? "true" : "false");
+    });
+    if (tab === "odds") renderOddsTab(false);
+    else if (tab === "pred") renderPredictionTab();
+    else if (tab === "rank") renderRankingsTab();
+  }
+
+  async function bootstrap() {
+    document.querySelectorAll(".wwc-tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+    });
+
+    // Click handler for match-log inspection inside Group & ICPO Prelim tables
+    document.getElementById("wwc-panel-sim").addEventListener("click", (e) => {
+      const trig = e.target.closest(".wwc-matchlog-trigger");
+      if (!trig) return;
+      const drawer = document.getElementById(`${trig.dataset.drawer}_drawer`);
+      if (!drawer) return;
+      const matches = (trig.dataset.log || "").split("\n").filter(Boolean);
+      drawer.innerHTML = `<div style="font-weight:700; color:#1D3549; margin-bottom:0.2rem;">${escapeHtml(trig.dataset.team)} Match Results:</div>` +
+        matches.map(m => `<div>&bull; ${escapeHtml(m)}</div>`).join("");
+      drawer.classList.add("open");
+    });
+
+    // Simulator step buttons
+    document.getElementById("btn_uefa").addEventListener("click", () => {
+      if (!STATE.ctx) return;
+      STATE.sim.uefa = STATE.ctx.simUefaStage(false);
+      STATE.sim.global = null;
+      STATE.sim.finalSim = null;
+      renderTab1All();
+    });
+
+    document.getElementById("btn_concacaf").addEventListener("click", () => {
+      if (!STATE.ctx) return;
+      STATE.sim.concacaf = STATE.ctx.simConcacafStage(false);
+      STATE.sim.global = null;
+      STATE.sim.finalSim = null;
+      renderTab1All();
+    });
+
+    document.getElementById("btn_global").addEventListener("click", () => {
+      if (!STATE.ctx) return;
+      const uefa = STATE.sim.uefa || STATE.ctx.simUefaStage(false);
+      const concacaf = STATE.sim.concacaf || STATE.ctx.simConcacafStage(false);
+      const caf = STATE.ctx.simCafStage(false);
+      STATE.sim.uefa = uefa;
+      STATE.sim.concacaf = concacaf;
+      STATE.sim.global = STATE.ctx.simGlobalPlayoffsStage(caf.playoff, concacaf.playoff, uefa.playoff, false);
+      STATE.sim.finalSim = null;
+      renderTab1All();
+    });
+
+    document.getElementById("btn_draw").addEventListener("click", () => {
+      if (!STATE.ctx) return;
+      const full = STATE.ctx.simulateSingleFullVisual({
+        uefa: STATE.sim.uefa,
+        concacaf: STATE.sim.concacaf,
+        global: STATE.sim.global
+      });
+      STATE.sim = { uefa: full.uefa, concacaf: full.concacaf, global: full.global, finalSim: full };
+      renderTab1All();
+    });
+
+    document.getElementById("btn_quick_sim").addEventListener("click", () => {
+      if (!STATE.ctx) return;
+      const full = STATE.ctx.simulateSingleFullVisual();
+      STATE.sim = { uefa: full.uefa, concacaf: full.concacaf, global: full.global, finalSim: full };
+      renderTab1All();
+    });
+
+    document.getElementById("btn_reset_sim").addEventListener("click", () => {
+      if (!STATE.ctx) return;
+      STATE.sim = {
+        uefa: (STATE.ctx.cfg.uefa && STATE.ctx.cfg.uefa.status === "completed") ? STATE.ctx.simUefaStage(false) : null,
+        concacaf: (STATE.ctx.cfg.concacaf && STATE.ctx.cfg.concacaf.status === "completed") ? STATE.ctx.simConcacafStage(false) : null,
+        global: (STATE.ctx.cfg.inter_confed && STATE.ctx.cfg.inter_confed.status === "completed") ? STATE.ctx.simGlobalPlayoffsStage([], [], null, false) : null,
+        finalSim: null
+      };
+      renderTab1All();
+    });
+
+    document.getElementById("btn_download_bracket").addEventListener("click", async () => {
+      const target = document.getElementById("wwc_export_area");
+      if (!target || typeof html2canvas === "undefined") return;
+      const canvas = await html2canvas(target, { backgroundColor: "#FFFFFF", scale: 2 });
+      const a = document.createElement("a");
+      a.download = "WWC_2027_Simulation_Bracket.png";
+      a.href = canvas.toDataURL("image/png");
+      a.click();
+    });
+
+    // Odds Tab controls
+    document.getElementById("odds_mode_select").addEventListener("change", (e) => {
+      STATE.odds.mode = e.target.value;
+      STATE.odds.page = 1;
+      renderOddsTab(false);
+    });
+    document.getElementById("odds_iter_select").addEventListener("change", (e) => {
+      STATE.odds.iterations = Number(e.target.value) || 2500;
+    });
+    document.getElementById("btn_run_mc").addEventListener("click", () => {
+      const btn = document.getElementById("btn_run_mc");
+      btn.disabled = true;
+      btn.textContent = "Running...";
+      setTimeout(() => {
+        renderOddsTab(true);
+        btn.disabled = false;
+        btn.textContent = "Run Simulations";
+      }, 15);
+    });
+    document.getElementById("odds_confed_filter").addEventListener("change", (e) => {
+      STATE.odds.confed = e.target.value;
+      STATE.odds.page = 1;
+      renderOddsTab(false);
+    });
+    document.getElementById("odds_page_len").addEventListener("change", (e) => {
+      STATE.odds.pageLen = Number(e.target.value) || 50;
+      STATE.odds.page = 1;
+      renderOddsTab(false);
+    });
+    document.getElementById("odds_table_search").addEventListener("input", (e) => {
+      STATE.odds.search = e.target.value;
+      STATE.odds.page = 1;
+      renderOddsTab(false);
+    });
+    document.getElementById("odds_table_head").addEventListener("click", (e) => {
+      const th = e.target.closest("th.sortable");
+      if (!th) return;
+      const col = th.dataset.col;
+      if (STATE.odds.sortCol === col) {
+        STATE.odds.sortDir = STATE.odds.sortDir === "asc" ? "desc" : "asc";
+      } else {
+        STATE.odds.sortCol = col;
+        STATE.odds.sortDir = (col === "team" || col === "confed" || col === "status") ? "asc" : "desc";
+      }
+      renderOddsTab(false);
+    });
+    document.getElementById("btn_export_odds_csv").addEventListener("click", () => {
+      const rows = (STATE.odds.mode === "live" && STATE.odds.liveCache)
+        ? STATE.odds.liveCache.rows
+        : buildPrecomputedOddsRows();
+      downloadCsv(
+        `wwc_2027_odds_${STATE.odds.mode}.csv`,
+        ["Team", "Confed", "Qualify_Pct", "Playoff_Pct", "R16_Pct", "QF_Pct", "SF_Pct", "Final_Pct", "Champion_Pct"],
+        rows.map(r => [r.team, r.confed, r.qualPct?.toFixed(2) ?? "", r.playoffPct?.toFixed(2) ?? "", r.r16Pct?.toFixed(2) ?? "", r.qfPct?.toFixed(2) ?? "", r.sfPct?.toFixed(2) ?? "", r.finPct?.toFixed(2) ?? "", r.champPct?.toFixed(2) ?? ""])
+      );
+    });
+
+    // Predictor Tab controls
+    document.getElementById("is_neutral").addEventListener("change", renderPredictionTab);
+    document.getElementById("run_prediction").addEventListener("click", renderPredictionTab);
+    document.getElementById("btn_swap_teams").addEventListener("click", () => {
+      if (!STATE.combos.pred_home || !STATE.combos.pred_away) return;
+      const h = STATE.combos.pred_home.getValue();
+      const a = STATE.combos.pred_away.getValue();
+      STATE.combos.pred_home.setValue(a, false);
+      STATE.combos.pred_away.setValue(h, false);
+      renderPredictionTab();
+    });
+
+    // Rankings Tab controls
+    ["wwr", "adv"].forEach(tbl => {
+      document.getElementById(`${tbl}_search`).addEventListener("input", (e) => {
+        STATE.rank[`${tbl}Search`] = e.target.value;
+        STATE.rank[`${tbl}Page`] = 1;
+        renderRankingsTab();
+      });
+      document.getElementById(`${tbl}_page_len`).addEventListener("change", (e) => {
+        STATE.rank[`${tbl}PageLen`] = Number(e.target.value) || 20;
+        STATE.rank[`${tbl}Page`] = 1;
+        renderRankingsTab();
+      });
+      document.getElementById(`${tbl}_thead`).addEventListener("click", (e) => {
+        const th = e.target.closest("th.sortable");
+        if (!th) return;
+        const col = th.dataset.col;
+        const curCol = STATE.rank[`${tbl}SortCol`];
+        if (curCol === col) {
+          STATE.rank[`${tbl}SortDir`] = STATE.rank[`${tbl}SortDir`] === "asc" ? "desc" : "asc";
+        } else {
+          STATE.rank[`${tbl}SortCol`] = col;
+          STATE.rank[`${tbl}SortDir`] = (col === "rank" || col === "team") ? "asc" : "desc";
+        }
+        renderRankingsTab();
+      });
+    });
+
+    document.getElementById("btn_export_wwr_csv").addEventListener("click", () => {
+      if (!STATE.ctx) return;
+      downloadCsv("wwr_rankings.csv", ["Rank", "Team", "WWR_Rating"], STATE.ctx.wwrRows.map(r => [r.rank, r.team, r.rating]));
+    });
+    document.getElementById("btn_export_adv_csv").addEventListener("click", () => {
+      if (!STATE.ctx) return;
+      downloadCsv("net_strength_rankings.csv", ["Rank", "Team", "Net_Strength", "Attack", "Defense"],
+        STATE.ctx.advRows.map(r => [r.rank, r.team, r.net_strength, r.attack, r.defense]));
+    });
+
+    // Fetch static payload JSON
+    setStatus("loading", "Loading data/wwc/wwc_payload.json...");
+    try {
+      const resp = await fetch(`data/wwc/wwc_payload.json?ts=${Date.now()}`, { cache: "no-store" });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status} ${resp.statusText}`);
+      const payload = await resp.json();
+      STATE.payload = payload;
+      STATE.ctx = buildEngineContext(payload);
+
+      // Update dynamic stage titles from config
+      const cfg = STATE.ctx.cfg;
+      if (cfg.uefa && cfg.uefa.label) {
+        document.getElementById("uefa_heading").textContent = `${cfg.uefa.label}${cfg.uefa.window ? " (" + cfg.uefa.window + ")" : ""}`;
+        if (cfg.uefa.note) document.getElementById("uefa_note").textContent = cfg.uefa.note;
+      }
+      if (cfg.concacaf && cfg.concacaf.label) {
+        document.getElementById("concacaf_heading").textContent = `${cfg.concacaf.label}${cfg.concacaf.window ? " (" + cfg.concacaf.window + ")" : ""}`;
+        if (cfg.concacaf.note) document.getElementById("concacaf_note").textContent = cfg.concacaf.note;
+      }
+      if (cfg.inter_confed && cfg.inter_confed.label) {
+        document.getElementById("global_heading").textContent = `${cfg.inter_confed.label}${cfg.inter_confed.window ? " (" + cfg.inter_confed.window + ")" : ""}`;
+      }
+
+      // Auto-populate any already-completed stage overrides from config
+      if (cfg.uefa && cfg.uefa.status === "completed") STATE.sim.uefa = STATE.ctx.simUefaStage(false);
+      if (cfg.concacaf && cfg.concacaf.status === "completed") STATE.sim.concacaf = STATE.ctx.simConcacafStage(false);
+      if (cfg.inter_confed && cfg.inter_confed.status === "completed") STATE.sim.global = STATE.ctx.simGlobalPlayoffsStage([], [], null, false);
+
+      renderTab1All();
+
+      const predTeams = buildAllPredictorTeams();
+      const defH = predTeams.some(t => t.name === "Brazil") ? "Brazil" : (predTeams[0] ? predTeams[0].name : "");
+      const defA = predTeams.some(t => t.name === "United States") ? "United States" : (predTeams[1] ? predTeams[1].name : defH);
+      setupTeamCombo("pred_home", predTeams, defH, renderPredictionTab);
+      setupTeamCombo("pred_away", predTeams, defA, renderPredictionTab);
+
+      const nMod = payload.meta && payload.meta.n_model_teams ? payload.meta.n_model_teams : Object.keys(payload.models.poisson.teams || {}).length;
+      setStatus("ready", `Ready (${nMod} nations modeled)`);
+      showError("");
+    } catch (err) {
+      setStatus("error", "Asset load pending");
+      showError(
+        `<strong>Static WWC data asset could not be loaded</strong> (${escapeHtml(err.message)}). ` +
+        `Run <code>Rscript scripts/export_wwc_web_assets.R --qs2=C:/path/to/wwc_app_data.qs2</code> from <code>quarto_site/</code> to generate <code>quarto_site/data/wwc/wwc_payload.json</code>.`
+      );
+    }
+  }
+
+  bootstrap();
+})();
+</script>
+```
