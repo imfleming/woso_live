@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "tournament_title": "2027 Women's World Cup Simulator",
+  "as_of_label": "Post-WAFCON 2026 Cycle",
+  "host_team": "Brazil",
+  "fallback_lambda": 1.25,
+  "fallback_wwr": 1300,
+  "aliases": {
+    "China PR": "China",
+    "South Korea": "Korea Republic",
+    "North Korea": "Korea DPR",
+    "Taiwan": "Chinese Taipei",
+    "Czechia": "Czech Republic",
+    "Cabo Verde": "Cape Verde",
+    "Côte d'Ivoire": "Ivory Coast",
+    "Ireland": "Republic of Ireland"
+  },
+  "confed_teams": {
+    "AFC": ["Japan", "Australia", "China PR", "China", "South Korea", "Korea Republic", "North Korea", "Korea DPR", "Philippines", "Taiwan", "Chinese Taipei", "Uzbekistan"],
+    "CAF": ["Morocco", "Algeria", "Senegal", "Kenya", "South Africa", "Ivory Coast", "Burkina Faso", "Tanzania", "Nigeria", "Zambia", "Egypt", "Malawi", "Ghana", "Cameroon", "Mali", "Cape Verde"],
+    "CONCACAF": ["United States", "El Salvador", "Jamaica", "Costa Rica", "Canada", "Panama", "Mexico", "Haiti"],
+    "CONMEBOL": ["Brazil", "Colombia", "Argentina", "Ecuador", "Venezuela"],
+    "OFC": ["New Zealand", "Papua New Guinea"],
+    "UEFA_EXTRA": ["Denmark", "France", "Germany", "Spain"]
+  },
+  "direct_qualifiers": {
+    "host": ["Brazil"],
+    "afc": ["Japan", "Australia", "China PR", "South Korea", "North Korea", "Philippines"],
+    "ofc": ["New Zealand"],
+    "conmebol": ["Colombia", "Argentina"],
+    "uefa_direct": ["Denmark", "France", "Germany", "Spain"]
+  },
+  "caf": {
+    "label": "CAF 2026 WAFCON",
+    "window": "July-August 2026",
+    "status": "completed",
+    "host": "Morocco",
+    "note": "Settled at 2026 WAFCON (Morocco): Algeria, Morocco, Cameroon, and Malawi qualified directly; Ghana and South Africa advanced to the Inter-Confederation Play-offs.",
+    "direct": ["Algeria", "Morocco", "Cameroon", "Malawi"],
+    "playoff": ["Ghana", "South Africa"],
+    "groups": {
+      "A": ["Morocco", "Algeria", "Senegal", "Kenya"],
+      "B": ["South Africa", "Ivory Coast", "Burkina Faso", "Tanzania"],
+      "C": ["Nigeria", "Zambia", "Egypt", "Malawi"],
+      "D": ["Ghana", "Cameroon", "Mali", "Cape Verde"]
+    }
+  },
+  "uefa": {
+    "label": "UEFA Play-offs",
+    "window": "October-December 2026",
+    "status": "upcoming",
+    "two_legged": true,
+    "note": "To update when UEFA ties conclude, set winner/scores inside ties or set direct (7 teams) & playoff (1 team) with status = completed.",
+    "direct": null,
+    "playoff": null,
+    "r1_path1": [
+      ["Lithuania", "Sweden"],
+      ["Romania", "Norway"],
+      ["Greece", "England"],
+      ["Croatia", "Iceland"],
+      ["Kazakhstan", "Republic of Ireland"],
+      ["Kosovo", "Austria"],
+      ["Hungary", "Netherlands"],
+      ["Belarus", "Italy"]
+    ],
+    "r1_path2": [
+      ["Albania", "Wales"],
+      ["Turkey", "Slovenia"],
+      ["Slovakia", "Ukraine"],
+      ["Israel", "Switzerland"],
+      ["Belgium", "Poland"],
+      ["Czech Republic", "Scotland"],
+      ["Northern Ireland", "Portugal"],
+      ["Finland", "Serbia"]
+    ],
+    "r2_pairings": [
+      [2, 2],
+      [7, 7],
+      [6, 3],
+      [0, 1],
+      [3, 5],
+      [5, 0],
+      [4, 4],
+      [1, 6]
+    ]
+  },
+  "concacaf": {
+    "label": "CONCACAF W Championship",
+    "window": "November-December 2026",
+    "status": "upcoming",
+    "host": "United States",
+    "note": "United States receives home-field advantage when active.",
+    "direct": null,
+    "playoff": null,
+    "final_winner": null,
+    "qf": [
+      ["United States", "El Salvador"],
+      ["Canada", "Panama"],
+      ["Mexico", "Haiti"],
+      ["Jamaica", "Costa Rica"]
+    ],
+    "sf_pairings": [[0, 3], [1, 2]],
+    "pi_pairings": [[0, 3], [1, 2]]
+  },
+  "inter_confed": {
+    "label": "Inter-Confederation Play-offs",
+    "window": "Nov-Dec 2026 & Feb 2027",
+    "status": "upcoming",
+    "afc": ["Taiwan", "Uzbekistan"],
+    "conmebol": ["Ecuador", "Venezuela"],
+    "ofc": "Papua New Guinea",
+    "prelim_schedule": [
+      [0, 2], [0, 3], [0, 4],
+      [1, 2], [1, 3], [1, 5],
+      [2, 5], [3, 4], [4, 5]
+    ],
+    "prelim_advancers": null,
+    "qualifiers": null
+  },
+  "draw_rules": {
+    "groups": ["A", "B", "C", "D", "E", "F", "G", "H"],
+    "host_group": "A",
+    "uefa_max_per_group": 2,
+    "non_uefa_max_per_group": 1,
+    "max_retries": 200
+  },
+  "wwc_final": {
+    "status": "upcoming",
+    "pots": null,
+    "groups": null,
+    "knockout_order": [
+      ["A1", "B2"], ["C1", "D2"], ["E1", "F2"], ["G1", "H2"],
+      ["B1", "A2"], ["D1", "C2"], ["F1", "E2"], ["H1", "G2"]
+    ]
+  }
+}
