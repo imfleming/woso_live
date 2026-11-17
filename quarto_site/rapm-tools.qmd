@@ -2597,6 +2597,17 @@ execute:
       highlightIdx: 0
     };
 
+    function ensureOptionVisible(node) {
+      if (!node) return;
+      const top = node.offsetTop;
+      const bottom = top + node.offsetHeight;
+      if (top < menuEl.scrollTop) {
+        menuEl.scrollTop = top;
+      } else if (bottom > menuEl.scrollTop + menuEl.clientHeight) {
+        menuEl.scrollTop = bottom - menuEl.clientHeight;
+      }
+    }
+
     function renderMenu(query) {
       const q = normSearch(query).trim();
       comboState.filtered = q
@@ -2614,11 +2625,12 @@ execute:
 
       comboState.highlightIdx = Math.max(0, comboState.filtered.findIndex(p => p.id === comboState.selectedId));
 
-      const limit = Math.min(comboState.filtered.length, 250);
-      for (let i = 0; i < limit; i++) {
+      const frag = document.createDocumentFragment();
+      for (let i = 0; i < comboState.filtered.length; i++) {
         const p = comboState.filtered[i];
         const row = document.createElement("div");
         row.className = "rapm-search-option" + (i === comboState.highlightIdx ? " active" : "");
+        row.dataset.idx = String(i);
         const mainSpan = document.createElement("span");
         mainSpan.textContent = p.name;
         const subSpan = document.createElement("span");
@@ -2626,17 +2638,24 @@ execute:
         subSpan.textContent = p.team;
         row.appendChild(mainSpan);
         row.appendChild(subSpan);
-        row.addEventListener("mousedown", (e) => {
-          e.preventDefault();
-          selectPlayer(p.id, p.name, true);
-          closeMenu();
-        });
-        menuEl.appendChild(row);
+        frag.appendChild(row);
       }
+      menuEl.appendChild(frag);
 
-      const activeNode = menuEl.children[comboState.highlightIdx];
-      if (activeNode) activeNode.scrollIntoView({ block: "nearest" });
+      ensureOptionVisible(menuEl.children[comboState.highlightIdx]);
     }
+
+    menuEl.addEventListener("mousedown", (e) => {
+      const opt = e.target.closest(".rapm-search-option");
+      if (!opt) return;
+      e.preventDefault();
+      const idx = Number(opt.dataset.idx);
+      const picked = comboState.filtered[idx];
+      if (picked) {
+        selectPlayer(picked.id, picked.name, true);
+        closeMenu();
+      }
+    });
 
     function selectPlayer(id, name, trigger) {
       comboState.selectedId = String(id || "");
@@ -2648,8 +2667,8 @@ execute:
 
     function openMenu() {
       inputEl.value = "";
-      renderMenu("");
       menuEl.classList.add("open");
+      renderMenu("");
     }
 
     function closeMenu() {
@@ -2673,14 +2692,14 @@ execute:
         if (comboState.filtered.length > 0 && menuEl.children.length > 0) {
           comboState.highlightIdx = Math.min(comboState.highlightIdx + 1, menuEl.children.length - 1);
           Array.from(menuEl.children).forEach((el, i) => el.classList.toggle("active", i === comboState.highlightIdx));
-          if (menuEl.children[comboState.highlightIdx]) menuEl.children[comboState.highlightIdx].scrollIntoView({ block: "nearest" });
+          ensureOptionVisible(menuEl.children[comboState.highlightIdx]);
         }
       } else if (e.key === "ArrowUp") {
         e.preventDefault();
         if (comboState.filtered.length > 0 && menuEl.children.length > 0) {
           comboState.highlightIdx = Math.max(comboState.highlightIdx - 1, 0);
           Array.from(menuEl.children).forEach((el, i) => el.classList.toggle("active", i === comboState.highlightIdx));
-          if (menuEl.children[comboState.highlightIdx]) menuEl.children[comboState.highlightIdx].scrollIntoView({ block: "nearest" });
+          ensureOptionVisible(menuEl.children[comboState.highlightIdx]);
         }
       } else if (e.key === "Enter") {
         e.preventDefault();
