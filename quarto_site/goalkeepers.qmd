@@ -33,10 +33,20 @@ if (file.exists(primary_gk_path)) {
   stop("master_gk_payload.qs2 not found.")
 }
 
-gk_mapping  <- master_payload$gk_mapping
-shot_stream <- master_payload$gk_shot_stream
+gk_mapping   <- master_payload$gk_mapping
+shot_stream  <- master_payload$gk_shot_stream
 gk_match_log <- master_payload$gk_match_log
 gk_cq_splits <- master_payload$gk_cq_splits
+model_meta   <- master_payload$model_meta
+
+prior_sd_gp <- if (!is.null(model_meta$prior_sd_gp) && is.finite(model_meta$prior_sd_gp) && model_meta$prior_sd_gp > 0) {
+  round(as.numeric(model_meta$prior_sd_gp), 6)
+} else {
+  0.036
+}
+tau_logit <- if (!is.null(model_meta$tau_logit) && is.finite(model_meta$tau_logit)) round(as.numeric(model_meta$tau_logit), 5) else NA_real_
+scale_gp  <- if (!is.null(model_meta$scale_gp) && is.finite(model_meta$scale_gp)) round(as.numeric(model_meta$scale_gp), 5) else NA_real_
+model_name <- if (!is.null(model_meta$model_name) && nzchar(model_meta$model_name)) as.character(model_meta$model_name) else "Static Empirical Bayes"
 
 # Global reference baselines matching gk_app/app.R
 global_cq_avgs <- gk_cq_splits %>%
@@ -56,7 +66,11 @@ global_max_gp <- max(abs(gk_match_log$match_gp), na.rm = TRUE)
 if (is.infinite(global_max_gp) || is.na(global_max_gp)) global_max_gp <- 3.0
 global_max_gp <- round(global_max_gp, 3)
 
-global_avg_xgot <- round(sum(gk_match_log$match_xgot, na.rm = TRUE) / pmax(sum(gk_cq_splits$shots_faced, na.rm = TRUE), 1), 4)
+global_avg_xgot <- if (!is.null(model_meta$global_avg_xgot) && is.finite(model_meta$global_avg_xgot)) {
+  round(as.numeric(model_meta$global_avg_xgot), 4)
+} else {
+  round(sum(gk_match_log$match_xgot, na.rm = TRUE) / pmax(sum(gk_cq_splits$shots_faced, na.rm = TRUE), 1), 4)
+}
 
 # Pre-compute League-level CQ & GP benchmarks for O(1) lookup in SAVE Profile
 keeper_leagues <- gk_mapping %>% dplyr::select(keeper_id, league_id) %>% dplyr::distinct()
@@ -86,10 +100,15 @@ league_gp_table <- gk_match_log %>%
 stream_anim <- shot_stream %>%
   dplyr::group_by(keeper_id) %>%
   dplyr::slice(unique(round(seq(1, dplyr::n(), length.out = min(dplyr::n(), 300))))) %>%
-  dplyr::ungroup() %>%
+  dplyr::ungroup()
+
+if (!"formatted_date" %in% names(stream_anim)) stream_anim$formatted_date <- NA_character_
+if (!"cum_xgot" %in% names(stream_anim)) stream_anim$cum_xgot <- NA_real_
+
+stream_anim <- stream_anim %>%
   dplyr::mutate(
-    date_str = stringr::str_match(stat_label, "<b>Date:</b> (.*?)<br>")[, 2],
-    cum_xgot = as.numeric(stringr::str_match(stat_label, "<b>Expected Goals \\(xGOT\\):</b> ([0-9.]+)")[, 2]),
+    date_str = dplyr::coalesce(as.character(formatted_date), stringr::str_match(stat_label, "<b>Date:</b> (.*?)<br>")[, 2], "Unknown Date"),
+    cum_xgot = round(dplyr::coalesce(as.numeric(cum_xgot), as.numeric(stringr::str_match(stat_label, "<b>Expected Goals \\(xGOT\\):</b> ([0-9.]+)")[, 2])), 2),
     post_mu  = round(post_mu, 4),
     post_sd  = round(post_sd, 4),
     cum_gp   = round(cum_goals_prevented, 2)
@@ -142,7 +161,14 @@ payload <- list(
     cq_avgs    = global_cq_avgs,
     gp_avg     = global_gp_avg,
     max_gp     = global_max_gp,
-    avg_xgot   = global_avg_xgot
+    avg_xgot   = global_avg_xgot,
+    prior_sd   = prior_sd_gp
+  ),
+  model_meta = list(
+    model_name  = model_name,
+    prior_sd_gp = prior_sd_gp,
+    tau_logit   = tau_logit,
+    scale_gp    = scale_gp
   ),
   league_cq = league_cq_table,
   league_gp = league_gp_table,
@@ -609,6 +635,15 @@ cat(sprintf(
       .toLowerCase();
   }
 
+  function escapeHtml(str) {
+    return String(str ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
   function colsToRows(colObj) {
     if (!colObj) return [];
     const keys = Object.keys(colObj);
@@ -634,6 +669,11 @@ cat(sprintf(
   const globalGpRow  = colsToRows(payload.globals.gp_avg)[0] || { avg_gp_10xgot: 0, avg_axa_pct: 50 };
   const globalMaxGp  = Number(payload.globals.max_gp) || 3.0;
   const globalAvgXgot = Number(payload.globals.avg_xgot) || 0.25;
+  const rawPriorSd   = Number(payload.model_meta?.prior_sd_gp ?? payload.globals?.prior_sd ?? 0.036);
+  const PRIOR_SD     = (Number.isFinite(rawPriorSd) && rawPriorSd > 0) ? rawPriorSd : 0.036;
+  const baselineLabel = /Calibrated/i.test(String(payload.model_meta?.model_name || ""))
+    ? "Calibrated xG Model Baseline"
+    : "Global xG Model Baseline";
 
   const streamMap  = payload.stream || {};
   const matchesMap = payload.matches || {};
@@ -664,7 +704,7 @@ cat(sprintf(
   for (let i = 0; i < N_GRID; i++) {
     const x = -0.2 + (0.4 * i) / (N_GRID - 1);
     X_SEQ[i] = x;
-    PRIOR_Y[i] = dnorm(x, 0.0, 0.036);
+    PRIOR_Y[i] = dnorm(x, 0.0, PRIOR_SD);
   }
 
   function getBlueShade(val, minVal = 0, maxVal = 100) {
@@ -898,8 +938,9 @@ cat(sprintf(
 
     const meta = getKeeperMeta(gkId);
     const selectedName = (meta && meta.player_name) ? meta.player_name : "Goalkeeper";
+    const safeName = escapeHtml(selectedName);
 
-    let maxY = 5.0;
+    let maxY = Math.max(5.0, dnorm(0.0, 0.0, PRIOR_SD));
     const frameCurves = new Array(nFrames);
     const peakYs = new Array(nFrames);
     const statLabels = new Array(nFrames);
@@ -942,7 +983,7 @@ cat(sprintf(
         line: { color: "#666666", dash: "dash", width: 2 },
         fill: "tozeroy",
         fillcolor: "rgba(136,136,136,0.2)",
-        name: "Global xG Model Baseline",
+        name: baselineLabel,
         hoverinfo: "none",
         showlegend: false
       },
@@ -996,12 +1037,12 @@ cat(sprintf(
 
     const layout = {
       title: {
-        text: `<b>${selectedName} | Shotstopping Performance</b><br><sup>Grey = Global xG Model Baseline | Teal = Live Keeper Estimate</sup>`,
+        text: `<b>${safeName} | Shotstopping Performance</b><br><sup>Grey = ${baselineLabel} | Teal = Live Keeper Estimate</sup>`,
         font: { family: "Assistant", size: 18 }
       },
       margin: { t: 90, b: 110, l: 55, r: 50 },
       xaxis: {
-        title: "<b>True Talent Estimate (Goals Prevented per Shot)</b><br>\u2190 Below Average | Elite Shotstopper \u2192",
+        title: "<b>True Talent Estimate (Calibrated Goals Prevented per Shot)</b><br>\u2190 Below Average | Elite Shotstopper \u2192",
         range: [-0.15, 0.15],
         tickvals: [-0.15, -0.10, -0.05, 0, 0.05, 0.10, 0.15],
         ticktext: ["-0.150", "-0.100", "-0.050", "0.000", "+0.050", "+0.100", "+0.150"],
@@ -1086,6 +1127,8 @@ cat(sprintf(
     const metaB = getKeeperMeta(gkB);
     const nameA = (metaA && metaA.player_name) ? metaA.player_name : "Goalkeeper A";
     const nameB = (metaB && metaB.player_name) ? metaB.player_name : "Goalkeeper B";
+    const safeNameA = escapeHtml(nameA);
+    const safeNameB = escapeHtml(nameB);
 
     const yA = new Array(N_GRID);
     const yB = new Array(N_GRID);
@@ -1100,14 +1143,14 @@ cat(sprintf(
 
     const yLimit = Math.max(maxY * 1.2, 5.0);
 
-    const labelA = `<b>${nameA}</b><br>Shots Faced: ${fShotsA}<br>Goals Prevented: ${formatSigned(fGpA, 2)}<br>Talent Est: ${formatSigned(fMuA, 2)}`;
-    const labelB = `<b>${nameB}</b><br>Shots Faced: ${fShotsB}<br>Goals Prevented: ${formatSigned(fGpB, 2)}<br>Talent Est: ${formatSigned(fMuB, 2)}`;
+    const labelA = `<b>${safeNameA}</b><br>Shots Faced: ${fShotsA}<br>Goals Prevented: ${formatSigned(fGpA, 2)}<br>Talent Est: ${formatSigned(fMuA, 2)}`;
+    const labelB = `<b>${safeNameB}</b><br>Shots Faced: ${fShotsB}<br>Goals Prevented: ${formatSigned(fGpB, 2)}<br>Talent Est: ${formatSigned(fMuB, 2)}`;
 
     const diffSd = Math.sqrt(fSdA * fSdA + fSdB * fSdB);
     const probA = (1 - pnorm(0, fMuA - fMuB, diffSd)) * 100;
     const probCaption = (probA >= 50)
-      ? `<i>${nameA} is ${probA.toFixed(1)}% likely to be a better true shotstopper than ${nameB}.</i>`
-      : `<i>${nameB} is ${(100 - probA).toFixed(1)}% likely to be a better true shotstopper than ${nameA}.</i>`;
+      ? `<i>${safeNameA} is ${probA.toFixed(1)}% likely to be a better true shotstopper than ${safeNameB}.</i>`
+      : `<i>${safeNameB} is ${(100 - probA).toFixed(1)}% likely to be a better true shotstopper than ${safeNameA}.</i>`;
 
     const traces = [
       {
@@ -1157,7 +1200,7 @@ cat(sprintf(
       },
       margin: { t: 90, b: 170, l: 55, r: 50 },
       xaxis: {
-        title: "<b>True Talent Estimate (Goals Prevented per Shot)</b><br>\u2190 Below Average | Elite Shotstopper \u2192",
+        title: "<b>True Talent Estimate (Calibrated Goals Prevented per Shot)</b><br>\u2190 Below Average | Elite Shotstopper \u2192",
         range: [-0.15, 0.15],
         tickvals: [-0.15, -0.10, -0.05, 0, 0.05, 0.10, 0.15],
         ticktext: ["-0.150", "-0.100", "-0.050", "0.000", "+0.050", "+0.100", "+0.150"],
@@ -1192,11 +1235,13 @@ cat(sprintf(
 
     const demoEl = document.getElementById("save_demographics_ui");
     const ageStr = (meta.age === null || meta.age === undefined || isNaN(meta.age)) ? "N/A" : Math.round(meta.age);
+    const safePlayer = escapeHtml(String(meta.player_name).toUpperCase());
+    const safeTeam = escapeHtml(String(meta.team_name).toUpperCase());
     demoEl.innerHTML = `
       <div class="save-demo-grid">
         <div style="line-height: 1.1; margin-top: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
           <span style="color:#AAAAAA; font-size:13px;">Player</span><br>
-          <span style="font-size:24px; font-weight:bold; color:#FFFFFF;">${String(meta.player_name).toUpperCase()}</span>
+          <span style="font-size:24px; font-weight:bold; color:#FFFFFF;">${safePlayer}</span>
         </div>
         <div style="line-height: 1.1; margin-top: 20px; white-space: nowrap;">
           <span style="color:#AAAAAA; font-size:13px;">Age:</span>
@@ -1204,7 +1249,7 @@ cat(sprintf(
         </div>
         <div style="line-height: 1.1; margin-top: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
           <span style="color:#AAAAAA; font-size:13px;">Team:</span>
-          <span style="font-size:18px; font-weight:bold; color:#FFFFFF;"> ${String(meta.team_name).toUpperCase()}</span>
+          <span style="font-size:18px; font-weight:bold; color:#FFFFFF;"> ${safeTeam}</span>
         </div>
       </div>
     `;
