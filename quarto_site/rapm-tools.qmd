@@ -1,6 +1,9 @@
 ---
 title: "RAPM Tools"
 page-layout: custom
+format:
+  html:
+    html-table-processing: none
 execute:
   echo: false
   warning: false
@@ -8,6 +11,7 @@ execute:
 ---
 
 ```{=html}
+<!--| quarto-html-table-processing: none -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&display=swap">
