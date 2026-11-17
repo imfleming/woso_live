@@ -9,6 +9,7 @@ project:
     - twitter_icon.png
     - email_icon.png
     - logos/*.png
+    - data/rapm/*
 
 website:
   title: "WoSo.Live"
