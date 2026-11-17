@@ -85,7 +85,7 @@ gtag('config', 'G-HV5N2DMVZR', { 'anonymize_ip': true});
 <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="nav-fixed fullcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -142,12 +142,10 @@ gtag('config', 'G-HV5N2DMVZR', { 'anonymize_ip': true});
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<div id="quarto-content" class="quarto-container page-layout-custom page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
 <!-- main -->
-<main class="content column-page" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -156,7 +154,7 @@ gtag('config', 'G-HV5N2DMVZR', { 'anonymize_ip': true});
 
 
 
-<div class="quarto-title-meta column-page">
+<div class="quarto-title-meta">
 
     
   
@@ -168,12 +166,3394 @@ gtag('config', 'G-HV5N2DMVZR', { 'anonymize_ip': true});
 </header>
 
 
-<iframe src="https://ianmichaelfleming.shinyapps.io/RAPM_App/" style="border: none; width: 100%; height: 1200px;" title="RAPM Tools">
-</iframe>
+<!--| quarto-html-table-processing: none -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&amp;display=swap">
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+
+<style>
+  .rapm-app-wrapper {
+    background-color: #FFFFFF;
+    color: #222222;
+    min-height: calc(100vh - 60px);
+    font-family: 'Assistant', sans-serif;
+    padding-bottom: 3rem;
+  }
+
+  .rapm-subnav {
+    background-color: #1D3549;
+    padding: 0 1.5rem;
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .rapm-subnav-left {
+    display: flex;
+    align-items: stretch;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    min-height: 56px;
+  }
+
+  .rapm-brand {
+    font-size: 1.22rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+
+  .rapm-league-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0;
+  }
+
+  .rapm-league-select {
+    background-color: #FFFFFF;
+    color: #1D3549;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 4px;
+    padding: 0.32rem 0.65rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: 'Assistant', sans-serif;
+    min-width: 215px;
+    cursor: pointer;
+  }
+
+  .rapm-league-select:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
+  }
+
+  .rapm-tabs {
+    display: flex;
+    align-items: stretch;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .rapm-tab-btn {
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.95rem;
+    font-weight: 400;
+    padding: 0.75rem 0.95rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: all 0.15s ease;
+    font-family: 'Assistant', sans-serif;
+    white-space: nowrap;
+  }
+
+  .rapm-tab-btn:hover {
+    color: #FFFFFF;
+  }
+
+  .rapm-tab-btn.active {
+    color: #FFFFFF;
+    font-weight: 700;
+    border-bottom: 3px solid #FFFFFF;
+  }
+
+  .rapm-status-pill {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.82);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    white-space: nowrap;
+  }
+
+  .rapm-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #20C997;
+    display: inline-block;
+  }
+
+  .rapm-status-dot.loading {
+    background-color: #FDB71A;
+  }
+
+  .rapm-status-dot.error {
+    background-color: #E74C3C;
+  }
+
+  .rapm-body-container {
+    max-width: 1680px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .rapm-alert {
+    background-color: #FFF8E6;
+    border: 1px solid #F5C26B;
+    border-left: 4px solid #D97706;
+    border-radius: 4px;
+    color: #7C2D12;
+    padding: 0.85rem 1rem;
+    margin-bottom: 1.25rem;
+    font-size: 0.92rem;
+    display: none;
+  }
+
+  .rapm-alert.visible {
+    display: block;
+  }
+
+  .rapm-layout {
+    display: grid;
+    grid-template-columns: 320px minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  @media (max-width: 992px) {
+    .rapm-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .rapm-sidebar {
+    background-color: #F8F9FA;
+    border: 1px solid #DEE2E6;
+    border-radius: 6px;
+    padding: 1.25rem;
+  }
+
+  .rapm-sidebar h4 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111111;
+    margin-top: 0;
+    margin-bottom: 0.4rem;
+  }
+
+  .rapm-sidebar p.rapm-help {
+    font-size: 0.88rem;
+    color: #555555;
+    line-height: 1.45;
+    margin-bottom: 1rem;
+  }
+
+  .rapm-label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #222222;
+    margin-bottom: 0.35rem;
+  }
+
+  .rapm-select {
+    width: 100%;
+    background-color: #FFFFFF;
+    color: #222222;
+    border: 1px solid #CED4DA;
+    border-radius: 4px;
+    padding: 0.45rem 0.65rem;
+    font-size: 0.92rem;
+    font-family: 'Assistant', sans-serif;
+    margin-bottom: 0.9rem;
+    box-sizing: border-box;
+  }
+
+  .rapm-select:focus {
+    outline: none;
+    border-color: #00747A;
+    box-shadow: 0 0 0 2px rgba(0, 116, 122, 0.2);
+  }
+
+  /* Searchable Player Combobox */
+  .rapm-search-wrap {
+    position: relative;
+    width: 100%;
+    margin-bottom: 0.95rem;
+  }
+
+  .rapm-search-input {
+    width: 100%;
+    background-color: #FFFFFF;
+    color: #222222;
+    border: 1px solid #CED4DA;
+    border-radius: 4px;
+    padding: 0.45rem 2rem 0.45rem 0.65rem;
+    font-size: 0.92rem;
+    font-family: 'Assistant', sans-serif;
+    box-sizing: border-box;
+    cursor: pointer;
+  }
+
+  .rapm-search-input:focus {
+    outline: none;
+    border-color: #00747A;
+    box-shadow: 0 0 0 2px rgba(0, 116, 122, 0.25);
+    cursor: text;
+  }
+
+  .rapm-search-chevron {
+    position: absolute;
+    right: 0.65rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 0.8rem;
+    color: #555555;
+  }
+
+  .rapm-search-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 2px);
+    left: 0;
+    right: 0;
+    background-color: #FFFFFF;
+    border: 1px solid #CED4DA;
+    border-radius: 4px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+    max-height: 280px;
+    overflow-y: auto;
+    z-index: 1050;
+  }
+
+  .rapm-search-menu.open {
+    display: block;
+  }
+
+  .rapm-search-option {
+    padding: 0.42rem 0.65rem;
+    font-size: 0.9rem;
+    color: #222222;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .rapm-search-option-sub {
+    font-size: 0.78rem;
+    color: #6C757D;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .rapm-search-option:hover,
+  .rapm-search-option.active {
+    background-color: #00747A;
+    color: #FFFFFF;
+  }
+
+  .rapm-search-option:hover .rapm-search-option-sub,
+  .rapm-search-option.active .rapm-search-option-sub {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .rapm-search-empty {
+    padding: 0.5rem 0.65rem;
+    font-size: 0.88rem;
+    color: #777777;
+    font-style: italic;
+  }
+
+  /* Radio groups */
+  .rapm-radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .rapm-radio-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: #222222;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .rapm-radio-item input[type="radio"] {
+    accent-color: #00747A;
+    cursor: pointer;
+    margin: 0;
+  }
+
+  .rapm-divider {
+    border: 0;
+    border-top: 1px solid #DEE2E6;
+    margin: 0.95rem 0;
+  }
+
+  /* Metadata Box */
+  .rapm-meta-box h5 {
+    font-size: 1.12rem;
+    font-weight: 700;
+    color: #111111;
+    margin: 0 0 0.6rem 0;
+  }
+
+  .rapm-meta-box p {
+    font-size: 0.88rem;
+    color: #333333;
+    margin: 0 0 0.34rem 0;
+    line-height: 1.38;
+  }
+
+  .rapm-meta-box p strong {
+    color: #111111;
+  }
+
+  /* Buttons */
+  .rapm-btn-dark,
+  .rapm-btn-outline {
+    width: 100%;
+    border-radius: 4px;
+    padding: 0.5rem 0.9rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: 'Assistant', sans-serif;
+    margin-bottom: 0.5rem;
+    display: inline-block;
+    text-align: center;
+  }
+
+  .rapm-btn-dark {
+    background-color: #1D3549;
+    color: #FFFFFF;
+    border: 1px solid #1D3549;
+  }
+
+  .rapm-btn-dark:hover:not(:disabled) {
+    background-color: #00747A;
+    border-color: #00747A;
+  }
+
+  .rapm-btn-outline {
+    background-color: transparent;
+    color: #222222;
+    border: 1px solid #333333;
+  }
+
+  .rapm-btn-outline:hover:not(:disabled) {
+    background-color: #222222;
+    color: #FFFFFF;
+  }
+
+  .rapm-btn-dark:disabled,
+  .rapm-btn-outline:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .rapm-main-panel {
+    background-color: #FFFFFF;
+    min-width: 0;
+  }
+
+  .rapm-pitch-header {
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #111111;
+    margin: 0 0 0.9rem 0;
+  }
+
+  .rapm-canvas-single {
+    display: flex;
+    justify-content: center;
+  }
+
+  .rapm-canvas-frame-full {
+    width: 100%;
+    max-width: 680px;
+    height: auto;
+    display: block;
+    background: #FFFFFF;
+    border: 1px solid #E9ECEF;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  .rapm-canvas-frame-half {
+    width: 100%;
+    max-width: 820px;
+    height: auto;
+    display: block;
+    background: #FFFFFF;
+    border: 1px solid #E9ECEF;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  .rapm-dual-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+    align-items: start;
+  }
+
+  @media (max-width: 1100px) {
+    .rapm-dual-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Range slider */
+  .rapm-slider-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+  }
+
+  .rapm-slider-val {
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: #00747A;
+  }
+
+  .rapm-range {
+    width: 100%;
+    accent-color: #00747A;
+    margin-bottom: 0.4rem;
+    cursor: pointer;
+  }
+
+  /* Tab 2 KPI Cards & Cards */
+  .rapm-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.9rem;
+    margin-bottom: 1.15rem;
+  }
+
+  @media (max-width: 1200px) {
+    .rapm-kpi-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 576px) {
+    .rapm-kpi-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .war-card {
+    background-color: #F8F9FA;
+    border: 1px solid #E9ECEF;
+    border-left: 4px solid #00747A;
+    border-radius: 4px;
+    padding: 0.85rem 1rem;
+  }
+
+  .war-card-sub {
+    font-size: 0.78rem;
+    color: #666666;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.25rem;
+  }
+
+  .war-card-val {
+    font-size: 1.22rem;
+    font-weight: 700;
+    color: #111111;
+    line-height: 1.2;
+    word-break: break-word;
+  }
+
+  .rapm-card {
+    background-color: #FFFFFF;
+    border: 1px solid #DEE2E6;
+    border-radius: 6px;
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+  }
+
+  .rapm-card-header {
+    background-color: #F8F9FA;
+    border-bottom: 1px solid #DEE2E6;
+    padding: 0.7rem 1rem;
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #1D3549;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .rapm-card-body {
+    padding: 1rem;
+  }
+
+  /* Data tables */
+  .rapm-dt-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .rapm-dt-search {
+    border: 1px solid #CED4DA;
+    border-radius: 4px;
+    padding: 0.35rem 0.6rem;
+    font-size: 0.88rem;
+    font-family: 'Assistant', sans-serif;
+    min-width: 220px;
+  }
+
+  .rapm-dt-search:focus {
+    outline: none;
+    border-color: #00747A;
+  }
+
+  .rapm-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  table.rapm-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+
+  table.rapm-table thead th {
+    background-color: #F8F9FA;
+    color: #222222;
+    font-weight: 700;
+    text-align: left;
+    padding: 7px 9px;
+    border-bottom: 2px solid #DEE2E6;
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  table.rapm-table thead th.sortable {
+    cursor: pointer;
+  }
+
+  table.rapm-table thead th.sortable:hover {
+    background-color: #EEF2F5;
+  }
+
+  table.rapm-table thead th.num,
+  table.rapm-table tbody td.num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  table.rapm-table tbody td {
+    padding: 6px 9px;
+    border-bottom: 1px solid #EDF0F2;
+    color: #222222;
+    white-space: nowrap;
+  }
+
+  table.rapm-table tbody tr:hover {
+    background-color: #F4F9FA;
+  }
+
+  .rapm-pos-badge {
+    display: inline-block;
+    padding: 0.1rem 0.42rem;
+    border-radius: 3px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: #FFFFFF;
+  }
+
+  .rapm-val-pos {
+    color: #00747A;
+    font-weight: 700;
+  }
+
+  .rapm-val-neg {
+    color: #B2182B;
+    font-weight: 700;
+  }
+
+  .rapm-dt-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+    font-size: 0.84rem;
+    color: #555555;
+  }
+
+  .rapm-page-btns {
+    display: flex;
+    gap: 0.3rem;
+    align-items: center;
+  }
+
+  .rapm-page-btn {
+    background: #FFFFFF;
+    border: 1px solid #CED4DA;
+    border-radius: 3px;
+    padding: 0.22rem 0.58rem;
+    font-size: 0.82rem;
+    font-family: 'Assistant', sans-serif;
+    cursor: pointer;
+    color: #222222;
+  }
+
+  .rapm-page-btn:hover:not(:disabled) {
+    background-color: #00747A;
+    color: #FFFFFF;
+    border-color: #00747A;
+  }
+
+  .rapm-page-btn.active {
+    background-color: #1D3549;
+    color: #FFFFFF;
+    border-color: #1D3549;
+    font-weight: 700;
+  }
+
+  .rapm-page-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  /* Tab 3 Best XI */
+  .rapm-xi-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: 1.25rem;
+    align-items: start;
+  }
+
+  @media (max-width: 1180px) {
+    .rapm-xi-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .rapm-xi-summary {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.9rem;
+    font-size: 0.88rem;
+    color: #333333;
+    background-color: #F8F9FA;
+    border: 1px solid #DEE2E6;
+    border-left: 4px solid #1D3549;
+    border-radius: 4px;
+    padding: 0.65rem 0.9rem;
+  }
+</style>
+
+<div class="rapm-app-wrapper">
+  <div class="rapm-subnav">
+    <div class="rapm-subnav-left">
+      <span class="rapm-brand">RAPM/WAR Tools</span>
+      <div class="rapm-league-wrap">
+        <select id="global_league_select" class="rapm-league-select" aria-label="Select Competition"></select>
+      </div>
+      <div class="rapm-tabs" role="tablist">
+        <button id="rapm-tab-btn-profile" class="rapm-tab-btn active" role="tab" aria-selected="true" data-tab="profile">Player Spatial RAPM</button>
+        <button id="rapm-tab-btn-war" class="rapm-tab-btn" role="tab" aria-selected="false" data-tab="war">Wins Above Replacement (WAR)</button>
+        <button id="rapm-tab-btn-bestxi" class="rapm-tab-btn" role="tab" aria-selected="false" data-tab="bestxi">Best XI Optimizer</button>
+      </div>
+    </div>
+    <div class="rapm-status-pill" id="rapm_status_pill">
+      <span class="rapm-status-dot loading" id="rapm_status_dot"></span>
+      <span id="rapm_status_text">Initializing models...</span>
+    </div>
+  </div>
+
+  <div class="rapm-body-container">
+    <div id="rapm_error_banner" class="rapm-alert" role="alert"></div>
+
+    <!-- TAB 1: PLAYER SPATIAL RAPM -->
+    <div id="rapm-panel-profile" class="rapm-layout">
+      <div class="rapm-sidebar">
+        <h4>Player Evaluation</h4>
+        <p class="rapm-help">Inspect isolated 11v11 offensive generation and defensive suppression maps.</p>
+
+        <label class="rapm-label" for="prof_player_select_search">Select Player:</label>
+        <input type="hidden" id="prof_player_select">
+        <div class="rapm-search-wrap" id="wrap_prof_player_select">
+          <input type="text" id="prof_player_select_search" class="rapm-search-input" placeholder="Search or scroll for a player..." autocomplete="off">
+          <span class="rapm-search-chevron">▾</span>
+          <div id="prof_player_select_menu" class="rapm-search-menu"></div>
+        </div>
+
+        <label class="rapm-label">Pitch View Mode:</label>
+        <div class="rapm-radio-group" id="prof_view_mode_group">
+          <label class="rapm-radio-item"><input type="radio" name="prof_view_mode" value="full" checked=""> Full Impact (Unified)</label>
+          <label class="rapm-radio-item"><input type="radio" name="prof_view_mode" value="offense"> Isolated Offense</label>
+          <label class="rapm-radio-item"><input type="radio" name="prof_view_mode" value="defense"> Isolated Defense</label>
+          <label class="rapm-radio-item"><input type="radio" name="prof_view_mode" value="side_by_side"> Dual Isolated (Side-by-Side)</label>
+        </div>
+
+        <hr class="rapm-divider">
+        <div id="prof_player_metadata_ui" class="rapm-meta-box"></div>
+
+        <hr class="rapm-divider">
+        <button id="download_full_map" class="rapm-btn-dark" type="button">Download Full Impact Map (PNG)</button>
+        <button id="download_offense_map" class="rapm-btn-outline" type="button">Download Offense Map (PNG)</button>
+        <button id="download_defense_map" class="rapm-btn-outline" type="button" style="margin-bottom:0;">Download Defense Map (PNG)</button>
+      </div>
+
+      <div class="rapm-main-panel">
+        <div id="prof_view_full">
+          <h4 class="rapm-pitch-header">Full Impact Spatial Profile (11v11)</h4>
+          <div class="rapm-canvas-single">
+            <canvas id="canvas_full" width="2160" height="3240" class="rapm-canvas-frame-full"></canvas>
+          </div>
+        </div>
+
+        <div id="prof_view_offense" style="display:none;">
+          <h4 class="rapm-pitch-header">Isolated Offense (xGF/90)</h4>
+          <div class="rapm-canvas-single">
+            <canvas id="canvas_offense" width="2040" height="1620" class="rapm-canvas-frame-half"></canvas>
+          </div>
+        </div>
+
+        <div id="prof_view_defense" style="display:none;">
+          <h4 class="rapm-pitch-header">Isolated Defense (xGA/90)</h4>
+          <div class="rapm-canvas-single">
+            <canvas id="canvas_defense" width="2040" height="1620" class="rapm-canvas-frame-half"></canvas>
+          </div>
+        </div>
+
+        <div id="prof_view_side_by_side" style="display:none;">
+          <div class="rapm-dual-grid">
+            <div>
+              <h4 class="rapm-pitch-header">Isolated Offense (xGF/90)</h4>
+              <canvas id="canvas_dual_offense" width="2040" height="1620" class="rapm-canvas-frame-half"></canvas>
+            </div>
+            <div>
+              <h4 class="rapm-pitch-header">Isolated Defense (xGA/90)</h4>
+              <canvas id="canvas_dual_defense" width="2040" height="1620" class="rapm-canvas-frame-half"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: WINS ABOVE REPLACEMENT (WAR) -->
+    <div id="rapm-panel-war" class="rapm-layout" style="display: none;">
+      <div class="rapm-sidebar">
+        <h4>WAR &amp; Player Value</h4>
+        <p class="rapm-help">Comprehensive evaluation of player contributions above positional replacement level.</p>
+
+        <label class="rapm-label">Plot Valuation Metric:</label>
+        <div class="rapm-radio-group" id="war_metric_group">
+          <label class="rapm-radio-item"><input type="radio" name="war_plot_metric" value="war" checked=""> Total WAR</label>
+          <label class="rapm-radio-item"><input type="radio" name="war_plot_metric" value="war_p30"> Paced WAR (WAR/30)</label>
+          <label class="rapm-radio-item" id="war_opt_exact_wrap"><input type="radio" name="war_plot_metric" value="war_exact"> Exact DC WAR</label>
+          <label class="rapm-radio-item" id="war_opt_p30_exact_wrap"><input type="radio" name="war_plot_metric" value="war_p30_exact"> Exact DC WAR/30</label>
+        </div>
+
+        <label class="rapm-label" for="war_pos_filter">Position Group:</label>
+        <select id="war_pos_filter" class="rapm-select">
+          <option value="All">All Positions</option>
+          <option value="GK">Goalkeepers (GK)</option>
+          <option value="CB">Center Backs (CB)</option>
+          <option value="FB">Fullbacks (FB)</option>
+          <option value="MF">Midfielders (MF)</option>
+          <option value="FWD">Forwards (FWD)</option>
+        </select>
+
+        <label class="rapm-label" for="war_team_filter">Filter Team:</label>
+        <select id="war_team_filter" class="rapm-select">
+          <option value="All Teams">All Teams</option>
+        </select>
+
+        <div class="rapm-slider-row">
+          <label class="rapm-label" for="war_min_minutes" style="margin-bottom:0;">Minimum Minutes Played:</label>
+          <span class="rapm-slider-val" id="war_min_minutes_val">270 mins</span>
+        </div>
+        <input id="war_min_minutes" class="rapm-range" type="range" min="0" max="3000" step="90" value="270">
+
+        <hr class="rapm-divider">
+        <button id="download_war_csv" class="rapm-btn-outline" type="button" style="margin-bottom:0;">Export Leaderboard (CSV)</button>
+      </div>
+
+      <div class="rapm-main-panel">
+        <div class="rapm-kpi-grid">
+          <div class="war-card">
+            <div class="war-card-sub">Evaluated Players</div>
+            <div class="war-card-val" id="war_kpi_total_players">—</div>
+          </div>
+          <div class="war-card">
+            <div class="war-card-sub" id="war_kpi_leader_sub">Leader (Most WAR)</div>
+            <div class="war-card-val" id="war_kpi_top_player">—</div>
+          </div>
+          <div class="war-card">
+            <div class="war-card-sub">Top Outfielder</div>
+            <div class="war-card-val" id="war_kpi_top_outfield">—</div>
+          </div>
+          <div class="war-card">
+            <div class="war-card-sub">Top Goalkeeper</div>
+            <div class="war-card-val" id="war_kpi_top_gk">—</div>
+          </div>
+        </div>
+
+        <div class="rapm-card">
+          <div class="rapm-card-header">
+            <span>WAR vs. Playing Time Trajectory</span>
+          </div>
+          <div class="rapm-card-body">
+            <div id="war_scatter_plot" style="width:100%; height:360px;"></div>
+          </div>
+        </div>
+
+        <div class="rapm-card">
+          <div class="rapm-card-header">
+            <span>Valuation &amp; Replacement Leaderboard</span>
+          </div>
+          <div class="rapm-card-body">
+            <div class="rapm-dt-controls">
+              <div>
+                <label style="font-size:0.84rem; color:#555555;">Show
+                  <select id="war_page_len" class="rapm-select" style="width:auto; display:inline-block; margin:0 0.3rem; padding:0.25rem 0.45rem;">
+                    <option value="20" selected="">20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="999999">All</option>
+                  </select> entries
+                </label>
+              </div>
+              <input id="war_table_search" class="rapm-dt-search" type="search" placeholder="Search player, team, role...">
+            </div>
+            <div class="rapm-table-wrap">
+              <table class="rapm-table" id="war_master_table">
+                <thead id="war_table_head"></thead>
+                <tbody id="war_table_body"></tbody>
+              </table>
+            </div>
+            <div class="rapm-dt-footer">
+              <span id="war_table_info">Showing 0 to 0 of 0 entries</span>
+              <div class="rapm-page-btns" id="war_table_pager"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: BEST XI OPTIMIZER -->
+    <div id="rapm-panel-bestxi" class="rapm-layout" style="display: none;">
+      <div class="rapm-sidebar">
+        <h4>Squad Optimization</h4>
+        <p class="rapm-help">Solves maximum bipartite matching under strict positional constraints.</p>
+
+        <label class="rapm-label" for="opt_team_select">Select Team:</label>
+        <select id="opt_team_select" class="rapm-select"></select>
+
+        <label class="rapm-label" for="opt_formation_select">Formation:</label>
+        <select id="opt_formation_select" class="rapm-select">
+          <option value="4-3-3">4-3-3</option>
+          <option value="4-2-3-1">4-2-3-1</option>
+          <option value="4-4-2">4-4-2</option>
+          <option value="3-5-2">3-5-2</option>
+          <option value="3-4-3">3-4-3</option>
+        </select>
+
+        <label class="rapm-label" for="opt_metric_select">Optimization Target:</label>
+        <select id="opt_metric_select" class="rapm-select">
+          <option value="net">Total RAPM (Net Value)</option>
+          <option value="off">Offensive Threat (Off xG)</option>
+          <option value="def">Defensive Suppression (Def xGA)</option>
+        </select>
+
+        <hr class="rapm-divider">
+        <button id="opt_run_btn" class="rapm-btn-dark" type="button" style="margin-bottom:0;">Calculate Best XI</button>
+      </div>
+
+      <div class="rapm-main-panel">
+        <div id="opt_error_msg" class="rapm-alert"></div>
+        <div id="opt_summary_bar" class="rapm-xi-summary" style="display:none;"></div>
+
+        <div class="rapm-xi-grid">
+          <div class="rapm-card">
+            <div class="rapm-card-header"><span>Optimal Tactical Lineup</span></div>
+            <div class="rapm-card-body">
+              <div class="rapm-table-wrap">
+                <table class="rapm-table">
+                  <thead>
+                    <tr>
+                      <th>Slot</th>
+                      <th>Player</th>
+                      <th>Primary Role</th>
+                      <th>Secondary Role</th>
+                      <th class="num">Minutes</th>
+                      <th class="num">Net RAPM</th>
+                      <th class="num">Off xG</th>
+                      <th class="num">Def xGA</th>
+                    </tr>
+                  </thead>
+                  <tbody id="opt_lineup_body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="rapm-card">
+            <div class="rapm-card-header"><span>Available Bench / Depth</span></div>
+            <div class="rapm-card-body">
+              <div class="rapm-table-wrap">
+                <table class="rapm-table">
+                  <thead>
+                    <tr>
+                      <th>Player</th>
+                      <th>Primary Role</th>
+                      <th>Secondary Role</th>
+                      <th class="num">Minutes</th>
+                      <th class="num">Net RAPM</th>
+                    </tr>
+                  </thead>
+                  <tbody id="opt_bench_body"></tbody>
+                </table>
+              </div>
+              <div class="rapm-dt-footer">
+                <span id="opt_bench_info"></span>
+                <div class="rapm-page-btns" id="opt_bench_pager"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script id="rapm-app-engine">
+(function() {
+  "use strict";
+
+  const FALLBACK_MANIFEST = {
+    tps_player_url: "data/rapm/tps_player.bin",
+    mccurdy_palette: [
+      "#053061", "#2166AC", "#4393C3", "#92C5DE", "#F7F7F7",
+      "#FFFFFF",
+      "#FDDBC7", "#F4A582", "#D6604D", "#B2182B", "#67001F"
+    ],
+    pos_palette: {
+      GK: "#7037A8", CB: "#2166AC", FB: "#4393C3", MF: "#00747A", FWD: "#D6604D"
+    },
+    formations: {
+      "4-3-3":   ["Goalkeeper", "Left Back", "Left Center Back", "Right Center Back", "Right Back", "Defensive Midfielder", "Central Midfielder", "Attacking Midfielder", "Left Winger", "Center Forward", "Right Winger"],
+      "4-2-3-1": ["Goalkeeper", "Left Back", "Left Center Back", "Right Center Back", "Right Back", "Defensive Midfielder", "Defensive Midfielder", "Attacking Midfielder", "Left Winger", "Center Forward", "Right Winger"],
+      "4-4-2":   ["Goalkeeper", "Left Back", "Left Center Back", "Right Center Back", "Right Back", "Left Winger", "Central Midfielder", "Central Midfielder", "Right Winger", "Center Forward", "Center Forward"],
+      "3-5-2":   ["Goalkeeper", "Left Center Back", "Center Back", "Right Center Back", "Left Winger", "Defensive Midfielder", "Central Midfielder", "Attacking Midfielder", "Right Winger", "Center Forward", "Center Forward"],
+      "3-4-3":   ["Goalkeeper", "Left Center Back", "Center Back", "Right Center Back", "Left Winger", "Central Midfielder", "Central Midfielder", "Right Winger", "Center Forward", "Center Forward", "Center Forward"]
+    },
+    leagues: [
+      { id: "nwsl", label: "NWSL (USA)", short: "NWSL", url: "data/rapm/nwsl.json" },
+      { id: "usl",  label: "USL Super League (USA)", short: "USL Super League", url: "data/rapm/usl.json" },
+      { id: "wsl",  label: "WSL (ENG)", short: "WSL", url: "data/rapm/wsl.json" },
+      { id: "wsl2", label: "WSL2 (ENG)", short: "WSL2", url: "data/rapm/wsl2.json" },
+      { id: "esp",  label: "Liga F (ESP)", short: "Liga F", url: "data/rapm/esp.json" },
+      { id: "fra",  label: "Premi\u00e8re Ligue (FRA)", short: "Premi\u00e8re Ligue", url: "data/rapm/fra.json" },
+      { id: "ger",  label: "Frauen-Bundesliga (GER)", short: "Frauen-Bundesliga", url: "data/rapm/ger.json" },
+      { id: "ita",  label: "Serie A (ITA)", short: "Serie A", url: "data/rapm/ita.json" },
+      { id: "swe",  label: "Damallsvenskan (SWE)", short: "Damallsvenskan", url: "data/rapm/swe.json" },
+      { id: "eli",  label: "Elitettan (SWE)", short: "Elitettan", url: "data/rapm/eli.json" },
+      { id: "den",  label: "Kvindeliga (DEN)", short: "Kvindeliga", url: "data/rapm/den.json" },
+      { id: "por",  label: "Campeonato Nacional (POR)", short: "Campeonato Nacional", url: "data/rapm/por.json" },
+      { id: "isl",  label: "Besta deild kvenna (ISL)", short: "Besta deild kvenna", url: "data/rapm/isl.json" },
+      { id: "nor",  label: "Toppserien (NOR)", short: "Toppserien", url: "data/rapm/nor.json" },
+      { id: "fin",  label: "Kansallinen Liiga (FIN)", short: "Kansallinen Liiga", url: "data/rapm/fin.json" },
+      { id: "sco",  label: "SWPL 1 (SCO)", short: "SWPL 1", url: "data/rapm/sco.json" },
+      { id: "bra",  label: "Brasileir\u00e3o S\u00e9rie A1 (BRA)", short: "Brasileir\u00e3o S\u00e9rie A1", url: "data/rapm/bra.json" },
+      { id: "mex",  label: "Liga MX Femenil (MEX)", short: "Liga MX Femenil", url: "data/rapm/mex.json" },
+      { id: "jpn",  label: "WE-League (JPN)", short: "WE-League", url: "data/rapm/jpn.json" },
+      { id: "aus",  label: "A-League (AUS)", short: "A-League", url: "data/rapm/aus.json" }
+    ]
+  };
+
+  const MONTHS_FULL  = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const MONTHS_SHORT = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+  // ---------------------------------------------------------------------------
+  // 1. PURE DATA, TEXT & STATISTICAL HELPERS (UNIT-TESTED IN NODE)
+  // ---------------------------------------------------------------------------
+  function normSearch(str) {
+    return String(str || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+  }
+
+  function slugifyPlayerName(name) {
+    return normSearch(name).replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+  }
+
+  function escapeHtml(str) {
+    return String(str ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function formatSigned(val, digits) {
+    const n = Number(val);
+    if (!Number.isFinite(n)) return "0." + "0".repeat(digits);
+    const eps = 0.5 * Math.pow(10, -digits);
+    const clean = Math.abs(n) < eps ? 0 : n;
+    return (clean >= 0 ? "+" : "") + clean.toFixed(digits);
+  }
+
+  function formatActivityDate(isoStr, style, fallback) {
+    if (!isoStr || typeof isoStr !== "string") return fallback;
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(isoStr.trim());
+    if (!m) return fallback;
+    const yr = m[1];
+    const moIdx = parseInt(m[2], 10) - 1;
+    const day = m[3];
+    if (moIdx < 0 || moIdx > 11) return fallback;
+    const moName = style === "short" ? MONTHS_SHORT[moIdx] : MONTHS_FULL[moIdx];
+    return `${moName} ${day}, ${yr}`;
+  }
+
+  function getOrdinalSuffix(n) {
+    const k = Math.round(Number(n) || 0);
+    const mod100 = Math.abs(k) % 100;
+    if (mod100 >= 11 && mod100 <= 13) return `${k}th`;
+    const mod10 = Math.abs(k) % 10;
+    if (mod10 === 1) return `${k}st`;
+    if (mod10 === 2) return `${k}nd`;
+    if (mod10 === 3) return `${k}rd`;
+    return `${k}th`;
+  }
+
+  function classifyCohort(role) {
+    if (role === "Center Back" || role === "Left Center Back" || role === "Right Center Back") return "CB";
+    if (role === "Left Back" || role === "Right Back") return "FB";
+    if (role === "Defensive Midfielder" || role === "Central Midfielder") return "CM";
+    if (role === "Attacking Midfielder") return "AM";
+    if (role === "Left Winger" || role === "Right Winger") return "W";
+    if (role === "Center Forward") return "CF";
+    return "MF";
+  }
+
+  function cohortPlural(code) {
+    switch (code) {
+      case "CB": return "CBs";
+      case "FB": return "FBs";
+      case "CM": return "CMs";
+      case "AM": return "AMs";
+      case "W":  return "Wingers";
+      case "CF": return "CFs";
+      default:   return "Outfielders";
+    }
+  }
+
+  // Exact match to R stats::ecdf(vals)(x) * 100, clamped [1, 99]
+  function ecdfPercentile(vals, target) {
+    if (!vals || vals.length === 0 || !Number.isFinite(target)) return 50;
+    let le = 0;
+    for (let i = 0; i < vals.length; i++) {
+      if (vals[i] <= target) le++;
+    }
+    const raw = (le / vals.length) * 100.0;
+    return Math.max(1, Math.min(99, Math.round(raw)));
+  }
+
+  // Exact match to R stats::quantile(vals, prob, na.rm = TRUE, type = 7)
+  function quantileType7(vals, prob) {
+    const clean = [];
+    for (let i = 0; i < vals.length; i++) {
+      const v = Number(vals[i]);
+      if (Number.isFinite(v)) clean.push(v);
+    }
+    if (clean.length === 0) return NaN;
+    clean.sort((a, b) => a - b);
+    if (clean.length === 1) return clean[0];
+    const h = (clean.length - 1) * prob;
+    const lo = Math.floor(h);
+    const hi = Math.ceil(h);
+    if (lo === hi) return clean[lo];
+    return clean[lo] + (h - lo) * (clean[hi] - clean[lo]);
+  }
+
+  function unpackColumns(colObj) {
+    if (!colObj || typeof colObj !== "object") return [];
+    const keys = Object.keys(colObj);
+    if (keys.length === 0) return [];
+    const first = colObj[keys[0]];
+    const n = Array.isArray(first) ? first.length : (first === undefined ? 0 : 1);
+    const rows = new Array(n);
+    for (let i = 0; i < n; i++) {
+      const row = {};
+      for (let k = 0; k < keys.length; k++) {
+        const key = keys[k];
+        const col = colObj[key];
+        row[key] = Array.isArray(col) ? col[i] : col;
+      }
+      rows[i] = row;
+    }
+    return rows;
+  }
+
+  function hydrateLeagueData(rawJson) {
+    const players = unpackColumns(rawJson.players).map(p => ({
+      id:            String(p.id),
+      name:          String(p.name || ""),
+      _norm:         normSearch(p.name || ""),
+      team:          String(p.team || ""),
+      role:          String(p.role || "Central Midfielder"),
+      sec_role:      String(p.sec_role || "None"),
+      pos:           String(p.pos || "MF"),
+      age:           p.age === null || p.age === undefined ? null : Number(p.age),
+      mins:          Number(p.mins) || 0,
+      active:        Boolean(p.active),
+      last_played:   p.last_played || null,
+      last_rostered: p.last_rostered || null,
+      off:           Number(p.off) || 0,
+      def:           Number(p.def) || 0,
+      net:           Number(p.net) || 0,
+      ss:            Number(p.ss) || 0,
+      war:           p.war === null || p.war === undefined ? null : Number(p.war),
+      war_p30:       p.war_p30 === null || p.war_p30 === undefined ? null : Number(p.war_p30),
+      gar:           p.gar === null || p.gar === undefined ? null : Number(p.gar),
+      gaa:           p.gaa === null || p.gaa === undefined ? null : Number(p.gaa),
+      par:           p.par === null || p.par === undefined ? null : Number(p.par),
+      war_exact:     p.war_exact === null || p.war_exact === undefined ? null : Number(p.war_exact),
+      war_p30_exact: p.war_p30_exact === null || p.war_p30_exact === undefined ? null : Number(p.war_p30_exact),
+      spatial_idx:   Number.isInteger(p.spatial_idx) ? p.spatial_idx : -1
+    }));
+
+    const warRows = unpackColumns(rawJson.war_table).map(w => ({
+      id:            String(w.id),
+      name:          String(w.name || ""),
+      _norm:         normSearch(`${w.name || ""} ${w.team || ""} ${w.role || ""} ${w.comp || ""}`),
+      team:          String(w.team || ""),
+      comp:          w.comp === undefined || w.comp === null ? null : String(w.comp),
+      pos:           String(w.pos || ""),
+      role:          String(w.role || ""),
+      mins:          Number(w.mins) || 0,
+      net_xg_p90:    Number(w.net_xg_p90) || 0,
+      gaa:           Number(w.gaa) || 0,
+      gar:           Number(w.gar) || 0,
+      par:           Number(w.par) || 0,
+      war:           w.war === null || w.war === undefined ? null : Number(w.war),
+      war_p30:       w.war_p30 === null || w.war_p30 === undefined ? null : Number(w.war_p30),
+      war_exact:     w.war_exact === null || w.war_exact === undefined ? null : Number(w.war_exact),
+      war_p30_exact: w.war_p30_exact === null || w.war_p30_exact === undefined ? null : Number(w.war_p30_exact)
+    }));
+
+    const sp = rawJson.spatial || {};
+    const offArr = Array.isArray(sp.off_hex) ? sp.off_hex : (sp.off_hex !== undefined ? [sp.off_hex] : []);
+    const defArr = Array.isArray(sp.def_hex) ? sp.def_hex : (sp.def_hex !== undefined ? [sp.def_hex] : []);
+
+    return {
+      meta: rawJson.meta || {},
+      players,
+      playersById: new Map(players.map(p => [p.id, p])),
+      warRows,
+      nHex: Number(sp.n_hex) || 90,
+      offHexFlat: Float32Array.from(offArr, v => Number(v) || 0),
+      defHexFlat: Float32Array.from(defArr, v => Number(v) || 0)
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // 2. WTPS v1 BINARY TPS DECODER & MATRIX-FACTOR EVALUATOR
+  // ---------------------------------------------------------------------------
+  function readAlignedFloat32(buf, byteOffset, count) {
+    if (byteOffset % 4 === 0) {
+      return new Float32Array(buf, byteOffset, count);
+    }
+    const view = new DataView(buf, byteOffset, count * 4);
+    const out = new Float32Array(count);
+    for (let i = 0; i < count; i++) out[i] = view.getFloat32(i * 4, true);
+    return out;
+  }
+
+  function readAlignedInt16(buf, byteOffset, count) {
+    if (byteOffset % 2 === 0) {
+      return new Int16Array(buf, byteOffset, count);
+    }
+    const view = new DataView(buf, byteOffset, count * 2);
+    const out = new Int16Array(count);
+    for (let i = 0; i < count; i++) out[i] = view.getInt16(i * 2, true);
+    return out;
+  }
+
+  function parseWtpsBinary(arrayBuffer) {
+    if (!arrayBuffer || arrayBuffer.byteLength < 16) {
+      throw new Error("Invalid WTPS binary buffer (too short).");
+    }
+    const view = new DataView(arrayBuffer);
+    const magic = String.fromCharCode(
+      view.getUint8(0), view.getUint8(1), view.getUint8(2), view.getUint8(3)
+    );
+    if (magic !== "WTPS") {
+      throw new Error(`Unexpected TPS binary header magic '${magic}'.`);
+    }
+    const version = view.getUint32(4, true);
+    if (version !== 1) {
+      throw new Error(`Unsupported WTPS binary version: ${version}.`);
+    }
+    const nMeshes = view.getUint32(8, true);
+    const flags   = view.getUint32(12, true);
+    const southMirror = (flags & 1) === 1;
+
+    let offset = 16;
+    const meshesById = {};
+    for (let m = 0; m < nMeshes; m++) {
+      const meshId = view.getUint32(offset, true);     offset += 4;
+      const nx     = view.getUint32(offset, true);     offset += 4;
+      const ny     = view.getUint32(offset, true);     offset += 4;
+      const xMin   = view.getFloat32(offset, true);    offset += 4;
+      const xMax   = view.getFloat32(offset, true);    offset += 4;
+      const yMin   = view.getFloat32(offset, true);    offset += 4;
+      const yMax   = view.getFloat32(offset, true);    offset += 4;
+      const k      = view.getUint32(offset, true);     offset += 4;
+      const nHex   = view.getUint32(offset, true);     offset += 4;
+
+      const B = readAlignedFloat32(arrayBuffer, offset, k * nHex);
+      offset += k * nHex * 4;
+
+      const scales = readAlignedFloat32(arrayBuffer, offset, k);
+      offset += k * 4;
+
+      const nQ = nx * ny * k;
+      const Xq = readAlignedInt16(arrayBuffer, offset, nQ);
+      offset += nQ * 2;
+      if ((nQ & 1) === 1) offset += 2; // 4-byte alignment padding
+
+      meshesById[meshId] = { meshId, nx, ny, xMin, xMax, yMin, yMax, k, nHex, B, scales, Xq };
+    }
+
+    const half  = meshesById[1] || null;
+    const north = meshesById[2] || null;
+    const south = meshesById[3] || (north ? {
+      ...north,
+      meshId: 3,
+      yMin: 0,
+      yMax: 35,
+      mirroredFromNorth: true
+    } : null);
+
+    return { version, flags, southMirror, half, north, south, meshesById };
+  }
+
+  function evaluateTpsMesh(mesh, hexVals, clampLimit, outGrid, flip180 = false) {
+    const { nx, ny, k, nHex, B, scales, Xq } = mesh;
+    const w = new Float32Array(k);
+    for (let c = 0; c < k; c++) {
+      let acc = 0;
+      const rowOff = c * nHex;
+      for (let h = 0; h < nHex; h++) {
+        acc += B[rowOff + h] * hexVals[h];
+      }
+      w[c] = acc * scales[c];
+    }
+    const N = nx * ny;
+    const dest = outGrid || new Float32Array(N);
+    for (let p = 0; p < N; p++) {
+      let z = 0;
+      const pOff = p * k;
+      for (let c = 0; c < k; c++) {
+        z += Xq[pOff + c] * w[c];
+      }
+      const clamped = z > clampLimit ? clampLimit : (z < -clampLimit ? -clampLimit : z);
+      dest[flip180 ? (N - 1 - p) : p] = clamped;
+    }
+    return dest;
+  }
+
+  // ---------------------------------------------------------------------------
+  // 3. MARCHING SQUARES CONTOUR + BOUNDARY-CLIPPED CHAIKIN + TANAKA ENGINE
+  // ---------------------------------------------------------------------------
+  function buildColorPalette(stops, nOut) {
+    const parsed = stops.map(hex => [
+      parseInt(hex.slice(1, 3), 16),
+      parseInt(hex.slice(3, 5), 16),
+      parseInt(hex.slice(5, 7), 16)
+    ]);
+    const nStops = parsed.length;
+    const out = new Array(nOut);
+    for (let i = 0; i < nOut; i++) {
+      const pos = nOut === 1 ? 0 : (i / (nOut - 1)) * (nStops - 1);
+      const lo = Math.floor(pos);
+      const hi = Math.min(nStops - 1, lo + 1);
+      const t = pos - lo;
+      const r = Math.round(parsed[lo][0] * (1 - t) + parsed[hi][0] * t);
+      const g = Math.round(parsed[lo][1] * (1 - t) + parsed[hi][1] * t);
+      const b = Math.round(parsed[lo][2] * (1 - t) + parsed[hi][2] * t);
+      out[i] = `rgb(${r},${g},${b})`;
+    }
+    return out;
+  }
+
+  // Saddle-disambiguated Marching Squares segment extractor using canonical integer edge IDs.
+  // coordX (length W) & coordY (length H) map lattice indices directly to data coordinates.
+  // When boundaryCollar=true, Zpad has outer sentinel ring (-1e9) clamped on exact [xMin,xMax] x [yMin,yMax],
+  // guaranteeing 100% closed rings cleanly flush against the pitch boundary.
+  function traceMarchingSquares(W, H, vals, coordX, coordY, T) {
+    const maxEdges = 2 * W * H;
+    const deg  = new Uint8Array(maxEdges);
+    const adj0 = new Int32Array(maxEdges).fill(-1);
+    const adj1 = new Int32Array(maxEdges).fill(-1);
+    const epx  = new Float32Array(maxEdges);
+    const epy  = new Float32Array(maxEdges);
+    const hasPt = new Uint8Array(maxEdges);
+    const activeEdges = [];
+
+    const eps = Math.max(1e-12, Math.abs(T) * 1e-12);
+    const nudged = new Float64Array(W * H);
+    for (let i = 0; i < W * H; i++) {
+      const x = vals[i];
+      nudged[i] = (x === T) ? (T + eps) : x;
+    }
+
+    function interpFrac(a, b) {
+      const denom = b - a;
+      if (denom === 0) return 0.5;
+      const t = (T - a) / denom;
+      return t < 0 ? 0 : (t > 1 ? 1 : t);
+    }
+
+    function addLink(eA, xA, yA, eB, xB, yB) {
+      if (!hasPt[eA]) {
+        epx[eA] = xA; epy[eA] = yA; hasPt[eA] = 1;
+        activeEdges.push(eA);
+      }
+      if (!hasPt[eB]) {
+        epx[eB] = xB; epy[eB] = yB; hasPt[eB] = 1;
+        activeEdges.push(eB);
+      }
+      if (deg[eA] === 0) adj0[eA] = eB; else adj1[eA] = eB;
+      deg[eA]++;
+      if (deg[eB] === 0) adj0[eB] = eA; else adj1[eB] = eA;
+      deg[eB]++;
+    }
+
+    for (let iy = 0; iy < H - 1; iy++) {
+      const y0 = coordY[iy];
+      const y1 = coordY[iy + 1];
+      const dy = y1 - y0;
+      const row0 = iy * W;
+      const row1 = (iy + 1) * W;
+
+      for (let ix = 0; ix < W - 1; ix++) {
+        const v0 = nudged[row0 + ix];
+        const v1 = nudged[row0 + ix + 1];
+        const v2 = nudged[row1 + ix + 1];
+        const v3 = nudged[row1 + ix];
+
+        const mask = (v0 > T ? 1 : 0) | (v1 > T ? 2 : 0) | (v2 > T ? 4 : 0) | (v3 > T ? 8 : 0);
+        if (mask === 0 || mask === 15) continue;
+
+        const x0 = coordX[ix];
+        const x1 = coordX[ix + 1];
+        const dx = x1 - x0;
+
+        let eB, bx, by, eR, rx, ry, eT, tx, ty, eL, lx, ly;
+        function ptB() {
+          if (eB === undefined) { eB = (row0 + ix) * 2; bx = x0 + interpFrac(v0, v1) * dx; by = y0; }
+        }
+        function ptR() {
+          if (eR === undefined) { eR = (row0 + ix + 1) * 2 + 1; rx = x1; ry = y0 + interpFrac(v1, v2) * dy; }
+        }
+        function ptT() {
+          if (eT === undefined) { eT = (row1 + ix) * 2; tx = x0 + interpFrac(v3, v2) * dx; ty = y1; }
+        }
+        function ptL() {
+          if (eL === undefined) { eL = (row0 + ix) * 2 + 1; lx = x0; ly = y0 + interpFrac(v0, v3) * dy; }
+        }
+
+        switch (mask) {
+          case 1:
+          case 14:
+            ptL(); ptB(); addLink(eL, lx, ly, eB, bx, by); break;
+          case 2:
+          case 13:
+            ptB(); ptR(); addLink(eB, bx, by, eR, rx, ry); break;
+          case 3:
+          case 12:
+            ptL(); ptR(); addLink(eL, lx, ly, eR, rx, ry); break;
+          case 4:
+          case 11:
+            ptR(); ptT(); addLink(eR, rx, ry, eT, tx, ty); break;
+          case 6:
+          case 9:
+            ptB(); ptT(); addLink(eB, bx, by, eT, tx, ty); break;
+          case 7:
+          case 8:
+            ptL(); ptT(); addLink(eL, lx, ly, eT, tx, ty); break;
+          case 5: {
+            ptB(); ptR(); ptT(); ptL();
+            const zc = 0.25 * (v0 + v1 + v2 + v3);
+            if (zc > T) {
+              addLink(eL, lx, ly, eT, tx, ty);
+              addLink(eB, bx, by, eR, rx, ry);
+            } else {
+              addLink(eL, lx, ly, eB, bx, by);
+              addLink(eR, rx, ry, eT, tx, ty);
+            }
+            break;
+          }
+          case 10: {
+            ptB(); ptR(); ptT(); ptL();
+            const zc = 0.25 * (v0 + v1 + v2 + v3);
+            if (zc > T) {
+              addLink(eB, bx, by, eL, lx, ly);
+              addLink(eT, tx, ty, eR, rx, ry);
+            } else {
+              addLink(eB, bx, by, eR, rx, ry);
+              addLink(eL, lx, ly, eT, tx, ty);
+            }
+            break;
+          }
+        }
+      }
+    }
+
+    const visited = new Uint8Array(maxEdges);
+    const chains = [];
+
+    function walkFrom(startEdge, isOpen) {
+      const pts = [];
+      let prev = -1;
+      let curr = startEdge;
+      while (curr !== -1) {
+        if (curr === startEdge && pts.length > 0) break;
+        if (visited[curr]) break;
+        visited[curr] = 1;
+        pts.push({ x: epx[curr], y: epy[curr] });
+        const n0 = adj0[curr];
+        const n1 = adj1[curr];
+        let next = -1;
+        if (n0 !== -1 && n0 !== prev && (!visited[n0] || (!isOpen && n0 === startEdge && pts.length > 2))) {
+          next = n0;
+        } else if (n1 !== -1 && n1 !== prev && (!visited[n1] || (!isOpen && n1 === startEdge && pts.length > 2))) {
+          next = n1;
+        }
+        prev = curr;
+        curr = next;
+      }
+      if (pts.length >= 2) chains.push({ closed: !isOpen, pts });
+    }
+
+    // Trace open boundary-to-boundary chains first (never trace perimeter!)
+    for (let i = 0; i < activeEdges.length; i++) {
+      const e = activeEdges[i];
+      if (deg[e] === 1 && !visited[e]) walkFrom(e, true);
+    }
+    // Trace closed interior rings
+    for (let i = 0; i < activeEdges.length; i++) {
+      const e = activeEdges[i];
+      if (!visited[e] && deg[e] === 2) walkFrom(e, false);
+    }
+    return chains;
+  }
+
+  function makeGridCoords(nx, ny, xMin, xMax, yMin, yMax) {
+    const cx = new Float64Array(nx);
+    const cy = new Float64Array(ny);
+    const dx = nx > 1 ? (xMax - xMin) / (nx - 1) : 0;
+    const dy = ny > 1 ? (yMax - yMin) / (ny - 1) : 0;
+    for (let i = 0; i < nx; i++) cx[i] = xMin + i * dx;
+    for (let j = 0; j < ny; j++) cy[j] = yMin + j * dy;
+    return { cx, cy };
+  }
+
+  // Zero-width outer sentinel collar for topologically closed filled rings flush on domain boundaries
+  function extractClosedSuperlevelRings(zGrid, nx, ny, xMin, xMax, yMin, yMax, threshold, negate) {
+    const W = nx + 2;
+    const H = ny + 2;
+    const vals = new Float64Array(W * H).fill(-1e9);
+    const T = negate ? -threshold : threshold;
+
+    for (let j = 0; j < ny; j++) {
+      const srcRow = j * nx;
+      const dstRow = (j + 1) * W + 1;
+      for (let i = 0; i < nx; i++) {
+        vals[dstRow + i] = negate ? -zGrid[srcRow + i] : zGrid[srcRow + i];
+      }
+    }
+
+    const { cx, cy } = makeGridCoords(nx, ny, xMin, xMax, yMin, yMax);
+    const padX = new Float64Array(W);
+    const padY = new Float64Array(H);
+    padX[0] = xMin;
+    for (let i = 0; i < nx; i++) padX[i + 1] = cx[i];
+    padX[W - 1] = xMax;
+    padY[0] = yMin;
+    for (let j = 0; j < ny; j++) padY[j + 1] = cy[j];
+    padY[H - 1] = yMax;
+
+    return traceMarchingSquares(W, H, vals, padX, padY, T);
+  }
+
+  // Unpadded interior isoline extractor: boundary-reaching contours remain open (zero perimeter lines)
+  function extractOpenAndClosedIsolines(zGrid, nx, ny, xMin, xMax, yMin, yMax, threshold) {
+    const { cx, cy } = makeGridCoords(nx, ny, xMin, xMax, yMin, yMax);
+    return traceMarchingSquares(nx, ny, zGrid, cx, cy, threshold);
+  }
+
+  // Chaikin smoothing matching metR::geom_contour_tanaka(smooth = 2)
+  function chaikinSmooth(pts, closed, passes = 2) {
+    if (!pts || pts.length < 3 || passes <= 0) return pts;
+    let cur = pts;
+    for (let pass = 0; pass < passes; pass++) {
+      const n = cur.length;
+      if (n < 3) break;
+      const next = [];
+      if (closed) {
+        for (let i = 0; i < n; i++) {
+          const p0 = cur[i];
+          const p1 = cur[(i + 1) % n];
+          next.push({ x: 0.75 * p0.x + 0.25 * p1.x, y: 0.75 * p0.y + 0.25 * p1.y });
+          next.push({ x: 0.25 * p0.x + 0.75 * p1.x, y: 0.25 * p0.y + 0.75 * p1.y });
+        }
+      } else {
+        // Pin first & last vertices on boundary so boundary-terminated arcs never pull away
+        next.push({ x: cur[0].x, y: cur[0].y });
+        for (let i = 0; i < n - 1; i++) {
+          const p0 = cur[i];
+          const p1 = cur[i + 1];
+          if (i > 0) next.push({ x: 0.75 * p0.x + 0.25 * p1.x, y: 0.75 * p0.y + 0.25 * p1.y });
+          if (i < n - 2) next.push({ x: 0.25 * p0.x + 0.75 * p1.x, y: 0.25 * p0.y + 0.75 * p1.y });
+        }
+        next.push({ x: cur[n - 1].x, y: cur[n - 1].y });
+      }
+      cur = next;
+    }
+    return cur;
+  }
+
+  function sampleBilinearGrid(zGrid, nx, ny, gx, gy) {
+    const cx = gx < 0 ? 0 : (gx > nx - 1 ? nx - 1 : gx);
+    const cy = gy < 0 ? 0 : (gy > ny - 1 ? ny - 1 : gy);
+    const i0 = Math.min(nx - 2, Math.floor(cx));
+    const j0 = Math.min(ny - 2, Math.floor(cy));
+    const tx = cx - i0;
+    const ty = cy - j0;
+    const z00 = zGrid[j0 * nx + i0];
+    const z10 = zGrid[j0 * nx + i0 + 1];
+    const z01 = zGrid[(j0 + 1) * nx + i0];
+    const z11 = zGrid[(j0 + 1) * nx + i0 + 1];
+    return (1 - tx) * (1 - ty) * z00 + tx * (1 - ty) * z10 + (1 - tx) * ty * z01 + tx * ty * z11;
+  }
+
+  // Pixel-verified NE sun (315 deg screen: (+1/sqrt2, -1/sqrt2)),
+  // linear #000000 -> #808080 -> #FFFFFF color, range [0.05, 0.80]
+  const INV_SQRT2 = Math.SQRT1_2;
+
+  function computeTanakaStyle(zGrid, nx, ny, xMin, xMax, yMin, yMax, mx, my, invert, dpi = 300) {
+    const gx = ((mx - xMin) / (xMax - xMin)) * (nx - 1);
+    const gy = ((my - yMin) / (yMax - yMin)) * (ny - 1);
+    const cellX = (xMax - xMin) / (nx - 1);
+    const cellY = (yMax - yMin) / (ny - 1);
+    const step = 0.45;
+
+    const gxL = Math.max(0, gx - step), gxR = Math.min(nx - 1, gx + step);
+    const gyD = Math.max(0, gy - step), gyU = Math.min(ny - 1, gy + step);
+    const spanX = (gxR - gxL) * cellX;
+    const spanY = (gyU - gyD) * cellY;
+
+    const dzdx = spanX > 0 ? (sampleBilinearGrid(zGrid, nx, ny, gxR, gy) - sampleBilinearGrid(zGrid, nx, ny, gxL, gy)) / spanX : 0;
+    const dzdy = spanY > 0 ? (sampleBilinearGrid(zGrid, nx, ny, gx, gyU) - sampleBilinearGrid(zGrid, nx, ny, gx, gyD)) / spanY : 0;
+
+    // Map uphill data gradient -> uphill screen gradient -> downhill screen normal (-grad_screen)
+    const upScreenX = invert ? -dzdx : dzdx;
+    const upScreenY = invert ? dzdy : -dzdy;
+    const downX = -upScreenX;
+    const downY = -upScreenY;
+    const norm = Math.hypot(downX, downY);
+
+    let intensity = 0;
+    if (norm > 1e-12) {
+      // Sun unit vector s = (+1/sqrt2, -1/sqrt2) in screen coordinates (NE = 315 deg screen)
+      intensity = ((downX * INV_SQRT2) + (downY * -INV_SQRT2)) / norm;
+      if (intensity > 1) intensity = 1;
+      if (intensity < -1) intensity = -1;
+    }
+
+    const lum = Math.round(127.5 * (1 + intensity));
+    const widthPx = (2.845276 / 96) * dpi * (0.05 + 0.75 * Math.abs(intensity));
+    return {
+      intensity,
+      color: `rgb(${lum},${lum},${lum})`,
+      widthPx
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // 4. PITCH VECTOR, SCORECARD & CANVAS RENDERER (CALIBRATED TO AMELIA WHITE)
+  // ---------------------------------------------------------------------------
+  const WORK_CANVAS = { fill: null, tanaka: null };
+  function getWorkCanvas(slot, w, h) {
+    if (!WORK_CANVAS[slot]) WORK_CANVAS[slot] = document.createElement("canvas");
+    const c = WORK_CANVAS[slot];
+    if (c.width !== w || c.height !== h) {
+      c.width = w;
+      c.height = h;
+    } else {
+      c.getContext("2d").clearRect(0, 0, w, h);
+    }
+    return c;
+  }
+
+  function makeViewportMapper(width, height, bounds, invert) {
+    const { xMin, xMax, yMin, yMax, marginTop, marginBottom, marginX } = bounds;
+    const availW = width - 2 * marginX;
+    const availH = height - marginTop - marginBottom;
+    const pxPerM = Math.min(availW / (xMax - xMin), availH / (yMax - yMin));
+    const usedW = (xMax - xMin) * pxPerM;
+    const usedH = (yMax - yMin) * pxPerM;
+    const leftEdge = (width - usedW) * 0.5;
+    const topEdge  = marginTop + (availH - usedH) * 0.5;
+
+    return {
+      pxPerM,
+      xPx(x) {
+        return invert
+          ? leftEdge + (xMax - x) * pxPerM
+          : leftEdge + (x - xMin) * pxPerM;
+      },
+      yPx(y) {
+        return invert
+          ? topEdge + (y - yMin) * pxPerM
+          : topEdge + (yMax - y) * pxPerM;
+      },
+      wPx(dx) { return dx * pxPerM; },
+      hPx(dy) { return dy * pxPerM; }
+    };
+  }
+
+  function strokePitchRect(ctx, vp, xmin, xmax, ymin, ymax, color, lw, alpha = 1.0) {
+    const x0 = vp.xPx(xmin);
+    const x1 = vp.xPx(xmax);
+    const y0 = vp.yPx(ymin);
+    const y1 = vp.yPx(ymax);
+    const rx = Math.min(x0, x1);
+    const ry = Math.min(y0, y1);
+    const rw = Math.abs(x1 - x0);
+    const rh = Math.abs(y1 - y0);
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = lw;
+    ctx.strokeRect(rx, ry, rw, rh);
+    ctx.restore();
+  }
+
+  function fillPitchRect(ctx, vp, xmin, xmax, ymin, ymax, fillColor, strokeColor = null, lw = 0) {
+    const x0 = vp.xPx(xmin);
+    const x1 = vp.xPx(xmax);
+    const y0 = vp.yPx(ymin);
+    const y1 = vp.yPx(ymax);
+    const rx = Math.min(x0, x1);
+    const ry = Math.min(y0, y1);
+    const rw = Math.abs(x1 - x0);
+    const rh = Math.abs(y1 - y0);
+    ctx.save();
+    if (fillColor) {
+      ctx.fillStyle = fillColor;
+      ctx.fillRect(rx, ry, rw, rh);
+    }
+    if (strokeColor && lw > 0) {
+      ctx.strokeStyle = strokeColor;
+      ctx.lineWidth = lw;
+      ctx.strokeRect(rx, ry, rw, rh);
+    }
+    ctx.restore();
+  }
+
+  function strokePitchSegment(ctx, vp, x1, x2, y1, y2, color, lw, dashed = false, alpha = 1.0) {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = lw;
+    if (dashed) ctx.setLineDash([12, 10]);
+    ctx.beginPath();
+    ctx.moveTo(vp.xPx(x1), vp.yPx(y1));
+    ctx.lineTo(vp.xPx(x2), vp.yPx(y2));
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function strokePitchArcPath(ctx, vp, cx, cy, r, tStart, tEnd, nSteps, color, lw, alpha = 1.0) {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = lw;
+    ctx.beginPath();
+    for (let i = 0; i <= nSteps; i++) {
+      const th = tStart + (i / nSteps) * (tEnd - tStart);
+      const px = vp.xPx(cx + r * Math.cos(th));
+      const py = vp.yPx(cy + r * Math.sin(th));
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function fillPitchDot(ctx, vp, x, y, radiusPx, color, alpha = 1.0) {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(vp.xPx(x), vp.yPx(y), radiusPx, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function renderSurfaceContoursOnLayers(fillCtx, tanakaCtx, vp, zGrid, nx, ny, xMin, xMax, yMin, yMax, limit, palette19, invert, dpi = 300) {
+    const breaks = new Array(20);
+    const step = (2 * limit) / 19;
+    for (let i = 0; i < 20; i++) breaks[i] = -limit + i * step;
+
+    function paintFillRings(rings, fillStyle) {
+      if (rings.length === 0) return;
+      fillCtx.fillStyle = fillStyle;
+      fillCtx.beginPath();
+      for (let r = 0; r < rings.length; r++) {
+        const pts = rings[r].pts;
+        if (pts.length < 3) continue;
+        fillCtx.moveTo(vp.xPx(pts[0].x), vp.yPx(pts[0].y));
+        for (let i = 1; i < pts.length; i++) {
+          fillCtx.lineTo(vp.xPx(pts[i].x), vp.yPx(pts[i].y));
+        }
+        fillCtx.closePath();
+      }
+      fillCtx.fill("evenodd");
+    }
+
+    // Paint neutral band (index 9 = #FFFFFF) across clipped domain first so underlying
+    // pitch markings receive uniform alpha = 0.70 compositing matching ggplot2::geom_contour_filled.
+    fillPitchRect(fillCtx, vp, xMin, xMax, yMin, yMax, palette19[9]);
+
+    // Paint superlevel bands from neutral band (index 9 = #FFFFFF) outward:
+    // Positive bands k = 10..18 use Z >= breaks[k]
+    for (let k = 10; k <= 18; k++) {
+      const rings = extractClosedSuperlevelRings(zGrid, nx, ny, xMin, xMax, yMin, yMax, breaks[k], false);
+      paintFillRings(rings, palette19[k]);
+    }
+    // Negative bands k = 8..0 use Z <= breaks[k+1] (negated superlevel -Z >= -breaks[k+1])
+    for (let k = 8; k >= 0; k--) {
+      const rings = extractClosedSuperlevelRings(zGrid, nx, ny, xMin, xMax, yMin, yMax, breaks[k + 1], true);
+      paintFillRings(rings, palette19[k]);
+    }
+
+    // Tanaka isolines for all 18 interior levels T_1..T_18 with Smooth=2 Chaikin & NE Sun
+    tanakaCtx.lineCap  = "round";
+    tanakaCtx.lineJoin = "round";
+    for (let k = 1; k <= 18; k++) {
+      const T = breaks[k];
+      const chains = extractOpenAndClosedIsolines(zGrid, nx, ny, xMin, xMax, yMin, yMax, T);
+      for (let c = 0; c < chains.length; c++) {
+        const ch = chains[c];
+        const sm = chaikinSmooth(ch.pts, ch.closed, 2);
+        const m = sm.length;
+        if (m < 2) continue;
+        const limitSeg = ch.closed ? m : m - 1;
+        for (let i = 0; i < limitSeg; i++) {
+          const p0 = sm[i];
+          const p1 = sm[(i + 1) % m];
+          const mx = 0.5 * (p0.x + p1.x);
+          const my = 0.5 * (p0.y + p1.y);
+          const style = computeTanakaStyle(zGrid, nx, ny, xMin, xMax, yMin, yMax, mx, my, invert, dpi);
+          tanakaCtx.strokeStyle = style.color;
+          tanakaCtx.lineWidth   = style.widthPx;
+          tanakaCtx.beginPath();
+          tanakaCtx.moveTo(vp.xPx(p0.x), vp.yPx(p0.y));
+          tanakaCtx.lineTo(vp.xPx(p1.x), vp.yPx(p1.y));
+          tanakaCtx.stroke();
+        }
+      }
+    }
+  }
+
+  function clipToPitchRect(ctx, vp, xMin, xMax, yMin, yMax) {
+    const x0 = vp.xPx(xMin), x1 = vp.xPx(xMax);
+    const y0 = vp.yPx(yMin), y1 = vp.yPx(yMax);
+    ctx.beginPath();
+    ctx.rect(Math.min(x0, x1), Math.min(y0, y1), Math.abs(x1 - x0), Math.abs(y1 - y0));
+    ctx.clip();
+  }
+
+  // ggplot2 linewidth multiplier calibrated to amelia_white_full_impact.png (2160w)
+  const LW_SCALE = 5.2;
+  // ggplot2 text sizes calibrated to amelia_white_full_impact.png (96/25.4 mm->px, 96/72 pt->px)
+  const MM_PX = 96 / 25.4;
+  const PT_PX = 96 / 72;
+
+  function drawHeaderBlock(ctx, width, titleStr, subLine1, subLine2) {
+    ctx.save();
+    ctx.textAlign = "center";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillStyle = "#111111";
+    ctx.font = `700 ${Math.round(52 * PT_PX)}px Assistant, sans-serif`;
+    ctx.fillText(titleStr, width * 0.5, 118);
+
+    ctx.fillStyle = "#555555";
+    ctx.font = `400 ${Math.round(26 * PT_PX)}px Assistant, sans-serif`;
+    ctx.fillText(subLine1, width * 0.5, 174);
+    ctx.fillText(subLine2, width * 0.5, 224);
+    ctx.restore();
+  }
+
+  function computePlayerPercentiles(league, player) {
+    const cohort = league.players.filter(p => p.role !== "Goalkeeper" && p.mins >= 450);
+    const netVals = cohort.map(p => p.net);
+    const offVals = cohort.map(p => p.off);
+    const defVals = cohort.map(p => p.def);
+
+    const tCohort = classifyCohort(player.role);
+    const posPlural = cohortPlural(tCohort);
+    const posCohort = cohort.filter(p => classifyCohort(p.role) === tCohort);
+
+    const netLg = ecdfPercentile(netVals, player.net);
+    const offLg = ecdfPercentile(offVals, player.off);
+    const defLg = ecdfPercentile(defVals, player.def);
+
+    const netPos = posCohort.length >= 5 ? ecdfPercentile(posCohort.map(p => p.net), player.net) : netLg;
+    const offPos = posCohort.length >= 5 ? ecdfPercentile(posCohort.map(p => p.off), player.off) : offLg;
+    const defPos = posCohort.length >= 5 ? ecdfPercentile(posCohort.map(p => p.def), player.def) : defLg;
+
+    return { posPlural, netLg, offLg, defLg, netPos, offPos, defPos };
+  }
+
+  function renderFullImpactCanvas(canvas, tps, league, leagueMeta, player, palette19) {
+    const W = 2160, H = 3240;
+    if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
+    const ctx = canvas.getContext("2d");
+
+    // 1. White Background
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillRect(0, 0, W, H);
+
+    // Viewport mapped identically to amelia_white_full_impact.png (x in [-1.5, 69.5], y in [-2.5, 107.5])
+    const vp = makeViewportMapper(W, H, {
+      xMin: -1.5, xMax: 69.5, yMin: -2.5, yMax: 107.5,
+      marginTop: 233, marginBottom: 37, marginX: 121
+    }, false);
+
+    // 2. Interior Base Pitch Lines (drawn BEFORE contours, matching ggplot2 alpha=0.5 layering)
+    // Center circle / halfway line
+    strokePitchSegment(ctx, vp, 0, 68, 52.5, 52.5, "#444444", 0.9 * LW_SCALE);
+    strokePitchArcPath(ctx, vp, 34, 52.5, 9.15, 0, 2 * Math.PI, 60, "#444444", 0.8 * LW_SCALE);
+    fillPitchDot(ctx, vp, 34, 52.5, 4.5, "#444444");
+
+    // North Penalty Boxes, Spot & Arc (ggplot2 geom_rect alpha only affects fill, leaving stroke opaque under 0.70 contour veil)
+    strokePitchRect(ctx, vp, 13.84, 54.16, 88.5, 105, "#444444", 0.8 * LW_SCALE, 1.0);
+    strokePitchRect(ctx, vp, 24.84, 43.16, 99.5, 105, "#444444", 0.8 * LW_SCALE, 1.0);
+    fillPitchDot(ctx, vp, 34, 94, 4.0, "#444444", 0.5);
+    strokePitchArcPath(ctx, vp, 34, 94, 9.15, 3.786, 5.638, 30, "#444444", 0.7 * LW_SCALE, 0.5);
+
+    // South Penalty Boxes, Spot & Arc
+    strokePitchRect(ctx, vp, 13.84, 54.16, 0, 16.5, "#444444", 0.8 * LW_SCALE, 1.0);
+    strokePitchRect(ctx, vp, 24.84, 43.16, 0, 5.5, "#444444", 0.8 * LW_SCALE, 1.0);
+    fillPitchDot(ctx, vp, 34, 11, 4.0, "#444444", 0.5);
+    strokePitchArcPath(ctx, vp, 34, 11, 9.15, 0.644, 2.498, 30, "#444444", 0.7 * LW_SCALE, 0.5);
+
+    // 3 & 4. Contours + Smooth Tanaka rendered onto offscreen buffers & composited cleanly
+    if (tps && tps.north && tps.south && player.spatial_idx >= 0) {
+      const sOff = player.spatial_idx * league.nHex;
+      const offCoefs = league.offHexFlat.subarray(sOff, sOff + league.nHex);
+      const defRaw   = league.defHexFlat.subarray(sOff, sOff + league.nHex);
+      const defCoefs = new Float32Array(league.nHex);
+      for (let i = 0; i < league.nHex; i++) defCoefs[i] = -defRaw[i];
+
+      const limit = Number(league.meta.spatial_limit) || 0.02;
+      const clampL = limit - 1e-6;
+      const zNorth = evaluateTpsMesh(tps.north, offCoefs, clampL, null, false);
+      const zSouth = evaluateTpsMesh(tps.south.mirroredFromNorth ? tps.north : tps.south, defCoefs, clampL, null, Boolean(tps.south.mirroredFromNorth));
+
+      const fillC = getWorkCanvas("fill", W, H);
+      const tanC  = getWorkCanvas("tanaka", W, H);
+      const fCtx  = fillC.getContext("2d");
+      const tCtx  = tanC.getContext("2d");
+
+      fCtx.save(); clipToPitchRect(fCtx, vp, 0, 68, 70, 105);
+      tCtx.save(); clipToPitchRect(tCtx, vp, 0, 68, 70, 105);
+      renderSurfaceContoursOnLayers(fCtx, tCtx, vp, zNorth, tps.north.nx, tps.north.ny, 0, 68, 70, 105, limit, palette19, false, 300);
+      fCtx.restore();
+      tCtx.restore();
+
+      fCtx.save(); clipToPitchRect(fCtx, vp, 0, 68, 0, 35);
+      tCtx.save(); clipToPitchRect(tCtx, vp, 0, 68, 0, 35);
+      renderSurfaceContoursOnLayers(fCtx, tCtx, vp, zSouth, tps.south.nx, tps.south.ny, 0, 68, 0, 35, limit, palette19, false, 300);
+      fCtx.restore();
+      tCtx.restore();
+
+      ctx.save();
+      ctx.globalAlpha = 0.70;
+      ctx.drawImage(fillC, 0, 0);
+      ctx.restore();
+
+      ctx.save();
+      ctx.globalAlpha = 0.90;
+      ctx.drawImage(tanC, 0, 0);
+      ctx.restore();
+    }
+
+    // 5. Foreground Pitch Borders, Goals & Enclosed Scorecard (opaque alpha = 1.0)
+    strokePitchRect(ctx, vp, 0, 68, 0, 105, "#444444", 0.9 * LW_SCALE);
+    fillPitchRect(ctx, vp, 30.34, 37.66, 105, 106.5, "#333333", "#333333", 2);
+    fillPitchRect(ctx, vp, 30.34, 37.66, -1.5, 0, "#333333", "#333333", 2);
+
+    // Scorecard Base (X in [0, 68], Y in [36.0, 69.0])
+    fillPitchRect(ctx, vp, 0, 68, 36.0, 69.0, "#FFFFFF");
+    strokePitchSegment(ctx, vp, 0, 68, 69.0, 69.0, "#444444", 0.9 * LW_SCALE);
+    strokePitchSegment(ctx, vp, 0, 68, 36.0, 36.0, "#444444", 0.9 * LW_SCALE);
+    // Keep outer sidelines unbroken across scorecard
+    strokePitchSegment(ctx, vp, 0, 0, 0, 105, "#444444", 0.9 * LW_SCALE);
+    strokePitchSegment(ctx, vp, 68, 68, 0, 105, "#444444", 0.9 * LW_SCALE);
+
+    // Top Teal Banner [66.8, 69.0] & Bottom Navy Banner [36.0, 38.2]
+    fillPitchRect(ctx, vp, 0, 68, 66.8, 69.0, "#00747A");
+    fillPitchRect(ctx, vp, 0, 68, 36.0, 38.2, "#1D3549");
+
+    const pct = computePlayerPercentiles(league, player);
+    const shortLg = leagueMeta ? leagueMeta.short : (league.meta.label || "NWSL");
+
+    ctx.save();
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    // Banner text
+    ctx.fillStyle = "#FFFFFF";
+    ctx.font = `700 ${Math.round(7.8 * MM_PX)}px Assistant, sans-serif`;
+    ctx.fillText("ATTACKING THIRD   \u2022   OFFENSIVE THREAT GENERATION", vp.xPx(34), vp.yPx(67.9));
+    ctx.fillText("DEFENSIVE THIRD   \u2022   OPPONENT THREAT SUPPRESSION", vp.xPx(34), vp.yPx(37.1));
+
+    // Net RAPM KPI & percentiles
+    ctx.fillStyle = player.net >= 0 ? "#00747A" : "#B2182B";
+    ctx.font = `700 ${Math.round(15.5 * MM_PX)}px Assistant, sans-serif`;
+    ctx.fillText(`${formatSigned(player.net, 3)} Net xG/90`, vp.xPx(34), vp.yPx(63.5));
+
+    ctx.fillStyle = "#666666";
+    ctx.font = `400 ${Math.round(9.2 * MM_PX)}px Assistant, sans-serif`;
+    ctx.fillText(`${getOrdinalSuffix(pct.netLg)} Percentile in the ${shortLg}`, vp.xPx(34), vp.yPx(60.8));
+
+    ctx.fillStyle = "#111111";
+    ctx.font = `700 ${Math.round(9.8 * MM_PX)}px Assistant, sans-serif`;
+    ctx.fillText(`${getOrdinalSuffix(pct.netPos)} Percentile Among ${shortLg} ${pct.posPlural}`, vp.xPx(34), vp.yPx(58.4));
+
+    // Hairline horizontal rules
+    strokePitchSegment(ctx, vp, 8, 60, 56.5, 56.5, "#E5E7EB", 0.6 * LW_SCALE);
+
+    // Production ledger bar
+    const minsRounded = Math.round(player.mins);
+    let prodText;
+    if (player.war !== null && player.gar !== null) {
+      const p30Str = player.war_p30 !== null
+        ? player.war_p30.toFixed(2)
+        : (minsRounded >= 450 ? ((player.war / (minsRounded / 90.0)) * 30.0).toFixed(2) : "N/A");
+      prodText = `GAR: ${formatSigned(player.gar, 1)}   |   WAR: ${player.war.toFixed(2)}   |   WAR/30: ${p30Str}   |   ${minsRounded.toLocaleString("en-US")} MINS`;
+    } else {
+      prodText = `${minsRounded.toLocaleString("en-US")} MINS PLAYED   |   FULL SEASON SAMPLE`;
+    }
+    ctx.fillStyle = "#333333";
+    ctx.font = `700 ${Math.round(8.8 * MM_PX)}px Assistant, sans-serif`;
+    ctx.fillText(prodText, vp.xPx(34), vp.yPx(54.8));
+
+    strokePitchSegment(ctx, vp, 8, 60, 53.0, 53.0, "#E5E7EB", 0.6 * LW_SCALE);
+    strokePitchSegment(ctx, vp, 34, 34, 41.2, 52.0, "#E5E7EB", 0.6 * LW_SCALE);
+
+    // Left Pod: Offensive Threat
+    ctx.fillStyle = "#555555";
+    ctx.font = `700 ${Math.round(7.5 * MM_PX)}px Assistant, sans-serif`;
+    ctx.fillText("OFFENSIVE THREAT", vp.xPx(17), vp.yPx(50.8));
+
+    ctx.fillStyle = "#111111";
+    ctx.font = `700 ${Math.round(11.5 * MM_PX)}px Assistant, sans-serif`;
+    ctx.fillText(`${formatSigned(player.off, 3)} xGF/90`, vp.xPx(17), vp.yPx(48.0));
+
+    ctx.fillStyle = "#666666";
+    ctx.font = `400 ${Math.round(8.2 * MM_PX)}px Assistant, sans-serif`;
+    ctx.fillText(`${getOrdinalSuffix(pct.offLg)} Pctl in ${shortLg}`, vp.xPx(17), vp.yPx(45.4));
+
+    ctx.fillStyle = "#00747A";
+    ctx.font = `700 ${Math.round(9.0 * MM_PX)}px Assistant, sans-serif`;
+    ctx.fillText(`${getOrdinalSuffix(pct.offPos)} Pctl Among ${pct.posPlural}`, vp.xPx(17), vp.yPx(43.0));
+
+    // Right Pod: Defensive Suppression
+    ctx.fillStyle = "#555555";
+    ctx.font = `700 ${Math.round(7.5 * MM_PX)}px Assistant, sans-serif`;
+    ctx.fillText("DEFENSIVE SUPPRESSION", vp.xPx(51), vp.yPx(50.8));
+
+    ctx.fillStyle = "#111111";
+    ctx.font = `700 ${Math.round(11.5 * MM_PX)}px Assistant, sans-serif`;
+    ctx.fillText(`${formatSigned(-player.def, 3)} xGA/90`, vp.xPx(51), vp.yPx(48.0));
+
+    ctx.fillStyle = "#666666";
+    ctx.font = `400 ${Math.round(8.2 * MM_PX)}px Assistant, sans-serif`;
+    ctx.fillText(`${getOrdinalSuffix(pct.defLg)} Pctl in ${shortLg}`, vp.xPx(51), vp.yPx(45.4));
+
+    ctx.fillStyle = "#00747A";
+    ctx.font = `700 ${Math.round(9.0 * MM_PX)}px Assistant, sans-serif`;
+    ctx.fillText(`${getOrdinalSuffix(pct.defPos)} Pctl Among ${pct.posPlural}`, vp.xPx(51), vp.yPx(43.0));
+
+    // Footer rule & brand
+    strokePitchSegment(ctx, vp, 8, 60, 40.2, 40.2, "#E5E7EB", 0.6 * LW_SCALE);
+    ctx.fillStyle = "#888888";
+    ctx.font = `700 ${Math.round(7.2 * MM_PX)}px Assistant, sans-serif`;
+    ctx.fillText("11v11 ISOLATED RAPM   \u2022   WOSO.LIVE", vp.xPx(34), vp.yPx(39.2));
+    ctx.restore();
+
+    // Header Title + 2-Line Subtitle
+    const ageStr = player.age === null ? "N/A" : String(Math.round(player.age));
+    const pDt = formatActivityDate(player.last_played, "short", "DNP");
+    const rDt = formatActivityDate(player.last_rostered, "short", "N/A");
+    drawHeaderBlock(
+      ctx,
+      W,
+      player.name.toUpperCase(),
+      `${player.role.toUpperCase()}   \u2022   AGE ${ageStr}   \u2022   ${player.team.toUpperCase()}`,
+      `LAST PLAYED: ${pDt.toUpperCase()}   \u2022   LAST ROSTERED: ${rDt.toUpperCase()}`
+    );
+  }
+
+  function renderHalfPitchCanvas(canvas, tps, league, leagueMeta, player, palette19, kind) {
+    const W = 2040, H = 1620;
+    if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
+    const ctx = canvas.getContext("2d");
+    const isDef = (kind === "defense");
+
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillRect(0, 0, W, H);
+
+    const vp = makeViewportMapper(W, H, {
+      xMin: -0.5, xMax: 68.5, yMin: 51.5, yMax: 107.5,
+      marginTop: 235, marginBottom: 35, marginX: 70
+    }, isDef);
+
+    // 1. Interior Base Half-Pitch Markings (underneath contours)
+    strokePitchSegment(ctx, vp, 0, 68, 70, 70, "#888888", 0.6 * LW_SCALE, true);
+    strokePitchSegment(ctx, vp, 0, 68, 52.5, 52.5, "#444444", 0.9 * LW_SCALE);
+    strokePitchArcPath(ctx, vp, 34, 52.5, 9.15, 0, Math.PI, 50, "#444444", 0.8 * LW_SCALE);
+    fillPitchDot(ctx, vp, 34, 52.5, 4.5, "#444444");
+
+    strokePitchRect(ctx, vp, 13.84, 54.16, 88.5, 105, "#444444", 0.8 * LW_SCALE, 1.0);
+    fillPitchDot(ctx, vp, 34, 94, 4.0, "#444444", 0.5);
+    strokePitchArcPath(ctx, vp, 34, 94, 9.15, 3.786, 5.638, 30, "#444444", 0.7 * LW_SCALE, 0.5);
+    strokePitchRect(ctx, vp, 24.84, 43.16, 99.5, 105, "#444444", 0.8 * LW_SCALE, 1.0);
+
+    // 2. Contours + Tanaka over [0, 68] x [70, 105]
+    if (tps && tps.half && player.spatial_idx >= 0) {
+      const sOff = player.spatial_idx * league.nHex;
+      const coefs = new Float32Array(league.nHex);
+      if (isDef) {
+        const rawD = league.defHexFlat.subarray(sOff, sOff + league.nHex);
+        for (let i = 0; i < league.nHex; i++) coefs[i] = -rawD[i];
+      } else {
+        const rawO = league.offHexFlat.subarray(sOff, sOff + league.nHex);
+        for (let i = 0; i < league.nHex; i++) coefs[i] = rawO[i];
+      }
+
+      const limit = Number(league.meta.spatial_limit) || 0.02;
+      const clampL = limit - 1e-6;
+      const zHalf = evaluateTpsMesh(tps.half, coefs, clampL, null, false);
+
+      const fillC = getWorkCanvas("fill", W, H);
+      const tanC  = getWorkCanvas("tanaka", W, H);
+      const fCtx  = fillC.getContext("2d");
+      const tCtx  = tanC.getContext("2d");
+
+      fCtx.save(); clipToPitchRect(fCtx, vp, 0, 68, 70, 105);
+      tCtx.save(); clipToPitchRect(tCtx, vp, 0, 68, 70, 105);
+      renderSurfaceContoursOnLayers(fCtx, tCtx, vp, zHalf, tps.half.nx, tps.half.ny, 0, 68, 70, 105, limit, palette19, isDef, 300);
+      fCtx.restore();
+      tCtx.restore();
+
+      ctx.save();
+      ctx.globalAlpha = 0.70;
+      ctx.drawImage(fillC, 0, 0);
+      ctx.restore();
+
+      ctx.save();
+      ctx.globalAlpha = 0.90;
+      ctx.drawImage(tanC, 0, 0);
+      ctx.restore();
+    }
+
+    // 3. Outer Pitch Frame + Goal + Enclosed Half Scorecard [14, 54] x [54.0, 67.0]
+    strokePitchRect(ctx, vp, 0, 68, 52.5, 105, "#444444", 0.9 * LW_SCALE);
+    fillPitchRect(ctx, vp, 30.34, 37.66, 105, 106.5, "#333333", "#333333", 2);
+
+    fillPitchRect(ctx, vp, 14, 54, 54.0, 67.0, "#FFFFFF", "#444444", 0.6 * LW_SCALE);
+
+    const pct = computePlayerPercentiles(league, player);
+    const shortLg = leagueMeta ? leagueMeta.short : (league.meta.label || "NWSL");
+    const baseXg = Number(league.meta.baseline_xg) > 0 ? Number(league.meta.baseline_xg) : 1.25;
+    const minsRounded = Math.round(player.mins);
+
+    let titleLine, lgLine, poLine, ys;
+    if (isDef) {
+      const xgaVal = -player.def;
+      const pctChg = (xgaVal / baseXg) * 100;
+      titleLine = `${formatSigned(xgaVal, 3)} xGA/90 (${formatSigned(pctChg, 1)}%)`;
+      lgLine = `${getOrdinalSuffix(pct.defLg)} Percentile in the ${shortLg}`;
+      poLine = `${getOrdinalSuffix(pct.defPos)} Percentile Among ${shortLg} ${pct.posPlural}`;
+      ys = [56.8, 59.2, 61.5, 64.2];
+    } else {
+      const pctChg = (player.off / baseXg) * 100;
+      titleLine = `${formatSigned(player.off, 3)} xGF/90 (${formatSigned(pctChg, 1)}%)`;
+      lgLine = `${getOrdinalSuffix(pct.offLg)} Percentile in the ${shortLg}`;
+      poLine = `${getOrdinalSuffix(pct.offPos)} Percentile Among ${shortLg} ${pct.posPlural}`;
+      ys = [64.2, 61.8, 59.5, 56.8];
+    }
+
+    ctx.save();
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    ctx.fillStyle = "#111111";
+    ctx.font = `700 ${Math.round(13.5 * MM_PX)}px Assistant, sans-serif`;
+    ctx.fillText(titleLine, vp.xPx(34), vp.yPx(ys[0]));
+
+    ctx.fillStyle = "#555555";
+    ctx.font = `400 ${Math.round(9.5 * MM_PX)}px Assistant, sans-serif`;
+    ctx.fillText(lgLine, vp.xPx(34), vp.yPx(ys[1]));
+
+    ctx.fillStyle = "#00747A";
+    ctx.font = `700 ${Math.round(9.5 * MM_PX)}px Assistant, sans-serif`;
+    ctx.fillText(poLine, vp.xPx(34), vp.yPx(ys[2]));
+
+    ctx.fillStyle = "#222222";
+    ctx.font = `700 ${Math.round(10.5 * MM_PX)}px Assistant, sans-serif`;
+    ctx.fillText(`${minsRounded} Minutes Played`, vp.xPx(34), vp.yPx(ys[3]));
+    ctx.restore();
+
+    const ageStr = player.age === null ? "N/A" : String(Math.round(player.age));
+    const pDt = formatActivityDate(player.last_played, "short", "DNP");
+    const rDt = formatActivityDate(player.last_rostered, "short", "N/A");
+    const modeLabel = isDef ? "Isolated Defense" : "Isolated Offense";
+    drawHeaderBlock(
+      ctx,
+      W,
+      player.name.toUpperCase(),
+      `${player.role.toUpperCase()} \u2022 Age ${ageStr} \u2022 Last Played: ${pDt} \u2022 Last Rostered: ${rDt}`,
+      `${modeLabel} \u2022 11v11 Impact \u2022 ${shortLg}`
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // 5. TAB 2: WAR FILTERING, SORTING, CSV EXPORT
+  // ---------------------------------------------------------------------------
+  function resolveActiveWarMetric(meta, reqMetric) {
+    let m = reqMetric || "war";
+    if (!meta || !meta.has_war_exact) {
+      if (m === "war_exact") m = "war";
+      else if (m === "war_p30_exact") m = "war_p30";
+    }
+    return m;
+  }
+
+  function filterAndSortWarRows(warRows, opts) {
+    const {
+      posFilter = "All",
+      teamFilter = "All Teams",
+      minMins = 0,
+      metric = "war",
+      searchQuery = "",
+      sortCol = null,
+      sortDir = "desc"
+    } = opts || {};
+
+    let rows = warRows.filter(r => {
+      if (posFilter !== "All" && r.pos !== posFilter) return false;
+      if (teamFilter !== "All Teams" && r.team !== teamFilter) return false;
+      if (r.mins < minMins) return false;
+      return true;
+    });
+
+    // Base leaderboard ranking by selected metric (matching app.R L1566-1575)
+    rows.sort((a, b) => {
+      if (metric === "war_p30") {
+        const aNa = a.war_p30 === null, bNa = b.war_p30 === null;
+        if (aNa !== bNa) return aNa ? 1 : -1;
+        if (!aNa && a.war_p30 !== b.war_p30) return b.war_p30 - a.war_p30;
+        return (b.war ?? -999) - (a.war ?? -999);
+      }
+      if (metric === "war_p30_exact") {
+        const aNa = a.war_p30_exact === null, bNa = b.war_p30_exact === null;
+        if (aNa !== bNa) return aNa ? 1 : -1;
+        if (!aNa && a.war_p30_exact !== b.war_p30_exact) return b.war_p30_exact - a.war_p30_exact;
+        return (b.war_exact ?? -999) - (a.war_exact ?? -999);
+      }
+      if (metric === "war_exact") {
+        return (b.war_exact ?? -999) - (a.war_exact ?? -999);
+      }
+      return (b.war ?? -999) - (a.war ?? -999);
+    });
+
+    // Assign canonical Rank from base metric order before search/column re-sort
+    const ranked = rows.map((r, idx) => ({ ...r, rank: idx + 1 }));
+
+    const q = normSearch(searchQuery).trim();
+    const searched = q ? ranked.filter(r => r._norm.includes(q)) : ranked.slice();
+
+    if (sortCol) {
+      const mul = sortDir === "asc" ? 1 : -1;
+      searched.sort((a, b) => {
+        const va = a[sortCol];
+        const vb = b[sortCol];
+        const aMissing = va === null || va === undefined || Number.isNaN(va);
+        const bMissing = vb === null || vb === undefined || Number.isNaN(vb);
+        if (aMissing && bMissing) return 0;
+        if (aMissing) return 1;
+        if (bMissing) return -1;
+        if (typeof va === "string" || typeof vb === "string") {
+          return String(va).localeCompare(String(vb)) * mul;
+        }
+        return (va - vb) * mul;
+      });
+    }
+
+    return { ranked, displayed: searched };
+  }
+
+  function formatWarKpiLeader(rows, metric) {
+    if (!rows || rows.length === 0) return "N/A";
+    const isP30 = metric === "war_p30" || metric === "war_p30_exact";
+    const cand = isP30 ? rows.find(r => r[metric] !== null && Number.isFinite(r[metric])) : rows[0];
+    if (!cand || cand[metric] === null || !Number.isFinite(cand[metric])) return "N/A";
+    const valStr = cand[metric].toFixed(2);
+    return isP30 ? `${cand.name} (${valStr}/30)` : `${cand.name} (${valStr})`;
+  }
+
+  function csvCell(val) {
+    if (val === null || val === undefined) return "";
+    if (typeof val === "number") return Number.isFinite(val) ? String(val) : "";
+    let s = String(val);
+    if (!/^-?\d+(\.\d+)?$/.test(s) && /^[=+\-@\t\r]/.test(s)) s = "'" + s;
+    if (/[",\n\r]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+    return s;
+  }
+
+  function generateWarCsv(rows, meta) {
+    const hasComp  = Boolean(meta && meta.has_comp);
+    const hasExact = Boolean(meta && meta.has_war_exact);
+    const headers = [
+      "Rank", "Player", "Team",
+      ...(hasComp ? ["Competition"] : []),
+      "Pos Group", "Role", "Minutes", "Net xG/90", "GAA", "GAR", "PAR", "WAR",
+      ...(hasExact ? ["WAR (Exact)"] : []),
+      "WAR/30",
+      ...(hasExact ? ["WAR/30 (Exact)"] : [])
+    ];
+    const lines = [headers.map(csvCell).join(",")];
+    for (let i = 0; i < rows.length; i++) {
+      const r = rows[i];
+      const vals = [
+        r.rank ?? (i + 1), r.name, r.team,
+        ...(hasComp ? [r.comp || ""] : []),
+        r.pos, r.role, Math.round(r.mins),
+        r.net_xg_p90.toFixed(3), r.gaa.toFixed(2), r.gar.toFixed(2), r.par.toFixed(1),
+        r.war !== null ? r.war.toFixed(2) : "",
+        ...(hasExact ? [r.war_exact !== null ? r.war_exact.toFixed(2) : ""] : []),
+        r.war_p30 !== null ? r.war_p30.toFixed(2) : "",
+        ...(hasExact ? [r.war_p30_exact !== null ? r.war_p30_exact.toFixed(2) : ""] : [])
+      ];
+      lines.push(vals.map(csvCell).join(","));
+    }
+    return "\uFEFF" + lines.join("\n");
+  }
+
+  // ---------------------------------------------------------------------------
+  // 6. TAB 3: EXACT BIPARTITE HUNGARIAN ASSIGNMENT (MATCHING lpSolve IN app.R)
+  // ---------------------------------------------------------------------------
+  function computeFitPenalty(pRole, pSecStr, targetSlot) {
+    if (pRole === targetSlot) return 0.00;
+    const secList = (pSecStr && pSecStr !== "None")
+      ? pSecStr.split(",").map(s => s.trim()).filter(Boolean)
+      : [];
+    if (secList.includes(targetSlot)) return 0.05;
+
+    const isCb = r => r === "Left Center Back" || r === "Right Center Back" || r === "Center Back";
+    const isFb = r => r === "Left Back" || r === "Right Back";
+    const isW  = r => r === "Left Winger" || r === "Right Winger";
+
+    if (isCb(pRole) && isCb(targetSlot)) return 0.10;
+    if (isFb(pRole) && isW(targetSlot)) return 0.20;
+    if (isW(pRole) && (isFb(targetSlot) || targetSlot === "Center Forward")) return 0.15;
+    if (pRole === "Center Forward" && isW(targetSlot)) return 0.15;
+    if (pRole === "Central Midfielder" && (targetSlot === "Defensive Midfielder" || targetSlot === "Attacking Midfielder")) return 0.10;
+    if (pRole === "Defensive Midfielder" && targetSlot === "Central Midfielder") return 0.10;
+    if (pRole === "Attacking Midfielder" && (targetSlot === "Central Midfielder" || isW(targetSlot))) return 0.15;
+    if (pRole === "Goalkeeper" && targetSlot !== "Goalkeeper") return 999.0;
+    if (pRole !== "Goalkeeper" && targetSlot === "Goalkeeper") return 999.0;
+    return 1.00;
+  }
+
+  // Exact O(M^2 * N) Hungarian / Jonker-Volgenant min-cost rectangular matching (rows M <= cols N)
+  // Returns matchCol[row] (0-indexed) for each row in 0..M-1.
+  function solveHungarianMinCost(costMatrix) {
+    const M = costMatrix.length;
+    if (M === 0) return [];
+    const N = costMatrix[0].length;
+    if (N < M) throw new Error("Hungarian requires cols >= rows.");
+
+    const u   = new Float64Array(M + 1);
+    const v   = new Float64Array(N + 1);
+    const p   = new Int32Array(N + 1);
+    const way = new Int32Array(N + 1);
+
+    for (let i = 1; i <= M; i++) {
+      p[0] = i;
+      let j0 = 0;
+      const minv = new Float64Array(N + 1).fill(Infinity);
+      const used = new Uint8Array(N + 1);
+
+      do {
+        used[j0] = 1;
+        const i0 = p[j0];
+        let delta = Infinity;
+        let j1 = 0;
+        const rowI0 = costMatrix[i0 - 1];
+        for (let j = 1; j <= N; j++) {
+          if (!used[j]) {
+            const cur = rowI0[j - 1] - u[i0] - v[j];
+            if (cur < minv[j]) {
+              minv[j] = cur;
+              way[j] = j0;
+            }
+            if (minv[j] < delta) {
+              delta = minv[j];
+              j1 = j;
+            }
+          }
+        }
+        for (let j = 0; j <= N; j++) {
+          if (used[j]) {
+            u[p[j]] += delta;
+            v[j] -= delta;
+          } else {
+            minv[j] -= delta;
+          }
+        }
+        j0 = j1;
+      } while (p[j0] !== 0);
+
+      do {
+        const j1 = way[j0];
+        p[j0] = p[j1];
+        j0 = j1;
+      } while (j0);
+    }
+
+    const rowToCol = new Array(M);
+    for (let j = 1; j <= N; j++) {
+      if (p[j] > 0) rowToCol[p[j] - 1] = j - 1;
+    }
+    return rowToCol;
+  }
+
+  function solveBestXI(squadPlayers, allLeaguePlayers, formation, metric, formationTemplates) {
+    const slots = (formationTemplates && formationTemplates[formation])
+      ? formationTemplates[formation]
+      : FALLBACK_MANIFEST.formations[formation];
+    if (!slots || squadPlayers.length < 11) return null;
+
+    let cohort = allLeaguePlayers.filter(p => p.active && p.role !== "Goalkeeper");
+    if (cohort.length < 11) {
+      cohort = allLeaguePlayers.filter(p => p.mins >= 450 && p.role !== "Goalkeeper");
+    }
+    let replacementPrior = quantileType7(cohort.map(p => p[metric]), 0.20);
+    if (!Number.isFinite(replacementPrior)) replacementPrior = 0.0;
+
+    const nPlayers = squadPlayers.length;
+    const M = slots.length; // 11
+
+    // Build reward[slot][player] and find maxReward to shift into non-negative min-cost
+    const rewardMatrix = Array.from({ length: M }, () => new Float64Array(nPlayers));
+    let maxReward = -Infinity;
+
+    for (let i = 0; i < nPlayers; i++) {
+      const p = squadPlayers[i];
+      let pScore;
+      if (p.role === "Goalkeeper") {
+        pScore = p.ss;
+      } else {
+        const bw = p.mins / (p.mins + 450.0);
+        pScore = bw * p[metric] + (1.0 - bw) * replacementPrior;
+      }
+      for (let j = 0; j < M; j++) {
+        const pen = computeFitPenalty(p.role, p.sec_role, slots[j]);
+        const r = pScore - pen;
+        rewardMatrix[j][i] = r;
+        if (r > maxReward) maxReward = r;
+      }
+    }
+
+    const costMatrix = Array.from({ length: M }, (_, j) => {
+      const row = new Float64Array(nPlayers);
+      for (let i = 0; i < nPlayers; i++) row[i] = maxReward - rewardMatrix[j][i];
+      return row;
+    });
+
+    const assignedPlayerIdx = solveHungarianMinCost(costMatrix);
+    const chosenSet = new Set(assignedPlayerIdx);
+    let totalObjective = 0;
+
+    const lineup = assignedPlayerIdx.map((pIdx, j) => {
+      totalObjective += rewardMatrix[j][pIdx];
+      return { slot: slots[j], player: squadPlayers[pIdx] };
+    });
+
+    const bench = squadPlayers
+      .filter((_, idx) => !chosenSet.has(idx))
+      .sort((a, b) => b.net - a.net);
+
+    return { lineup, bench, objective: totalObjective, replacementPrior, slots };
+  }
+
+  // Expose pure computational engine for headless Node parity verification
+  const TEST_API = {
+    FALLBACK_MANIFEST,
+    normSearch,
+    slugifyPlayerName,
+    formatSigned,
+    formatActivityDate,
+    getOrdinalSuffix,
+    classifyCohort,
+    ecdfPercentile,
+    quantileType7,
+    unpackColumns,
+    hydrateLeagueData,
+    parseWtpsBinary,
+    evaluateTpsMesh,
+    buildColorPalette,
+    extractClosedSuperlevelRings,
+    extractOpenAndClosedIsolines,
+    chaikinSmooth,
+    computeTanakaStyle,
+    resolveActiveWarMetric,
+    filterAndSortWarRows,
+    formatWarKpiLeader,
+    generateWarCsv,
+    computeFitPenalty,
+    solveHungarianMinCost,
+    solveBestXI,
+    renderFullImpactCanvas,
+    renderHalfPitchCanvas
+  };
+  if (typeof globalThis !== "undefined") {
+    globalThis.__RAPM_TEST_API__ = TEST_API;
+  }
+
+  // Exit early when loaded outside a browser DOM (e.g., headless Node unit suite)
+  if (typeof document === "undefined" || !document.getElementById("global_league_select")) {
+    return;
+  }
+
+  // ---------------------------------------------------------------------------
+  // 7. BROWSER RUNTIME CONTROLLER & INTERACTIVE UI WIRING
+  // ---------------------------------------------------------------------------
+  const STATE = {
+    manifest: FALLBACK_MANIFEST,
+    palette19: buildColorPalette(FALLBACK_MANIFEST.mccurdy_palette, 19),
+    tps: null,
+    activeLeagueId: "nwsl",
+    leagueCache: new Map(), // leagueId -> hydrated league object
+    activeTab: "profile",
+    fontsReadyPromise: null,
+    playerCombo: null,
+    // Tab 2 state
+    warSortCol: null,
+    warSortDir: "desc",
+    warPage: 1,
+    warFilteredCache: [],
+    // Tab 3 state
+    benchPage: 1,
+    lastBestXi: null
+  };
+
+  function ensureFontsPromise() {
+    if (!STATE.fontsReadyPromise) {
+      const waitFonts = (document.fonts && document.fonts.ready)
+        ? Promise.all([
+            document.fonts.load("700 48px Assistant").catch(() => {}),
+            document.fonts.load("400 26px Assistant").catch(() => {}),
+            document.fonts.ready
+          ])
+        : Promise.resolve();
+      const timeout = new Promise(res => setTimeout(res, 1200));
+      STATE.fontsReadyPromise = Promise.race([waitFonts, timeout]);
+    }
+    return STATE.fontsReadyPromise;
+  }
+
+  function setStatus(kind, msg) {
+    const dot = document.getElementById("rapm_status_dot");
+    const txt = document.getElementById("rapm_status_text");
+    if (dot) dot.className = "rapm-status-dot" + (kind === "ready" ? "" : " " + kind);
+    if (txt) txt.textContent = msg;
+  }
+
+  function showError(msg) {
+    const el = document.getElementById("rapm_error_banner");
+    if (!el) return;
+    if (msg) {
+      el.textContent = msg;
+      el.classList.add("visible");
+    } else {
+      el.textContent = "";
+      el.classList.remove("visible");
+    }
+  }
+
+  function getActiveLeague() {
+    return STATE.leagueCache.get(STATE.activeLeagueId) || null;
+  }
+
+  function getActiveLeagueMeta() {
+    return (STATE.manifest.leagues || []).find(l => l.id === STATE.activeLeagueId) || null;
+  }
+
+  // Custom searchable combobox matching goalkeepers.qmd UX
+  function initPlayerCombobox(onChange) {
+    const hiddenEl = document.getElementById("prof_player_select");
+    const inputEl  = document.getElementById("prof_player_select_search");
+    const menuEl   = document.getElementById("prof_player_select_menu");
+    const wrapEl   = document.getElementById("wrap_prof_player_select");
+
+    const comboState = {
+      items: [],
+      filtered: [],
+      selectedId: "",
+      selectedLabel: "",
+      highlightIdx: 0
+    };
+
+    function ensureOptionVisible(node) {
+      if (!node) return;
+      const top = node.offsetTop;
+      const bottom = top + node.offsetHeight;
+      if (top < menuEl.scrollTop) {
+        menuEl.scrollTop = top;
+      } else if (bottom > menuEl.scrollTop + menuEl.clientHeight) {
+        menuEl.scrollTop = bottom - menuEl.clientHeight;
+      }
+    }
+
+    function renderMenu(query) {
+      const q = normSearch(query).trim();
+      comboState.filtered = q
+        ? comboState.items.filter(p => p._norm.includes(q) || normSearch(p.team).includes(q))
+        : comboState.items;
+
+      menuEl.innerHTML = "";
+      if (comboState.filtered.length === 0) {
+        const emp = document.createElement("div");
+        emp.className = "rapm-search-empty";
+        emp.textContent = "No matching players";
+        menuEl.appendChild(emp);
+        return;
+      }
+
+      comboState.highlightIdx = Math.max(0, comboState.filtered.findIndex(p => p.id === comboState.selectedId));
+
+      const frag = document.createDocumentFragment();
+      for (let i = 0; i < comboState.filtered.length; i++) {
+        const p = comboState.filtered[i];
+        const row = document.createElement("div");
+        row.className = "rapm-search-option" + (i === comboState.highlightIdx ? " active" : "");
+        row.dataset.idx = String(i);
+        const mainSpan = document.createElement("span");
+        mainSpan.textContent = p.name;
+        const subSpan = document.createElement("span");
+        subSpan.className = "rapm-search-option-sub";
+        subSpan.textContent = p.team;
+        row.appendChild(mainSpan);
+        row.appendChild(subSpan);
+        frag.appendChild(row);
+      }
+      menuEl.appendChild(frag);
+
+      ensureOptionVisible(menuEl.children[comboState.highlightIdx]);
+    }
+
+    menuEl.addEventListener("mousedown", (e) => {
+      const opt = e.target.closest(".rapm-search-option");
+      if (!opt) return;
+      e.preventDefault();
+      const idx = Number(opt.dataset.idx);
+      const picked = comboState.filtered[idx];
+      if (picked) {
+        selectPlayer(picked.id, picked.name, true);
+        closeMenu();
+      }
+    });
+
+    function selectPlayer(id, name, trigger) {
+      comboState.selectedId = String(id || "");
+      comboState.selectedLabel = String(name || "");
+      hiddenEl.value = comboState.selectedId;
+      inputEl.value = comboState.selectedLabel;
+      if (trigger && onChange) onChange();
+    }
+
+    function openMenu() {
+      inputEl.value = "";
+      menuEl.classList.add("open");
+      renderMenu("");
+    }
+
+    function closeMenu() {
+      menuEl.classList.remove("open");
+      inputEl.value = comboState.selectedLabel;
+    }
+
+    inputEl.addEventListener("focus", openMenu);
+    inputEl.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (!menuEl.classList.contains("open")) openMenu();
+    });
+    inputEl.addEventListener("input", () => {
+      if (!menuEl.classList.contains("open")) menuEl.classList.add("open");
+      renderMenu(inputEl.value);
+    });
+    inputEl.addEventListener("keydown", (e) => {
+      if (!menuEl.classList.contains("open")) return;
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        if (comboState.filtered.length > 0 && menuEl.children.length > 0) {
+          comboState.highlightIdx = Math.min(comboState.highlightIdx + 1, menuEl.children.length - 1);
+          Array.from(menuEl.children).forEach((el, i) => el.classList.toggle("active", i === comboState.highlightIdx));
+          ensureOptionVisible(menuEl.children[comboState.highlightIdx]);
+        }
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        if (comboState.filtered.length > 0 && menuEl.children.length > 0) {
+          comboState.highlightIdx = Math.max(comboState.highlightIdx - 1, 0);
+          Array.from(menuEl.children).forEach((el, i) => el.classList.toggle("active", i === comboState.highlightIdx));
+          ensureOptionVisible(menuEl.children[comboState.highlightIdx]);
+        }
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        const picked = comboState.filtered[comboState.highlightIdx];
+        if (picked) {
+          selectPlayer(picked.id, picked.name, true);
+          closeMenu();
+          inputEl.blur();
+        }
+      } else if (e.key === "Escape") {
+        closeMenu();
+        inputEl.blur();
+      }
+    });
+
+    wrapEl.addEventListener("click", (e) => e.stopPropagation());
+    document.addEventListener("click", closeMenu);
+
+    return {
+      setPlayers(list) {
+        comboState.items = list;
+        const kept = list.find(p => p.id === comboState.selectedId);
+        if (kept) {
+          selectPlayer(kept.id, kept.name, false);
+        } else if (list.length > 0) {
+          selectPlayer(list[0].id, list[0].name, false);
+        } else {
+          selectPlayer("", "", false);
+        }
+      },
+      getSelectedId() {
+        return comboState.selectedId;
+      }
+    };
+  }
+
+  // --- TAB 1 RENDERING ---
+  function renderProfileMetadata(player, meta) {
+    const el = document.getElementById("prof_player_metadata_ui");
+    if (!player) {
+      el.innerHTML = `<p style="color:#777777; font-style:italic;">No outfield player selected.</p>`;
+      return;
+    }
+
+    const pDt = formatActivityDate(player.last_played, "full", "Did Not Play this season");
+    const rDt = formatActivityDate(player.last_rostered, "full", "N/A");
+    const hasWar = Boolean(meta && meta.has_war) && player.war !== null;
+    const hasExact = Boolean(meta && meta.has_war_exact) && player.war_exact !== null;
+    const p30Text = player.war_p30 !== null ? player.war_p30.toFixed(2) : "N/A (< 450 mins)";
+    const p30ExactText = player.war_p30_exact !== null ? player.war_p30_exact.toFixed(2) : "N/A (< 450 mins)";
+
+    let html = `
+      <h5>${escapeHtml(player.name)}</h5>
+      <p><strong>Role: </strong>${escapeHtml(player.role)}</p>
+      <p><strong>Team: </strong>${escapeHtml(player.team)}</p>
+      <p><strong>Last Played: </strong>${escapeHtml(pDt)}</p>
+      <p><strong>Last Rostered: </strong>${escapeHtml(rDt)}</p>
+      <p><strong>Total Minutes: </strong>${Math.round(player.mins).toLocaleString("en-US")}</p>
+      <p><strong>Net RAPM / 90: </strong>${formatSigned(player.net, 3)}</p>
+      <p><strong>Offensive Impact / 90: </strong>${formatSigned(player.off, 3)}</p>
+      <p><strong>Defensive Impact / 90: </strong>${formatSigned(player.def, 3)}</p>
+    `;
+
+    if (hasWar) {
+      html += `
+        <hr class="rapm-divider">
+        <p><strong>Wins Above Replacement (WAR): </strong>${player.war.toFixed(2)}</p>
+        ${hasExact ? `<p><strong>WAR (Exact DC): </strong>${player.war_exact.toFixed(2)}</p>` : ""}
+        <p><strong>WAR (per 30 Matches): </strong>${p30Text}</p>
+        ${hasExact ? `<p><strong>WAR/30 (Exact DC): </strong>${p30ExactText}</p>` : ""}
+        <p><strong>Goals Above Replacement (GAR): </strong>${formatSigned(player.gar, 2)}</p>
+        <p><strong>Goals Above Average (GAA): </strong>${formatSigned(player.gaa, 2)}</p>
+        <p><strong>Points Above Replacement (PAR): </strong>${formatSigned(player.par, 1)}</p>
+      `;
+    }
+
+    el.innerHTML = html;
+  }
+
+  async function renderTab1() {
+    const league = getActiveLeague();
+    if (!league) return;
+    const playerId = STATE.playerCombo ? STATE.playerCombo.getSelectedId() : "";
+    const player = league.playersById.get(playerId) || null;
+    renderProfileMetadata(player, league.meta);
+
+    const viewMode = (document.querySelector('input[name="prof_view_mode"]:checked') || {}).value || "full";
+    document.getElementById("prof_view_full").style.display         = viewMode === "full" ? "block" : "none";
+    document.getElementById("prof_view_offense").style.display      = viewMode === "offense" ? "block" : "none";
+    document.getElementById("prof_view_defense").style.display      = viewMode === "defense" ? "block" : "none";
+    document.getElementById("prof_view_side_by_side").style.display = viewMode === "side_by_side" ? "block" : "none";
+
+    if (!player || !STATE.tps) return;
+    await ensureFontsPromise();
+
+    const lgMeta = getActiveLeagueMeta();
+    if (viewMode === "full") {
+      renderFullImpactCanvas(document.getElementById("canvas_full"), STATE.tps, league, lgMeta, player, STATE.palette19);
+    } else if (viewMode === "offense") {
+      renderHalfPitchCanvas(document.getElementById("canvas_offense"), STATE.tps, league, lgMeta, player, STATE.palette19, "offense");
+    } else if (viewMode === "defense") {
+      renderHalfPitchCanvas(document.getElementById("canvas_defense"), STATE.tps, league, lgMeta, player, STATE.palette19, "defense");
+    } else {
+      renderHalfPitchCanvas(document.getElementById("canvas_dual_offense"), STATE.tps, league, lgMeta, player, STATE.palette19, "offense");
+      renderHalfPitchCanvas(document.getElementById("canvas_dual_defense"), STATE.tps, league, lgMeta, player, STATE.palette19, "defense");
+    }
+  }
+
+  async function downloadPngMap(kind) {
+    const league = getActiveLeague();
+    if (!league || !STATE.tps) return;
+    const playerId = STATE.playerCombo ? STATE.playerCombo.getSelectedId() : "";
+    const player = league.playersById.get(playerId);
+    if (!player) return;
+
+    await ensureFontsPromise();
+    const lgMeta = getActiveLeagueMeta();
+    const offscreen = document.createElement("canvas");
+
+    let filenameSuffix;
+    if (kind === "full") {
+      renderFullImpactCanvas(offscreen, STATE.tps, league, lgMeta, player, STATE.palette19);
+      filenameSuffix = "_full_impact.png";
+    } else if (kind === "offense") {
+      renderHalfPitchCanvas(offscreen, STATE.tps, league, lgMeta, player, STATE.palette19, "offense");
+      filenameSuffix = "_isolated_offense.png";
+    } else {
+      renderHalfPitchCanvas(offscreen, STATE.tps, league, lgMeta, player, STATE.palette19, "defense");
+      filenameSuffix = "_isolated_defense.png";
+    }
+
+    const fname = (slugifyPlayerName(player.name) || "player") + filenameSuffix;
+    offscreen.toBlob((blob) => {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fname;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+    }, "image/png");
+  }
+
+  // --- TAB 2 RENDERING ---
+  function renderTab2() {
+    const league = getActiveLeague();
+    if (!league) return;
+
+    const hasExact = Boolean(league.meta && league.meta.has_war_exact);
+    document.getElementById("war_opt_exact_wrap").style.display     = hasExact ? "flex" : "none";
+    document.getElementById("war_opt_p30_exact_wrap").style.display = hasExact ? "flex" : "none";
+
+    const rawMetric = (document.querySelector('input[name="war_plot_metric"]:checked') || {}).value || "war";
+    const metric = resolveActiveWarMetric(league.meta, rawMetric);
+    if (metric !== rawMetric) {
+      const targetRadio = document.querySelector(`input[name="war_plot_metric"][value="${metric}"]`);
+      if (targetRadio) targetRadio.checked = true;
+    }
+
+    const posFilter   = document.getElementById("war_pos_filter").value;
+    const teamFilter  = document.getElementById("war_team_filter").value;
+    const minMins     = Number(document.getElementById("war_min_minutes").value) || 0;
+    const searchQuery = document.getElementById("war_table_search").value || "";
+
+    document.getElementById("war_min_minutes_val").textContent = `${minMins} mins`;
+
+    const { ranked, displayed } = filterAndSortWarRows(league.warRows, {
+      posFilter, teamFilter, minMins, metric, searchQuery,
+      sortCol: STATE.warSortCol, sortDir: STATE.warSortDir
+    });
+    STATE.warFilteredCache = displayed;
+
+    // KPI Cards
+    const leaderLabelMap = {
+      war: "Leader (Most WAR)",
+      war_p30: "Leader (WAR / 30)",
+      war_exact: "Leader (Exact DC WAR)",
+      war_p30_exact: "Leader (Exact WAR/30)"
+    };
+    document.getElementById("war_kpi_leader_sub").textContent = leaderLabelMap[metric] || "Leader";
+    document.getElementById("war_kpi_total_players").textContent = ranked.length.toLocaleString("en-US");
+    document.getElementById("war_kpi_top_player").textContent    = formatWarKpiLeader(ranked, metric);
+    document.getElementById("war_kpi_top_outfield").textContent  = formatWarKpiLeader(ranked.filter(r => r.pos !== "GK"), metric);
+    document.getElementById("war_kpi_top_gk").textContent        = formatWarKpiLeader(ranked.filter(r => r.pos === "GK"), metric);
+
+    // Plotly Scatter Plot
+    const plotEl = document.getElementById("war_scatter_plot");
+    const isP30  = metric === "war_p30" || metric === "war_p30_exact";
+    const plotRows = isP30 ? ranked.filter(r => r[metric] !== null && Number.isFinite(r[metric])) : ranked;
+
+    if (plotRows.length === 0 || typeof Plotly === "undefined") {
+      if (typeof Plotly !== "undefined") Plotly.purge(plotEl);
+      plotEl.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#777777;">No qualifying players match the active filters.</div>`;
+    } else {
+      const posPal = STATE.manifest.pos_palette || FALLBACK_MANIFEST.pos_palette;
+      const posOrder = ["GK", "CB", "FB", "MF", "FWD"];
+      const posNames = { GK: "Goalkeepers (GK)", CB: "Center Backs (CB)", FB: "Fullbacks (FB)", MF: "Midfielders (MF)", FWD: "Forwards (FWD)" };
+      const metricTitleMap = {
+        war: "Wins Above Replacement (WAR)",
+        war_p30: "Paced WAR per 30 Matches (WAR/30)",
+        war_exact: "Exact Bivariate DC Wins Above Replacement (WAR)",
+        war_p30_exact: "Exact DC Paced WAR per 30 Matches (WAR/30)"
+      };
+
+      const traces = [];
+      for (let pi = 0; pi < posOrder.length; pi++) {
+        const pg = posOrder[pi];
+        const grp = plotRows.filter(r => r.pos === pg);
+        if (grp.length === 0) continue;
+        traces.push({
+          type: "scatter",
+          mode: "markers",
+          name: pg,
+          legendgroup: pg,
+          x: grp.map(r => r.mins),
+          y: grp.map(r => r[metric]),
+          customdata: grp.map(r => [
+            r.name,
+            r.team,
+            r.role,
+            r.war !== null ? r.war.toFixed(2) : "N/A",
+            r.war_p30 !== null ? r.war_p30.toFixed(2) : "N/A (<450m)",
+            r.net_xg_p90.toFixed(3),
+            posNames[pg] || pg
+          ]),
+          marker: {
+            color: posPal[pg] || "#00747A",
+            size: 9,
+            opacity: 0.78,
+            line: { color: "rgba(255,255,255,0.65)", width: 0.8 }
+          },
+          hovertemplate:
+            "<b>%{customdata[0]}</b><br>" +
+            "%{customdata[1]} \u2022 %{customdata[2]} (%{customdata[6]})<br>" +
+            "Minutes: %{x:,.0f}<br>" +
+            "Metric Value: <b>%{y:.2f}</b><br>" +
+            "Net xG/90: %{customdata[5]} | WAR: %{customdata[3]} | WAR/30: %{customdata[4]}" +
+            "<extra></extra>"
+        });
+      }
+
+      // Top-8 leader text labels matching app.R L1626-1641
+      const top8 = [...plotRows].sort((a, b) => b[metric] - a[metric]).slice(0, 8);
+      if (top8.length > 0) {
+        traces.push({
+          type: "scatter",
+          mode: "text",
+          x: top8.map(r => r.mins),
+          y: top8.map(r => r[metric]),
+          text: top8.map(r => r.name),
+          textposition: "top center",
+          textfont: { family: "Assistant, sans-serif", size: 11.5, color: "#111111" },
+          showlegend: false,
+          hoverinfo: "skip"
+        });
+      }
+
+      const layout = {
+        margin: { t: 18, r: 24, b: 68, l: 64 },
+        xaxis: {
+          title: { text: "<b>Total Minutes Played</b>", font: { family: "Assistant, sans-serif", size: 13, color: "#333333" } },
+          tickformat: ",d",
+          gridcolor: "#EEF0F2",
+          zeroline: false
+        },
+        yaxis: {
+          title: { text: `<b>${metricTitleMap[metric] || "WAR"}</b>`, font: { family: "Assistant, sans-serif", size: 13, color: "#333333" } },
+          gridcolor: "#EEF0F2",
+          zeroline: false
+        },
+        shapes: [{
+          type: "line",
+          xref: "paper",
+          x0: 0, x1: 1,
+          y0: 0, y1: 0,
+          line: { color: "#888888", dash: "dash", width: 1.5 }
+        }],
+        legend: {
+          orientation: "h",
+          x: 0.5, xanchor: "center",
+          y: -0.22, yanchor: "top",
+          font: { family: "Assistant, sans-serif", size: 12 }
+        },
+        hovermode: "closest",
+        font: { family: "Assistant, sans-serif" },
+        plot_bgcolor: "#FFFFFF",
+        paper_bgcolor: "#FFFFFF"
+      };
+
+      Plotly.react(plotEl, traces, layout, { displayModeBar: false, responsive: true });
+    }
+
+    renderWarTable(displayed, league.meta);
+  }
+
+  function renderWarTable(rows, meta) {
+    const hasComp  = Boolean(meta && meta.has_comp);
+    const hasExact = Boolean(meta && meta.has_war_exact);
+    const posPal   = STATE.manifest.pos_palette || FALLBACK_MANIFEST.pos_palette;
+
+    const cols = [
+      { key: "rank",       label: "Rank",        num: true,  fmt: r => r.rank },
+      { key: "name",       label: "Player",      num: false, fmt: r => `<strong>${escapeHtml(r.name)}</strong>` },
+      { key: "team",       label: "Team",        num: false, fmt: r => escapeHtml(r.team) },
+      ...(hasComp ? [{ key: "comp", label: "Competition", num: false, fmt: r => escapeHtml(r.comp || "") }] : []),
+      { key: "pos",        label: "Pos Group",   num: false, fmt: r => `<span class="rapm-pos-badge" style="background:${posPal[r.pos] || "#555555"};">${escapeHtml(r.pos)}</span>` },
+      { key: "role",       label: "Role",        num: false, fmt: r => escapeHtml(r.role) },
+      { key: "mins",       label: "Minutes",     num: true,  fmt: r => Math.round(r.mins).toLocaleString("en-US") },
+      { key: "net_xg_p90", label: "Net xG/90",   num: true,  fmt: r => `<span class="${r.net_xg_p90 >= 0 ? "rapm-val-pos" : "rapm-val-neg"}">${formatSigned(r.net_xg_p90, 3)}</span>` },
+      { key: "gaa",        label: "GAA",         num: true,  fmt: r => r.gaa.toFixed(2) },
+      { key: "gar",        label: "GAR",         num: true,  fmt: r => r.gar.toFixed(2) },
+      { key: "par",        label: "PAR",         num: true,  fmt: r => r.par.toFixed(1) },
+      { key: "war",        label: "WAR",         num: true,  fmt: r => r.war !== null ? r.war.toFixed(2) : "—" },
+      ...(hasExact ? [{ key: "war_exact", label: "WAR (Exact)", num: true, fmt: r => r.war_exact !== null ? r.war_exact.toFixed(2) : "—" }] : []),
+      { key: "war_p30",    label: "WAR/30",      num: true,  fmt: r => r.war_p30 !== null ? r.war_p30.toFixed(2) : "—" }
+    ];
+
+    const thead = document.getElementById("war_table_head");
+    const trHead = document.createElement("tr");
+    cols.forEach(col => {
+      const th = document.createElement("th");
+      th.className = "sortable" + (col.num ? " num" : "");
+      const arrow = STATE.warSortCol === col.key ? (STATE.warSortDir === "asc" ? " \u25B2" : " \u25BC") : "";
+      th.textContent = col.label + arrow;
+      th.addEventListener("click", () => {
+        if (STATE.warSortCol === col.key) {
+          STATE.warSortDir = STATE.warSortDir === "desc" ? "asc" : "desc";
+        } else {
+          STATE.warSortCol = col.key;
+          STATE.warSortDir = col.num && col.key !== "rank" ? "desc" : "asc";
+        }
+        STATE.warPage = 1;
+        renderTab2();
+      });
+      trHead.appendChild(th);
+    });
+    thead.innerHTML = "";
+    thead.appendChild(trHead);
+
+    const pageLen = Number(document.getElementById("war_page_len").value) || 20;
+    const total = rows.length;
+    const totalPages = Math.max(1, Math.ceil(total / pageLen));
+    if (STATE.warPage > totalPages) STATE.warPage = totalPages;
+    const startIdx = (STATE.warPage - 1) * pageLen;
+    const endIdx   = Math.min(total, startIdx + pageLen);
+    const slice = rows.slice(startIdx, endIdx);
+
+    const tbody = document.getElementById("war_table_body");
+    if (slice.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="${cols.length}" style="text-align:center;color:#777777;padding:1.25rem;">No matching players found.</td></tr>`;
+    } else {
+      tbody.innerHTML = slice.map(r => `<tr>${cols.map(c => `<td${c.num ? ' class="num"' : ""}>${c.fmt(r)}</td>`).join("")}</tr>`).join("");
+    }
+
+    document.getElementById("war_table_info").textContent = total === 0
+      ? "Showing 0 to 0 of 0 entries"
+      : `Showing ${startIdx + 1} to ${endIdx} of ${total.toLocaleString("en-US")} entries`;
+
+    renderPager("war_table_pager", STATE.warPage, totalPages, (newPg) => {
+      STATE.warPage = newPg;
+      renderWarTable(STATE.warFilteredCache, meta);
+    });
+  }
+
+  function renderPager(containerId, curPage, totalPages, onPageChange) {
+    const pager = document.getElementById(containerId);
+    pager.innerHTML = "";
+    if (totalPages <= 1) return;
+
+    const addBtn = (label, page, disabled, active) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "rapm-page-btn" + (active ? " active" : "");
+      btn.textContent = label;
+      btn.disabled = disabled;
+      btn.addEventListener("click", () => onPageChange(page));
+      pager.appendChild(btn);
+    };
+
+    addBtn("Prev", Math.max(1, curPage - 1), curPage <= 1, false);
+    const winStart = Math.max(1, curPage - 2);
+    const winEnd   = Math.min(totalPages, curPage + 2);
+    if (winStart > 1) addBtn("1", 1, false, curPage === 1);
+    if (winStart > 2) {
+      const dots = document.createElement("span");
+      dots.textContent = "\u2026";
+      dots.style.padding = "0 0.25rem";
+      pager.appendChild(dots);
+    }
+    for (let p = winStart; p <= winEnd; p++) addBtn(String(p), p, false, p === curPage);
+    if (winEnd < totalPages - 1) {
+      const dots = document.createElement("span");
+      dots.textContent = "\u2026";
+      dots.style.padding = "0 0.25rem";
+      pager.appendChild(dots);
+    }
+    if (winEnd < totalPages) addBtn(String(totalPages), totalPages, false, curPage === totalPages);
+    addBtn("Next", Math.min(totalPages, curPage + 1), curPage >= totalPages, false);
+  }
+
+  function downloadWarCsv() {
+    const league = getActiveLeague();
+    if (!league || !STATE.warFilteredCache) return;
+    const csv = generateWarCsv(STATE.warFilteredCache, league.meta);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const dStr = new Date().toISOString().slice(0, 10);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `war_leaderboard_${STATE.activeLeagueId}_${dStr}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+  }
+
+  // --- TAB 3 RENDERING ---
+  function renderTab3(resetPage = true) {
+    const league = getActiveLeague();
+    if (!league) return;
+    const teamName  = document.getElementById("opt_team_select").value;
+    const formation = document.getElementById("opt_formation_select").value;
+    const metric    = document.getElementById("opt_metric_select").value;
+
+    const errEl = document.getElementById("opt_error_msg");
+    const sumEl = document.getElementById("opt_summary_bar");
+    const lBody = document.getElementById("opt_lineup_body");
+    const bBody = document.getElementById("opt_bench_body");
+
+    if (!teamName) {
+      errEl.classList.remove("visible");
+      sumEl.style.display = "none";
+      lBody.innerHTML = "";
+      bBody.innerHTML = "";
+      return;
+    }
+
+    let roster = league.players.filter(p => p.team === teamName);
+    const activeRoster = roster.filter(p => p.active);
+    if (activeRoster.length >= 11) roster = activeRoster;
+
+    if (roster.length < 11) {
+      errEl.textContent = `Not enough players for ${teamName} (${roster.length}) to form a starting XI.`;
+      errEl.classList.add("visible");
+      sumEl.style.display = "none";
+      lBody.innerHTML = "";
+      bBody.innerHTML = "";
+      document.getElementById("opt_bench_info").textContent = "";
+      document.getElementById("opt_bench_pager").innerHTML = "";
+      return;
+    }
+
+    errEl.classList.remove("visible");
+    const res = solveBestXI(roster, league.players, formation, metric, STATE.manifest.formations);
+    STATE.lastBestXi = res;
+    if (!res) return;
+
+    if (resetPage) STATE.benchPage = 1;
+
+    const xiNet = res.lineup.reduce((acc, row) => acc + row.player.net, 0);
+    const xiOff = res.lineup.reduce((acc, row) => acc + row.player.off, 0);
+    const xiDef = res.lineup.reduce((acc, row) => acc + row.player.def, 0);
+    sumEl.style.display = "flex";
+    sumEl.innerHTML = `
+      <span><strong>${escapeHtml(teamName)} (${escapeHtml(formation)})</strong></span>
+      <span>Eligible Pool: <strong>${roster.length}</strong> players</span>
+      <span>Combined Raw Net RAPM: <strong>${formatSigned(xiNet, 3)}</strong> (Off ${formatSigned(xiOff, 3)} / Def ${formatSigned(xiDef, 3)})</span>
+    `;
+
+    lBody.innerHTML = res.lineup.map(({ slot, player }) => `
+      <tr>
+        <td><strong>${escapeHtml(slot)}</strong></td>
+        <td><strong>${escapeHtml(player.name)}</strong></td>
+        <td>${escapeHtml(player.role)}</td>
+        <td>${escapeHtml(player.sec_role)}</td>
+        <td class="num">${Math.round(player.mins).toLocaleString("en-US")}</td>
+        <td class="num"><span class="${player.net >= 0 ? "rapm-val-pos" : "rapm-val-neg"}">${player.net.toFixed(3)}</span></td>
+        <td class="num">${player.off.toFixed(3)}</td>
+        <td class="num">${player.def.toFixed(3)}</td>
+      </tr>
+    `).join("");
+
+    renderBenchPage(res.bench);
+  }
+
+  function renderBenchPage(bench) {
+    const bBody = document.getElementById("opt_bench_body");
+    const pageLen = 8;
+    const total = bench.length;
+    const totalPages = Math.max(1, Math.ceil(total / pageLen));
+    if (STATE.benchPage > totalPages) STATE.benchPage = totalPages;
+    const startIdx = (STATE.benchPage - 1) * pageLen;
+    const endIdx   = Math.min(total, startIdx + pageLen);
+    const slice = bench.slice(startIdx, endIdx);
+
+    if (slice.length === 0) {
+      bBody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:#777777;padding:1rem;">No additional squad depth available.</td></tr>`;
+    } else {
+      bBody.innerHTML = slice.map(p => `
+        <tr>
+          <td><strong>${escapeHtml(p.name)}</strong></td>
+          <td>${escapeHtml(p.role)}</td>
+          <td>${escapeHtml(p.sec_role)}</td>
+          <td class="num">${Math.round(p.mins).toLocaleString("en-US")}</td>
+          <td class="num"><span class="${p.net >= 0 ? "rapm-val-pos" : "rapm-val-neg"}">${p.net.toFixed(3)}</span></td>
+        </tr>
+      `).join("");
+    }
+
+    document.getElementById("opt_bench_info").textContent = total === 0
+      ? ""
+      : `Showing ${startIdx + 1} to ${endIdx} of ${total} bench players`;
+    renderPager("opt_bench_pager", STATE.benchPage, totalPages, (pg) => {
+      STATE.benchPage = pg;
+      renderBenchPage(bench);
+    });
+  }
+
+  // --- LEAGUE & ASSET LOADING ---
+  function populateLeagueSelect() {
+    const sel = document.getElementById("global_league_select");
+    sel.innerHTML = "";
+    (STATE.manifest.leagues || []).forEach(lg => {
+      const opt = document.createElement("option");
+      opt.value = lg.id;
+      opt.textContent = lg.label;
+      sel.appendChild(opt);
+    });
+    sel.value = STATE.activeLeagueId;
+  }
+
+  function syncDropdownsForActiveLeague() {
+    const league = getActiveLeague();
+    if (!league) return;
+
+    // Tab 1 Outfield Players sorted alphabetically
+    const outfield = league.players
+      .filter(p => p.role !== "Goalkeeper" && p.spatial_idx >= 0)
+      .sort((a, b) => a.name.localeCompare(b.name));
+    if (STATE.playerCombo) STATE.playerCombo.setPlayers(outfield);
+
+    // Tab 2 Teams
+    const warTeams = Array.from(new Set(league.warRows.map(w => w.team).filter(Boolean))).sort((a, b) => a.localeCompare(b));
+    const warTeamSel = document.getElementById("war_team_filter");
+    warTeamSel.innerHTML = `<option value="All Teams">All Teams</option>` +
+      warTeams.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join("");
+    warTeamSel.value = "All Teams";
+    STATE.warPage = 1;
+    STATE.warSortCol = null;
+    STATE.warSortDir = "desc";
+
+    // Tab 3 Teams
+    const teams = Array.from(new Set(league.players.map(p => p.team).filter(Boolean))).sort((a, b) => a.localeCompare(b));
+    const optTeamSel = document.getElementById("opt_team_select");
+    optTeamSel.innerHTML = teams.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join("");
+    if (teams.length > 0) optTeamSel.value = teams[0];
+    STATE.benchPage = 1;
+  }
+
+  async function ensureLeagueLoaded(leagueId) {
+    if (STATE.leagueCache.has(leagueId)) return STATE.leagueCache.get(leagueId);
+    const meta = (STATE.manifest.leagues || []).find(l => l.id === leagueId);
+    if (!meta) throw new Error(`Unknown league '${leagueId}'.`);
+    const resp = await fetch(meta.url);
+    if (!resp.ok) throw new Error(`Failed loading ${meta.label} (${resp.status} ${resp.statusText}).`);
+    const rawJson = await resp.json();
+    const hydrated = hydrateLeagueData(rawJson);
+    STATE.leagueCache.set(leagueId, hydrated);
+    return hydrated;
+  }
+
+  async function onLeagueChange(leagueId) {
+    STATE.activeLeagueId = leagueId;
+    const lgMeta = getActiveLeagueMeta();
+    setStatus("loading", `Loading ${lgMeta ? lgMeta.short : leagueId}...`);
+    showError("");
+    try {
+      await ensureLeagueLoaded(leagueId);
+      syncDropdownsForActiveLeague();
+      await renderActiveTab();
+      const lg = getActiveLeague();
+      setStatus("ready", `${lgMeta ? lgMeta.short : leagueId} Ready (${lg ? lg.players.length : 0} players)`);
+    } catch (err) {
+      setStatus("error", "Asset load pending");
+      showError(`Unable to load static RAPM assets for ${lgMeta ? lgMeta.label : leagueId} (${err.message}). If building locally, run Rscript export_rapm_web_assets.R inside rapm-backend to generate quarto_site/data/rapm/.`);
+    }
+  }
+
+  async function renderActiveTab() {
+    if (STATE.activeTab === "profile") {
+      await renderTab1();
+    } else if (STATE.activeTab === "war") {
+      renderTab2();
+      const plotEl = document.getElementById("war_scatter_plot");
+      if (plotEl && typeof Plotly !== "undefined") Plotly.Plots.resize(plotEl);
+    } else if (STATE.activeTab === "bestxi") {
+      renderTab3();
+    }
+  }
+
+  function switchTab(tab) {
+    STATE.activeTab = tab;
+    const panels = ["profile", "war", "bestxi"];
+    panels.forEach(p => {
+      document.getElementById(`rapm-panel-${p}`).style.display = (p === tab) ? "grid" : "none";
+      const btn = document.getElementById(`rapm-tab-btn-${p}`);
+      btn.classList.toggle("active", p === tab);
+      btn.setAttribute("aria-selected", p === tab ? "true" : "false");
+    });
+    renderActiveTab();
+  }
+
+  async function bootstrap() {
+    STATE.playerCombo = initPlayerCombobox(() => renderTab1());
+
+    // Wire Tab buttons
+    document.querySelectorAll(".rapm-tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+    });
+
+    // Wire League selector
+    const lgSelect = document.getElementById("global_league_select");
+    lgSelect.addEventListener("change", () => onLeagueChange(lgSelect.value));
+
+    // Wire Tab 1 controls
+    document.querySelectorAll('input[name="prof_view_mode"]').forEach(r => {
+      r.addEventListener("change", () => renderTab1());
+    });
+    document.getElementById("download_full_map").addEventListener("click", () => downloadPngMap("full"));
+    document.getElementById("download_offense_map").addEventListener("click", () => downloadPngMap("offense"));
+    document.getElementById("download_defense_map").addEventListener("click", () => downloadPngMap("defense"));
+
+    // Wire Tab 2 controls
+    document.querySelectorAll('input[name="war_plot_metric"]').forEach(r => {
+      r.addEventListener("change", () => { STATE.warPage = 1; renderTab2(); });
+    });
+    ["war_pos_filter", "war_team_filter", "war_page_len"].forEach(id => {
+      document.getElementById(id).addEventListener("change", () => { STATE.warPage = 1; renderTab2(); });
+    });
+    document.getElementById("war_min_minutes").addEventListener("input", () => { STATE.warPage = 1; renderTab2(); });
+    document.getElementById("war_table_search").addEventListener("input", () => { STATE.warPage = 1; renderTab2(); });
+    document.getElementById("download_war_csv").addEventListener("click", downloadWarCsv);
+
+    // Wire Tab 3 controls
+    ["opt_team_select", "opt_formation_select", "opt_metric_select"].forEach(id => {
+      document.getElementById(id).addEventListener("change", () => renderTab3(true));
+    });
+    document.getElementById("opt_run_btn").addEventListener("click", () => renderTab3(true));
+
+    // Fetch live manifest (fallback to inline defaults if unavailable)
+    setStatus("loading", "Loading spatial basis & NWSL...");
+    try {
+      const mResp = await fetch(`data/rapm/manifest.json?ts=${Date.now()}`, { cache: "no-store" });
+      if (mResp.ok) {
+        const liveManifest = await mResp.json();
+        if (liveManifest && Array.isArray(liveManifest.leagues) && liveManifest.leagues.length > 0) {
+          STATE.manifest = liveManifest;
+          if (Array.isArray(liveManifest.mccurdy_palette)) {
+            STATE.palette19 = buildColorPalette(liveManifest.mccurdy_palette, 19);
+          }
+        }
+      }
+    } catch (_ignored) {
+      // Retain FALLBACK_MANIFEST cleanly
+    }
+
+    populateLeagueSelect();
+
+    try {
+      const tpsUrl = STATE.manifest.tps_player_url || "data/rapm/tps_player.bin";
+      const [tpsResp] = await Promise.all([
+        fetch(tpsUrl).then(r => {
+          if (!r.ok) throw new Error(`TPS basis fetch failed (${r.status}).`);
+          return r.arrayBuffer();
+        }),
+        ensureLeagueLoaded(STATE.activeLeagueId)
+      ]);
+      STATE.tps = parseWtpsBinary(tpsResp);
+      syncDropdownsForActiveLeague();
+      await renderActiveTab();
+      const lgMeta = getActiveLeagueMeta();
+      const lg = getActiveLeague();
+      setStatus("ready", `${lgMeta ? lgMeta.short : "NWSL"} Ready (${lg ? lg.players.length : 0} players)`);
+      showError("");
+    } catch (err) {
+      setStatus("error", "Web assets not found");
+      showError(`Static RAPM data assets could not be loaded (${err.message}). Run Rscript export_rapm_web_assets.R from rapm-backend to populate quarto_site/data/rapm/ before rendering.`);
+    }
+  }
+
+  bootstrap();
+})();
+</script>
 
 
 
-</main> <!-- /main -->
+
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
