@@ -159,6 +159,150 @@ mapping_clean <- gk_mapping %>%
     total_minutes = round(as.numeric(total_minutes))
   )
 
+# Resolve current club -> current domestic league & former club names from static RAPM snapshots
+`%||%` <- function(a, b) if (is.null(a) || length(a) == 0) b else a
+
+norm_gk_txt <- function(x) {
+  x <- as.character(x %||% "")
+  if (requireNamespace("stringi", quietly = TRUE)) {
+    x <- stringi::stri_trans_general(x, "Latin-ASCII")
+  }
+  x <- gsub("[-\u2013\u2014']", " ", x)
+  tolower(trimws(gsub("\\s+", " ", x)))
+}
+
+strip_gk_club <- function(x) {
+  x <- norm_gk_txt(x)
+  x <- gsub("\\b(fc|wfc|afc|sc|cf|w f c|women|ladies|lfc|dff|fk|if|bk|ik|sk|kvinner|ac|cd|ud)\\b", " ", x)
+  trimws(gsub("\\s+", " ", x))
+}
+
+to_chr_vec <- function(v, n_target) {
+  if (is.null(v) || length(v) == 0) return(rep("", n_target))
+  if (is.list(v)) {
+    out <- vapply(v, function(el) if (is.null(el) || length(el) == 0 || is.na(el[1])) "" else as.character(el[1]), character(1))
+  } else {
+    out <- ifelse(is.na(v), "", as.character(v))
+  }
+  if (length(out) < n_target) out <- c(out, rep("", n_target - length(out)))
+  out[seq_len(n_target)]
+}
+
+club_leagues_exact <- list()
+club_leagues_base  <- list()
+keeper_club_history_map <- list()
+
+tryCatch({
+  rapm_dir <- file.path(data_dir, "rapm")
+  rapm_slug_map <- c(
+    nwsl = 9134L, usl = 28384L, wsl = 9227L, wsl2 = 10553L, esp = 1127L,
+    fra = 9677L, ger = 232L, ita = 10640L, swe = 214L, eli = 19860L,
+    den = 9412L, por = 10527L, isl = 10307L, nor = 201L, fin = 1662L,
+    sco = 2054L, bra = 10257L, mex = 13593L, jpn = 18653L, aus = 9495L
+  )
+  dom_ids_all <- c(unname(rapm_slug_map), 18944L)
+
+  if (dir.exists(rapm_dir)) {
+    team_best_exact <- list()
+    team_best_base  <- list()
+    rapm_by_lg      <- list()
+
+    for (slug in names(rapm_slug_map)) {
+      lid <- as.integer(rapm_slug_map[[slug]])
+      fp  <- file.path(rapm_dir, paste0(slug, ".json"))
+      if (!file.exists(fp)) next
+
+      r_obj <- jsonlite::fromJSON(fp, simplifyVector = TRUE)
+      pls   <- r_obj$players
+      if (is.null(pls) || length(pls$name) == 0) next
+
+      n_p   <- length(pls$name)
+      nms   <- to_chr_vec(pls$name, n_p)
+      tms   <- to_chr_vec(pls$team, n_p)
+      pos   <- to_chr_vec(pls$pos, n_p)
+      lp    <- to_chr_vec(pls$last_played, n_p)
+      lr    <- to_chr_vec(pls$last_rostered, n_p)
+      dts   <- ifelse(nzchar(lr), lr, lp)
+
+      nnms  <- vapply(nms, norm_gk_txt, character(1))
+      ntms  <- vapply(tms, norm_gk_txt, character(1))
+      btms  <- vapply(tms, strip_gk_club, character(1))
+
+      for (idx in seq_len(n_p)) {
+        t_exact <- ntms[idx]
+        t_base  <- btms[idx]
+        dt_val  <- dts[idx]
+        if (nzchar(t_exact)) {
+          prev <- team_best_exact[[t_exact]]
+          if (is.null(prev) || dt_val >= prev$dt) {
+            team_best_exact[[t_exact]] <- list(lid = lid, dt = dt_val)
+          }
+        }
+        if (nzchar(t_base)) {
+          prev_b <- team_best_base[[t_base]]
+          if (is.null(prev_b) || dt_val >= prev_b$dt) {
+            team_best_base[[t_base]] <- list(lid = lid, dt = dt_val)
+          }
+        }
+      }
+
+      gk_mask <- !nzchar(pos) | pos == "GK"
+      rapm_by_lg[[as.character(lid)]] <- list(
+        norm_names = nnms[gk_mask],
+        raw_teams  = tms[gk_mask],
+        tokens     = lapply(nnms[gk_mask], function(s) unique(strsplit(s, "\\s+")[[1]]))
+      )
+    }
+
+    for (k in names(team_best_exact)) club_leagues_exact[[k]] <- team_best_exact[[k]]$lid
+    for (k in names(team_best_base))  club_leagues_base[[k]]  <- team_best_base[[k]]$lid
+
+    resolve_tm_lg <- function(tm) {
+      nk <- norm_gk_txt(tm)
+      if (nzchar(nk) && !is.null(club_leagues_exact[[nk]])) return(as.integer(club_leagues_exact[[nk]]))
+      bk <- strip_gk_club(tm)
+      if (nzchar(bk) && !is.null(club_leagues_base[[bk]])) return(as.integer(club_leagues_base[[bk]]))
+      NA_integer_
+    }
+
+    gk_splits <- split(mapping_clean, mapping_clean$keeper_id)
+    for (kid in names(gk_splits)) {
+      sub <- gk_splits[[kid]]
+      dom_lgs <- unique(as.integer(sub$league_id[sub$league_id %in% dom_ids_all]))
+      if (length(dom_lgs) == 0) next
+      curr_tm <- sub$team_name[1]
+      curr_lg <- resolve_tm_lg(curr_tm)
+      needs_history <- (length(dom_lgs) > 1) || (!is.na(curr_lg) && !(curr_lg %in% dom_lgs))
+      if (!needs_history) next
+
+      p_norm <- norm_gk_txt(sub$player_name[1])
+      p_toks <- unique(strsplit(p_norm, "\\s+")[[1]])
+      hist_l <- list()
+
+      for (lid in dom_lgs) {
+        if (lid == 18944L) next
+        lg_pool <- rapm_by_lg[[as.character(lid)]]
+        if (is.null(lg_pool) || length(lg_pool$norm_names) == 0) next
+
+        hit_idx <- which(lg_pool$norm_names == p_norm)
+        if (length(hit_idx) > 0) {
+          tm_val <- lg_pool$raw_teams[hit_idx[1]]
+          if (nzchar(tm_val)) hist_l[[as.character(lid)]] <- tm_val
+        } else if (length(p_toks) >= 2) {
+          sub_hits <- which(vapply(lg_pool$tokens, function(rt) {
+            length(rt) >= 2 && (all(p_toks %in% rt) || all(rt %in% p_toks))
+          }, logical(1)))
+          if (length(sub_hits) == 1) {
+            tm_val <- lg_pool$raw_teams[sub_hits[1]]
+            if (nzchar(tm_val)) hist_l[[as.character(lid)]] <- tm_val
+          }
+        }
+      }
+      if (length(hist_l) > 0) keeper_club_history_map[[kid]] <- hist_l
+    }
+  }
+}, error = function(e) {})
+
 payload <- list(
   globals = list(
     cq_avgs    = global_cq_avgs,
@@ -173,12 +317,15 @@ payload <- list(
     tau_logit   = tau_logit,
     scale_gp    = scale_gp
   ),
-  league_cq = league_cq_table,
-  league_gp = league_gp_table,
-  mapping   = mapping_clean,
-  stream    = stream_by_gk,
-  matches   = matches_by_gk,
-  cq        = cq_by_gk
+  league_cq           = league_cq_table,
+  league_gp           = league_gp_table,
+  club_leagues        = club_leagues_exact,
+  club_leagues_base   = club_leagues_base,
+  keeper_club_history = keeper_club_history_map,
+  mapping             = mapping_clean,
+  stream              = stream_by_gk,
+  matches             = matches_by_gk,
+  cq                  = cq_by_gk
 )
 
 cat(sprintf(
@@ -952,7 +1099,7 @@ cat(sprintf(
         <button id="gk-tab-btn-comp" class="gk-tab-btn" role="tab" aria-selected="false" onclick="switchGkTab('comp')">Goalkeeper Comparison</button>
       </div>
     </div>
-    <div id="gk_model_badge" class="gk-model-meta-pill">Calibrated Logit EB</div>
+    <div id="gk_model_badge" class="gk-model-meta-pill">Goalkeeper Evaluation</div>
   </div>
 
   <div class="gk-body-container">
@@ -1095,7 +1242,7 @@ cat(sprintf(
 
       <div class="gk-main-panel">
         <div class="gk-stage-bar">
-          <span class="gk-stage-hint">Shareable 2400&times;1450px Head-to-Head Card &bull; Hover curves to inspect probability thresholds</span>
+          <span class="gk-stage-hint">Hover posterior curves to inspect probability thresholds</span>
         </div>
 
         <div id="comp_card_stage" class="gk-canvas-stage">
@@ -1109,7 +1256,7 @@ cat(sprintf(
     <div id="gk-panel-save" class="gk-layout">
       <div class="gk-sidebar">
         <h4>Player Cards</h4>
-        <p class="gk-help">Shareable scouting card uniting Calibrated Logit EB posteriors, danger-tier save efficiency, and game-by-game form.</p>
+        <p class="gk-help">Shareable scouting card uniting Bayesian shot-stopping posteriors, danger-tier save efficiency, and game-by-game form.</p>
 
         <div class="gk-selector-grid">
           <div>
@@ -1163,7 +1310,7 @@ cat(sprintf(
 
       <div class="gk-main-panel">
         <div class="gk-stage-bar">
-          <span class="gk-stage-hint">2400&times;1500px High-DPI PNG Card &bull; Hover curves, tiers, or match bars to inspect values</span>
+          <span class="gk-stage-hint">Hover curves, tiers, or match bars to inspect values</span>
           <span class="gk-stage-hint" id="save_cohort_caption"></span>
         </div>
 
@@ -1238,6 +1385,7 @@ cat(sprintf(
 
   const INTL_SET = new Set([3076, 852, 1954, 780, 20378, 477, 878, 437, 290, 32833, 18681, 9558, 11330, 1692, 404]);
   const DOMESTIC_PRIORITY = [9134, 9227, 28384, 9677, 232, 1127, 10640, 214, 10553, 9495, 13593, 10257, 18653, 201, 9412, 10527, 10307, 1662, 2054, 19860, 18944];
+  const DOM_LEAGUE_SET = new Set(DOMESTIC_PRIORITY);
   const QUAL_MIN_MINS = 450;
 
   // Same-origin local club badges in quarto_site/logos/ + curated club colors
@@ -1324,6 +1472,20 @@ cat(sprintf(
       .toLowerCase();
   }
 
+  function normClubKey(str) {
+    return normSearch(str)
+      .replace(/[-\u2013\u2014']/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function stripClubAffix(str) {
+    return normClubKey(str)
+      .replace(/\b(fc|wfc|afc|sc|cf|w f c|women|ladies|lfc|dff|fk|if|bk|ik|sk|kvinner|ac|cd|ud)\b/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
   function escapeHtml(str) {
     return String(str ?? "")
       .replace(/&/g, "&amp;")
@@ -1398,14 +1560,14 @@ cat(sprintf(
   const globalAvgXgot = Number(payload.globals.avg_xgot) || 0.27;
   const rawPriorSd   = Number(payload.model_meta?.prior_sd_gp ?? payload.globals?.prior_sd ?? 0.036);
   const PRIOR_SD     = (Number.isFinite(rawPriorSd) && rawPriorSd > 0) ? rawPriorSd : 0.036;
-  const modelName    = String(payload.model_meta?.model_name || "Empirical Bayes");
-  const baselineLabel = /Calibrated/i.test(modelName)
-    ? "Calibrated xG Model Baseline"
-    : "Global xG Model Baseline";
+  const baselineLabel = "Pro League Average";
 
   const streamMap  = payload.stream || {};
   const matchesMap = payload.matches || {};
   const cqMap      = payload.cq || {};
+  const clubLeaguesExact = payload.club_leagues || {};
+  const clubLeaguesBase  = payload.club_leagues_base || {};
+  const keeperClubHistoryMap = payload.keeper_club_history || {};
 
   // Normal PDF & CDF
   const INV_SQRT_2PI = 1 / Math.sqrt(2 * Math.PI);
@@ -1518,6 +1680,9 @@ cat(sprintf(
         qualified: totalMins >= QUAL_MIN_MINS,
         leagues: [],
         primary_league_id: lid,
+        current_league_id: lid,
+        club_history: keeperClubHistoryMap[kid] || {},
+        former_dom_entries: [],
         mu,
         sd,
         ci_low: mu - 1.96 * sd,
@@ -1551,7 +1716,7 @@ cat(sprintf(
     }
   }
 
-  // Resolve primary domestic league for each keeper
+  // Resolve current club's true domestic league + evaluated primary league + former clubs
   keeperById.forEach(k => {
     let chosen = k.leagues[0];
     for (let p = 0; p < DOMESTIC_PRIORITY.length; p++) {
@@ -1560,17 +1725,111 @@ cat(sprintf(
         break;
       }
     }
-    if (!DOMESTIC_PRIORITY.includes(chosen)) {
+    if (!DOM_LEAGUE_SET.has(chosen)) {
       const nonIntl = k.leagues.find(l => !INTL_SET.has(l) && l !== 696);
       if (nonIntl !== undefined) chosen = nonIntl;
     }
-    k.primary_league_id = chosen;
+
+    const nk = normClubKey(k.team_name);
+    const bk = stripClubAffix(k.team_name);
+    const mappedCurrLg = clubLeaguesExact[nk] ?? (bk ? clubLeaguesBase[bk] : undefined);
+    const currLgId = mappedCurrLg !== undefined ? Number(mappedCurrLg) : chosen;
+
+    k.current_league_id = currLgId;
+    k.primary_league_id = k.leagues.includes(currLgId) ? currLgId : chosen;
+
+    const currBase = stripClubAffix(k.team_name);
+    const domFormer = [];
+    k.leagues.forEach(lid => {
+      if (!DOM_LEAGUE_SET.has(lid) || lid === currLgId) return;
+      const lgShort = LEAGUE_SHORT_BY_ID[String(lid)] || "Former League";
+      const histClub = k.club_history ? (k.club_history[String(lid)] || null) : null;
+      const isSameClub = Boolean(histClub && currBase && stripClubAffix(histClub) === currBase);
+      domFormer.push({ leagueId: lid, leagueShort: lgShort, clubName: histClub, isSameClub });
+    });
+    k.former_dom_entries = domFormer;
+
+    const extraSearchParts = [LEAGUE_SHORT_BY_ID[String(currLgId)] || ""];
+    domFormer.forEach(f => {
+      if (f.clubName) extraSearchParts.push(f.clubName);
+      extraSearchParts.push(f.leagueShort);
+    });
+    k._norm = normSearch([k.player_name, k.team_name, ...extraSearchParts].join(" "));
   });
+
+  function getKeeperAffiliationMeta(keeper, contextLeagueVal) {
+    const currLgId = keeper.current_league_id;
+    const currLgShort = LEAGUE_SHORT_BY_ID[String(currLgId)] ||
+      (INTL_SET.has(Number(currLgId)) ? "Senior Intl" : "");
+
+    const ctxNum = (contextLeagueVal && contextLeagueVal !== "all" && contextLeagueVal !== "intl")
+      ? Number(contextLeagueVal) : null;
+    const former = (keeper.former_dom_entries || []).slice();
+    former.sort((a, b) => {
+      if (ctxNum !== null) {
+        if (a.leagueId === ctxNum && b.leagueId !== ctxNum) return -1;
+        if (b.leagueId === ctxNum && a.leagueId !== ctxNum) return 1;
+      }
+      const aScore = (a.clubName && !a.isSameClub ? 2 : (a.clubName ? 1 : 0));
+      const bScore = (b.clubName && !b.isSameClub ? 2 : (b.clubName ? 1 : 0));
+      return bScore - aScore;
+    });
+
+    const fmtEntry = (e, compact) => {
+      if (e.clubName && !e.isSameClub) {
+        return compact ? `${e.clubName} (${e.leagueShort})` : `${e.clubName} (${e.leagueShort})`;
+      }
+      if (e.isSameClub) {
+        return compact ? `${e.clubName} (${e.leagueShort})` : `${e.clubName} in ${e.leagueShort}`;
+      }
+      return e.leagueShort;
+    };
+
+    let formerBannerText = "";
+    let formerCompactText = "";
+    if (former.length > 0) {
+      const f0 = former[0];
+      if (f0.clubName && !f0.isSameClub) {
+        formerBannerText = `FORMER CLUB: ${fmtEntry(f0, false).toUpperCase()}`;
+        formerCompactText = `Prev: ${fmtEntry(f0, true)}`;
+      } else if (f0.isSameClub) {
+        formerBannerText = `INCLUDES ${f0.leagueShort.toUpperCase()} MATCHES (${f0.clubName.toUpperCase()})`;
+        formerCompactText = `Includes ${f0.leagueShort}`;
+      } else {
+        formerBannerText = `PREVIOUSLY PLAYED IN ${f0.leagueShort.toUpperCase()}`;
+        formerCompactText = `Prev: ${f0.leagueShort}`;
+      }
+      if (former.length > 1) {
+        const extraStr = former.slice(1, 2).map(e => fmtEntry(e, true).toUpperCase()).join(", ");
+        if (extraStr) formerBannerText += `   \u2022   ${extraStr}`;
+      }
+    }
+
+    let contextFormerClub = null;
+    let contextFormerSameClub = false;
+    if (ctxNum !== null && ctxNum !== currLgId) {
+      const matchCtx = former.find(e => e.leagueId === ctxNum);
+      if (matchCtx) {
+        contextFormerClub = matchCtx.clubName;
+        contextFormerSameClub = matchCtx.isSameClub;
+      }
+    }
+
+    return {
+      currLgId,
+      currLgShort,
+      formerEntries: former,
+      formerBannerText,
+      formerCompactText,
+      contextFormerClub,
+      contextFormerSameClub
+    };
+  }
 
   const allKeepersList = Array.from(keeperById.values()).sort((a, b) => a.player_name.localeCompare(b.player_name));
 
   document.getElementById("gk_model_badge").textContent =
-    `${modelName} \u2022 ${allKeepersList.length.toLocaleString("en-US")} Keepers`;
+    `${allKeepersList.length.toLocaleString("en-US")} Goalkeepers`;
 
   function getFilteredKeepers(leagueFilterVal) {
     let list;
@@ -1753,6 +2012,12 @@ cat(sprintf(
 
   // Searchable combobox
   const comboRegistry = {};
+  const COMBO_LEAGUE_SEL = {
+    gk_select: "league_filter",
+    save_gk: "save_league",
+    comp_gk_a: "comp_league_a",
+    comp_gk_b: "comp_league_b"
+  };
 
   function setupSearchableCombo(baseId, onSelectCallback) {
     const hiddenEl = document.getElementById(baseId);
@@ -1783,6 +2048,7 @@ cat(sprintf(
         return;
       }
 
+      const activeLgVal = document.getElementById(COMBO_LEAGUE_SEL[baseId] || "")?.value || "all";
       state.highlightIdx = Math.max(0, state.filtered.findIndex(k => k.keeper_id === state.selectedId));
       const frag = document.createDocumentFragment();
       state.filtered.forEach((k, idx) => {
@@ -1793,7 +2059,14 @@ cat(sprintf(
         nSpan.textContent = k.player_name;
         const sSpan = document.createElement("span");
         sSpan.className = "gk-search-option-sub";
-        sSpan.textContent = k.team_name;
+        const aff = getKeeperAffiliationMeta(k, activeLgVal);
+        if (aff.contextFormerClub && !aff.contextFormerSameClub) {
+          sSpan.textContent = `${k.team_name} (prev. ${aff.contextFormerClub})`;
+        } else if (activeLgVal !== "all" && activeLgVal !== "intl" && Number(activeLgVal) !== aff.currLgId && aff.currLgShort) {
+          sSpan.textContent = `${k.team_name} (${aff.currLgShort})`;
+        } else {
+          sSpan.textContent = k.team_name;
+        }
         div.appendChild(nSpan);
         div.appendChild(sSpan);
         div.addEventListener("mousedown", (e) => {
@@ -1908,12 +2181,19 @@ cat(sprintf(
     const top = getQualifiedCohort(leagueVal).slice(0, 5);
     el.innerHTML = "";
     top.forEach((k, idx) => {
+      const aff = getKeeperAffiliationMeta(k, leagueVal);
+      let clubSub = k.team_name;
+      if (aff.contextFormerClub && !aff.contextFormerSameClub) {
+        clubSub = `${aff.contextFormerClub} (now ${k.team_name})`;
+      } else if (leagueVal !== "all" && leagueVal !== "intl" && Number(leagueVal) !== aff.currLgId && aff.currLgShort) {
+        clubSub = `${k.team_name} (${aff.currLgShort})`;
+      }
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "gk-top-item" + (k.keeper_id === activeKeeperId ? " active" : "");
       btn.innerHTML = `
         <span class="gk-top-rank">#${idx + 1}</span>
-        <span class="gk-top-name">${escapeHtml(k.player_name)}<span class="gk-top-sub">${escapeHtml(k.team_name)} &bull; ${k.shots_faced} sh</span></span>
+        <span class="gk-top-name">${escapeHtml(k.player_name)}<span class="gk-top-sub">${escapeHtml(clubSub)} &bull; ${k.shots_faced} sh</span></span>
         <span class="gk-top-val ${k.mu < 0 ? "neg" : ""}">${formatSigned(k.mu, 3)}</span>
       `;
       btn.addEventListener("click", () => onPick(k.keeper_id));
@@ -2139,17 +2419,23 @@ cat(sprintf(
     ctx.fillRect(0, 0, W, H);
 
     // Header
+    const postLgVal = document.getElementById("league_filter")?.value || "all";
+    const postAff = getKeeperAffiliationMeta(k, postLgVal);
     ctx.save();
     ctx.textBaseline = "alphabetic";
     ctx.textAlign = "left";
     ctx.fillStyle = theme.ink;
     ctx.font = "800 34px Assistant, sans-serif";
-    const hdrName = `${k.player_name}  \u2022  ${k.team_name}`;
+    const clubLabel = postAff.currLgShort ? `${k.team_name} (${postAff.currLgShort})` : k.team_name;
+    const hdrName = `${k.player_name}  \u2022  ${clubLabel}`;
     ctx.fillText(truncateText(ctx, hdrName, 1180), 68, 56);
 
     ctx.fillStyle = theme.inkSub;
     ctx.font = "600 20px Assistant, sans-serif";
-    ctx.fillText(`Live Posterior Evolution vs. ${baselineLabel}  (${modelName})`, 68, 86);
+    const subHdr = postAff.formerCompactText
+      ? `Shot-by-Shot Bayesian Estimate vs. ${baselineLabel}  \u2022  ${postAff.formerCompactText}`
+      : `Shot-by-Shot Bayesian Estimate vs. ${baselineLabel}`;
+    ctx.fillText(truncateText(ctx, subHdr, 1180), 68, 86);
 
     // Right shot readout (plain typography, no pill box)
     const totalShots = postAnimState.frames[postAnimState.frames.length - 1].s;
@@ -2335,7 +2621,7 @@ cat(sprintf(
     });
     ctx.fillStyle = theme.inkMuted;
     ctx.font = "700 17px Assistant, sans-serif";
-    ctx.fillText("\u2190 Below Average   \u2022   True Talent Estimate (Calibrated Goals Prevented per Shot)   \u2022   Elite Shotstopper \u2192", pX + pW * 0.5, pBot + 70);
+    ctx.fillText("\u2190 Below Average   \u2022   True Talent Estimate (Goals Prevented per Shot)   \u2022   Elite Shotstopper \u2192", pX + pW * 0.5, pBot + 70);
 
     // Flat hairline telemetry footer inside PNG
     ctx.strokeStyle = theme.rule;
@@ -2486,27 +2772,33 @@ cat(sprintf(
 
     // 2. Masthead (y: 44..198)
     const redrawSafe = () => requestAnimationFrame(drawPlayerCardCanvas);
+    const aff = getKeeperAffiliationMeta(keeper, leagueVal);
     drawClubCrest(ctx, keeper.team_name, 124, 116, 120, theme, redrawSafe);
 
     ctx.save();
     ctx.textAlign = "left";
     ctx.textBaseline = "alphabetic";
     const nameUpper = keeper.player_name.toUpperCase();
-    fitTextFont(ctx, nameUpper, 1260, 800, 62, 38);
+    const hasFormerBanner = Boolean(aff.formerBannerText);
+    fitTextFont(ctx, nameUpper, 1260, 800, hasFormerBanner ? 58 : 62, 36);
     ctx.fillStyle = theme.ink;
-    ctx.fillText(nameUpper, 212, 110);
+    ctx.fillText(nameUpper, 212, hasFormerBanner ? 98 : 110);
 
     const metaParts = [keeper.team_name.toUpperCase()];
-    const lgDisp = LEAGUE_SHORT_BY_ID[String(keeper.primary_league_id)] ||
-      (INTL_SET.has(Number(keeper.primary_league_id)) ? "SENIOR INTL" : "");
-    if (lgDisp) metaParts.push(lgDisp.toUpperCase());
+    if (aff.currLgShort) metaParts.push(aff.currLgShort.toUpperCase());
     if (keeper.age !== null) metaParts.push(`AGE ${keeper.age}`);
     metaParts.push(`${Math.round(keeper.total_minutes).toLocaleString("en-US")} MINS`);
     metaParts.push(`${keeper.n_matches} ${plural(keeper.n_matches, "MATCH", "MATCHES")}`);
     const metaStr = metaParts.join("   \u2022   ");
     ctx.fillStyle = theme.inkSub;
-    ctx.font = "600 24px Assistant, sans-serif";
-    ctx.fillText(truncateText(ctx, metaStr, 1340), 212, 152);
+    ctx.font = `600 ${hasFormerBanner ? 23 : 24}px Assistant, sans-serif`;
+    ctx.fillText(truncateText(ctx, metaStr, 1340), 212, hasFormerBanner ? 136 : 152);
+
+    if (hasFormerBanner) {
+      ctx.fillStyle = theme.ink;
+      ctx.font = "700 20px Assistant, sans-serif";
+      ctx.fillText(truncateText(ctx, aff.formerBannerText, 1340), 212, 171);
+    }
     ctx.restore();
 
     // Right Masthead: WOSO.LIVE / PLAYER CARD + Plain Rank Readout
@@ -2559,7 +2851,7 @@ cat(sprintf(
 
     ctx.textAlign = "right";
     ctx.font = "600 19px Assistant, sans-serif";
-    ctx.fillText(modelName.toUpperCase(), lpX + lpW, lpY + 28);
+    ctx.fillText("POSTERIOR VS. PRO PRIOR", lpX + lpW, lpY + 28);
     ctx.restore();
 
     const isPosMu = keeper.mu >= 0;
@@ -3237,7 +3529,7 @@ cat(sprintf(
     const lastDateStr = validDates.length > 0 ? `Latest Match: ${validDates[validDates.length - 1]}` : "Non-Penalty xGOT Shots";
     ctx.textAlign = "right";
     ctx.font = "600 18px Assistant, sans-serif";
-    ctx.fillText(`${modelName}  \u2022  Non-Penalty xGOT  \u2022  ${lastDateStr}`, 2336, 1468);
+    ctx.fillText(validDates.length > 0 ? `Non-Penalty xGOT  \u2022  ${lastDateStr}` : lastDateStr, 2336, 1468);
     ctx.restore();
   }
 
@@ -3313,6 +3605,8 @@ cat(sprintf(
     const lgB = document.getElementById("comp_league_b").value;
     const benchA = getBenchmarkInfo(kA, lgA, "league");
     const benchB = getBenchmarkInfo(kB, lgB, "league");
+    const affA = getKeeperAffiliationMeta(kA, lgA);
+    const affB = getKeeperAffiliationMeta(kB, lgB);
 
     drawClubCrest(ctx, kA.team_name, 124, 112, 116, theme, redrawSafe);
     drawClubCrest(ctx, kB.team_name, 2276, 112, 116, theme, redrawSafe);
@@ -3320,13 +3614,20 @@ cat(sprintf(
     ctx.save();
     ctx.textBaseline = "alphabetic";
     ctx.textAlign = "left";
-    fitTextFont(ctx, kA.player_name.toUpperCase(), 820, 800, 50, 32);
-    ctx.fillStyle = colA;
-    ctx.fillText(kA.player_name.toUpperCase(), 208, 104);
-    ctx.fillStyle = theme.inkSub;
-    ctx.font = "600 22px Assistant, sans-serif";
+    const clubLgA = affA.currLgShort ? `${kA.team_name} (${affA.currLgShort})` : kA.team_name;
     const rankATxt = benchA.qualified && benchA.rank ? `#${benchA.rank} in ${benchA.cohortLabel} (${getOrdinalSuffix(benchA.pctl)})` : benchA.cohortLabel;
-    ctx.fillText(truncateText(ctx, `${kA.team_name.toUpperCase()}  \u2022  ${rankATxt}  \u2022  ${kA.shots_faced} SHOTS`, 840), 208, 144);
+    const hasFormerA = Boolean(affA.formerBannerText);
+    fitTextFont(ctx, kA.player_name.toUpperCase(), 880, 800, hasFormerA ? 46 : 50, 32);
+    ctx.fillStyle = colA;
+    ctx.fillText(kA.player_name.toUpperCase(), 208, hasFormerA ? 96 : 104);
+    ctx.fillStyle = theme.inkSub;
+    ctx.font = "600 20px Assistant, sans-serif";
+    ctx.fillText(truncateText(ctx, `${clubLgA.toUpperCase()}  \u2022  ${rankATxt}  \u2022  ${kA.shots_faced} SHOTS`, 920), 208, hasFormerA ? 134 : 144);
+    if (hasFormerA) {
+      ctx.fillStyle = theme.ink;
+      ctx.font = "700 18px Assistant, sans-serif";
+      ctx.fillText(truncateText(ctx, affA.formerBannerText, 920), 208, 165);
+    }
 
     // Center Masthead Matchup Mark (plain typography, no pill badge)
     ctx.textAlign = "center";
@@ -3338,13 +3639,20 @@ cat(sprintf(
     ctx.fillText("VS", 1200, 118);
 
     ctx.textAlign = "right";
-    fitTextFont(ctx, kB.player_name.toUpperCase(), 820, 800, 50, 32);
-    ctx.fillStyle = colB;
-    ctx.fillText(kB.player_name.toUpperCase(), 2192, 104);
-    ctx.fillStyle = theme.inkSub;
-    ctx.font = "600 22px Assistant, sans-serif";
+    const clubLgB = affB.currLgShort ? `${kB.team_name} (${affB.currLgShort})` : kB.team_name;
     const rankBTxt = benchB.qualified && benchB.rank ? `#${benchB.rank} in ${benchB.cohortLabel} (${getOrdinalSuffix(benchB.pctl)})` : benchB.cohortLabel;
-    ctx.fillText(truncateText(ctx, `${kB.shots_faced} SHOTS  \u2022  ${rankBTxt}  \u2022  ${kB.team_name.toUpperCase()}`, 840), 2192, 144);
+    const hasFormerB = Boolean(affB.formerBannerText);
+    fitTextFont(ctx, kB.player_name.toUpperCase(), 880, 800, hasFormerB ? 46 : 50, 32);
+    ctx.fillStyle = colB;
+    ctx.fillText(kB.player_name.toUpperCase(), 2192, hasFormerB ? 96 : 104);
+    ctx.fillStyle = theme.inkSub;
+    ctx.font = "600 20px Assistant, sans-serif";
+    ctx.fillText(truncateText(ctx, `${kB.shots_faced} SHOTS  \u2022  ${rankBTxt}  \u2022  ${clubLgB.toUpperCase()}`, 920), 2192, hasFormerB ? 134 : 144);
+    if (hasFormerB) {
+      ctx.fillStyle = theme.ink;
+      ctx.font = "700 18px Assistant, sans-serif";
+      ctx.fillText(truncateText(ctx, affB.formerBannerText, 920), 2192, 165);
+    }
     ctx.restore();
 
     ctx.strokeStyle = theme.ruleStrong;
@@ -3570,7 +3878,7 @@ cat(sprintf(
     });
     ctx.fillStyle = theme.inkMuted;
     ctx.font = "600 18px Assistant, sans-serif";
-    ctx.fillText("True Talent Estimate (Calibrated Goals Prevented per Shot)  \u2022  95% Credible Intervals Shown", pX0 + pW * 0.5, pBot + 132);
+    ctx.fillText("True Talent Estimate (Goals Prevented per Shot)  \u2022  95% Credible Intervals Shown", pX0 + pW * 0.5, pBot + 132);
     ctx.restore();
 
     // RIGHT ZONE: TALE OF THE TAPE (x: 1328..2336)
@@ -3718,7 +4026,7 @@ cat(sprintf(
     ctx.fillText("WOSO.LIVE   \u2022   BAYESIAN HEAD-TO-HEAD COMPARISON", 64, 1420);
     ctx.textAlign = "right";
     ctx.font = "600 18px Assistant, sans-serif";
-    ctx.fillText(`${modelName}  \u2022  Non-Penalty xGOT Shots`, 2336, 1420);
+    ctx.fillText("Non-Penalty xGOT Shots", 2336, 1420);
     ctx.restore();
   }
 
