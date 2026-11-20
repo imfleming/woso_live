@@ -1,6 +1,9 @@
 ---
 title: "Goalkeepers"
 page-layout: custom
+format:
+  html:
+    html-table-processing: none
 execute:
   echo: false
   warning: false
@@ -185,13 +188,15 @@ cat(sprintf(
 ```
 
 ```{=html}
-<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<!--| quarto-html-table-processing: none -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap">
 
 <style>
   .gk-app-wrapper {
     background-color: #FFFFFF;
-    color: #222222;
+    color: #1A242F;
     min-height: calc(100vh - 60px);
     font-family: 'Assistant', sans-serif;
     padding-bottom: 3rem;
@@ -200,12 +205,13 @@ cat(sprintf(
   .gk-subnav {
     background-color: #1D3549;
     padding: 0 1.5rem;
-    min-height: 54px;
+    min-height: 56px;
     display: flex;
-    align-items: stretch;
-    justify-content: flex-start;
+    align-items: center;
+    justify-content: space-between;
     flex-wrap: wrap;
-    margin-bottom: 1.5rem;
+    gap: 0.5rem 1.5rem;
+    margin-bottom: 1.4rem;
   }
 
   .gk-subnav-left {
@@ -213,15 +219,16 @@ cat(sprintf(
     align-items: stretch;
     gap: 1.5rem;
     flex-wrap: wrap;
+    min-height: 56px;
   }
 
   .gk-brand {
-    font-size: 1.25rem;
-    font-weight: 600;
+    font-size: 1.22rem;
+    font-weight: 700;
     color: #FFFFFF;
     display: flex;
     align-items: center;
-    margin-right: 0.5rem;
+    white-space: nowrap;
   }
 
   .gk-tabs {
@@ -231,21 +238,23 @@ cat(sprintf(
     list-style: none;
     margin: 0;
     padding: 0;
+    flex-wrap: wrap;
   }
 
   .gk-tab-btn {
     background: transparent;
     border: none;
     border-bottom: 3px solid transparent;
-    color: rgba(255, 255, 255, 0.75);
+    color: rgba(255, 255, 255, 0.78);
     font-size: 0.95rem;
     font-weight: 400;
-    padding: 0 0.9rem;
+    padding: 0.75rem 0.95rem;
     cursor: pointer;
     display: flex;
     align-items: center;
-    transition: all 0.15s ease;
+    transition: color 0.15s ease, border-color 0.15s ease;
     font-family: 'Assistant', sans-serif;
+    white-space: nowrap;
   }
 
   .gk-tab-btn:hover {
@@ -256,6 +265,14 @@ cat(sprintf(
     color: #FFFFFF;
     font-weight: 700;
     border-bottom: 3px solid #FFFFFF;
+  }
+
+  .gk-model-meta-pill {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.78);
+    font-weight: 600;
+    white-space: nowrap;
+    letter-spacing: 0.01em;
   }
 
   .gk-body-container {
@@ -271,48 +288,79 @@ cat(sprintf(
     align-items: start;
   }
 
-  @media (max-width: 992px) {
-    .gk-layout {
-      grid-template-columns: 1fr;
-    }
-  }
-
   .gk-sidebar {
     background-color: #F8F9FA;
     border: 1px solid #DEE2E6;
     border-radius: 6px;
-    padding: 1.25rem;
+    padding: 1.2rem;
   }
 
   .gk-sidebar h4 {
-    font-size: 1.3rem;
+    font-size: 1.22rem;
     font-weight: 700;
     color: #111111;
-    margin-top: 0;
-    margin-bottom: 0.5rem;
+    margin: 0 0 0.45rem 0;
   }
 
   .gk-sidebar h5 {
-    font-size: 1.05rem;
+    font-size: 1rem;
     font-weight: 700;
-    color: #111111;
-    margin-top: 0;
-    margin-bottom: 0.6rem;
+    color: #1D3549;
+    margin: 0 0 0.55rem 0;
   }
 
-  .gk-sidebar p {
-    font-size: 0.9rem;
-    color: #444444;
+  .gk-sidebar p.gk-help {
+    font-size: 0.88rem;
+    color: #4A5568;
     line-height: 1.45;
-    margin-bottom: 1rem;
+    margin: 0 0 0.95rem 0;
+  }
+
+  .gk-selector-grid {
+    display: block;
+  }
+
+  @media (max-width: 992px) {
+    .gk-body-container {
+      padding: 0 0.85rem;
+    }
+    .gk-layout {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    .gk-sidebar {
+      padding: 0.95rem;
+    }
+    .gk-sidebar p.gk-help,
+    .gk-desktop-only {
+      display: none !important;
+    }
+    .gk-selector-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+    }
+  }
+
+  @media (max-width: 540px) {
+    .gk-selector-grid {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+    .gk-subnav {
+      padding: 0 0.9rem;
+    }
+    .gk-model-meta-pill {
+      display: none;
+    }
   }
 
   .gk-label {
     display: block;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     color: #222222;
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.32rem;
   }
 
   .gk-select {
@@ -321,24 +369,24 @@ cat(sprintf(
     color: #222222;
     border: 1px solid #CED4DA;
     border-radius: 4px;
-    padding: 0.45rem 0.65rem;
-    font-size: 0.92rem;
+    padding: 0.44rem 0.62rem;
+    font-size: 0.91rem;
     font-family: 'Assistant', sans-serif;
-    margin-bottom: 0.9rem;
+    margin-bottom: 0.85rem;
     box-sizing: border-box;
   }
 
   .gk-select:focus {
     outline: none;
-    border-color: #1D3549;
-    box-shadow: 0 0 0 2px rgba(29, 53, 73, 0.2);
+    border-color: #00747A;
+    box-shadow: 0 0 0 2px rgba(0, 116, 122, 0.2);
   }
 
   /* Searchable Goalkeeper Combobox */
   .gk-search-wrap {
     position: relative;
     width: 100%;
-    margin-bottom: 0.9rem;
+    margin-bottom: 0.85rem;
   }
 
   .gk-search-input {
@@ -347,8 +395,8 @@ cat(sprintf(
     color: #222222;
     border: 1px solid #CED4DA;
     border-radius: 4px;
-    padding: 0.45rem 2rem 0.45rem 0.65rem;
-    font-size: 0.92rem;
+    padding: 0.44rem 2rem 0.44rem 0.62rem;
+    font-size: 0.91rem;
     font-family: 'Assistant', sans-serif;
     box-sizing: border-box;
     cursor: pointer;
@@ -380,8 +428,8 @@ cat(sprintf(
     background-color: #FFFFFF;
     border: 1px solid #CED4DA;
     border-radius: 4px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
-    max-height: 250px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
+    max-height: 270px;
     overflow-y: auto;
     z-index: 1050;
   }
@@ -392,14 +440,40 @@ cat(sprintf(
 
   .gk-search-option {
     padding: 0.42rem 0.65rem;
-    font-size: 0.9rem;
+    font-size: 0.89rem;
     color: #222222;
     cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem;
   }
 
-  .gk-search-option:hover, .gk-search-option.active {
+  .gk-search-option-name {
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .gk-search-option-sub {
+    font-size: 0.77rem;
+    color: #6C757D;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 48%;
+  }
+
+  .gk-search-option:hover,
+  .gk-search-option.active {
     background-color: #00747A;
     color: #FFFFFF;
+  }
+
+  .gk-search-option:hover .gk-search-option-sub,
+  .gk-search-option.active .gk-search-option-sub {
+    color: rgba(255, 255, 255, 0.85);
   }
 
   .gk-search-empty {
@@ -412,51 +486,459 @@ cat(sprintf(
   .gk-divider {
     border: 0;
     border-top: 1px solid #DEE2E6;
-    margin: 1rem 0;
+    margin: 0.9rem 0;
   }
 
+  /* Segmented Control (Theme / Benchmark) */
+  .gk-seg-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background-color: #E2E8F0;
+    padding: 2px;
+    border-radius: 5px;
+    margin-bottom: 0.85rem;
+  }
+
+  .gk-seg-btn {
+    border: none;
+    background: transparent;
+    color: #475569;
+    font-family: 'Assistant', sans-serif;
+    font-size: 0.84rem;
+    font-weight: 600;
+    padding: 0.36rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.14s ease;
+  }
+
+  .gk-seg-btn.active {
+    background-color: #FFFFFF;
+    color: #1D3549;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  }
+
+  /* Buttons */
+  .gk-btn-primary,
   .gk-btn-outline {
     width: 100%;
-    background-color: transparent;
-    color: #222222;
-    border: 1px solid #333333;
     border-radius: 4px;
-    padding: 0.5rem 1rem;
-    font-size: 0.92rem;
+    padding: 0.5rem 0.9rem;
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.15s ease;
     font-family: 'Assistant', sans-serif;
+    display: block;
+    text-align: center;
+    box-sizing: border-box;
+    margin-bottom: 0.5rem;
   }
 
-  .gk-btn-outline:hover {
-    background-color: #111111;
+  .gk-btn-primary {
+    background-color: #1D3549;
+    color: #FFFFFF;
+    border: 1px solid #1D3549;
+  }
+
+  .gk-btn-primary:hover:not(:disabled) {
+    background-color: #00747A;
+    border-color: #00747A;
+  }
+
+  .gk-btn-outline {
+    background-color: transparent;
+    color: #1D3549;
+    border: 1px solid #ADB5BD;
+  }
+
+  .gk-btn-outline:hover:not(:disabled) {
+    background-color: #1D3549;
+    border-color: #1D3549;
     color: #FFFFFF;
   }
 
+  .gk-btn-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.45rem;
+  }
+
+  .gk-copy-toast {
+    font-size: 0.8rem;
+    color: #00747A;
+    font-weight: 700;
+    text-align: center;
+    min-height: 1.05rem;
+    margin-top: 0.2rem;
+  }
+
+  /* Quick Top Qualified Leaders in Sidebar */
+  .gk-top-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748B;
+    margin-bottom: 0.45rem;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .gk-top-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 0.2rem;
+  }
+
+  .gk-top-item {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.36rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    background: transparent;
+    text-align: left;
+    font-family: 'Assistant', sans-serif;
+    width: 100%;
+    transition: background-color 0.12s ease;
+  }
+
+  .gk-top-item:hover {
+    background-color: #EAEFF4;
+  }
+
+  .gk-top-item.active {
+    background-color: #E6F4F4;
+    border-color: #B2DFDB;
+  }
+
+  .gk-top-rank {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #64748B;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .gk-top-name {
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: #1A242F;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .gk-top-sub {
+    display: block;
+    font-size: 0.74rem;
+    font-weight: 400;
+    color: #64748B;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .gk-top-val {
+    font-size: 0.82rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: #00747A;
+  }
+
+  .gk-top-val.neg {
+    color: #B83A3A;
+  }
+
+  /* Main Panels */
   .gk-main-panel {
     background-color: #FFFFFF;
-    min-height: 560px;
+    min-width: 0;
   }
 
-  .save-grid-3 {
+  /* Tab 1 Live HUD */
+  .gk-hud-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.85rem;
+    margin-bottom: 0.85rem;
   }
 
-  .save-demo-grid {
-    display: grid;
-    grid-template-columns: 5fr 2fr 5fr;
-    gap: 16px;
+  @media (max-width: 1100px) {
+    .gk-hud-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 560px) {
+    .gk-hud-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.5rem;
+    }
+  }
+
+  .gk-hud-card {
+    background-color: #F8F9FA;
+    border: 1px solid #DEE2E6;
+    border-left: 3px solid #00747A;
+    border-radius: 5px;
+    padding: 0.68rem 0.88rem;
+  }
+
+  .gk-hud-label {
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #64748B;
+    margin-bottom: 0.18rem;
+  }
+
+  .gk-hud-val {
+    font-size: 1.28rem;
+    font-weight: 800;
+    color: #111827;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.15;
+  }
+
+  .gk-hud-sub {
+    font-size: 0.8rem;
+    color: #526273;
+    margin-top: 0.14rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .gk-plot-frame {
+    border: 1px solid #DEE2E6;
+    border-radius: 6px;
+    padding: 0.75rem;
+    background-color: #FFFFFF;
+  }
+
+  .gk-post-controls {
+    display: flex;
     align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    padding: 0.65rem 0.25rem 0.15rem 0.25rem;
+    border-top: 1px solid #EDF0F2;
+    margin-top: 0.65rem;
   }
 
-  .save-header-grid {
-    display: grid;
-    grid-template-columns: 3fr 9fr;
-    gap: 20px;
+  .gk-post-btn-group {
+    display: flex;
     align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+  }
+
+  .gk-mini-btn {
+    border: 1px solid #CBD5E1;
+    background-color: #FFFFFF;
+    color: #1D3549;
+    font-family: 'Assistant', sans-serif;
+    font-size: 0.84rem;
+    font-weight: 600;
+    padding: 0.34rem 0.75rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.14s ease;
+  }
+
+  .gk-mini-btn:hover {
+    border-color: #00747A;
+    color: #00747A;
+  }
+
+  .gk-mini-btn.primary {
+    background-color: #00747A;
+    border-color: #00747A;
+    color: #FFFFFF;
+  }
+
+  .gk-mini-btn.primary:hover {
+    background-color: #005D62;
+  }
+
+  .gk-scrub-wrap {
+    flex: 1 1 260px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .gk-scrub-range {
+    flex: 1;
+    accent-color: #00747A;
+    cursor: pointer;
+  }
+
+  .gk-scrub-readout {
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: #1D3549;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  /* Canvas Card Stage */
+  .gk-canvas-stage {
+    position: relative;
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+
+  .gk-card-canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 6px;
+    border: 1px solid #D6DDE5;
+    box-shadow: 0 4px 18px rgba(15, 30, 44, 0.08);
+    cursor: crosshair;
+  }
+
+  .gk-post-canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+    cursor: crosshair;
+  }
+
+  .gk-canvas-tooltip {
+    position: absolute;
+    pointer-events: none;
+    display: none;
+    background-color: rgba(15, 30, 44, 0.94);
+    color: #FFFFFF;
+    padding: 0.48rem 0.68rem;
+    border-radius: 5px;
+    font-size: 0.82rem;
+    line-height: 1.4;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+    z-index: 40;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .gk-stage-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem 1rem;
+    margin-bottom: 0.6rem;
+    max-width: 1180px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .gk-stage-hint {
+    font-size: 0.84rem;
+    color: #64748B;
+  }
+
+  /* Interactive Match Log Companion Drawer below SAVE Card */
+  .gk-companion-box {
+    max-width: 1180px;
+    margin: 1.15rem auto 0 auto;
+    border: 1px solid #DEE2E6;
+    border-radius: 6px;
+    background-color: #FFFFFF;
+    overflow: hidden;
+  }
+
+  .gk-companion-header {
+    background-color: #F8F9FA;
+    border-bottom: 1px solid #DEE2E6;
+    padding: 0.65rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .gk-companion-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1D3549;
+  }
+
+  .gk-companion-toggle {
+    border: 1px solid #CED4DA;
+    background-color: #FFFFFF;
+    color: #1D3549;
+    font-family: 'Assistant', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 0.25rem 0.65rem;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .gk-companion-toggle:hover {
+    border-color: #00747A;
+    color: #00747A;
+  }
+
+  .gk-match-table-wrap {
+    max-height: 310px;
+    overflow-y: auto;
+    width: 100%;
+  }
+
+  table.gk-match-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.86rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  table.gk-match-table th {
+    position: sticky;
+    top: 0;
+    background-color: #F8F9FA;
+    color: #334155;
+    font-weight: 700;
+    text-align: left;
+    padding: 0.5rem 0.85rem;
+    border-bottom: 2px solid #DEE2E6;
+    white-space: nowrap;
+  }
+
+  table.gk-match-table th.num,
+  table.gk-match-table td.num {
+    text-align: right;
+  }
+
+  table.gk-match-table td {
+    padding: 0.44rem 0.85rem;
+    border-bottom: 1px solid #EDF0F2;
+    color: #1E293B;
+    white-space: nowrap;
+  }
+
+  table.gk-match-table tbody tr:hover {
+    background-color: #F4F9FA;
+  }
+
+  .gk-val-pos {
+    color: #00747A;
+    font-weight: 700;
+  }
+
+  .gk-val-neg {
+    color: #B83A3A;
+    font-weight: 700;
   }
 </style>
 
@@ -464,38 +946,93 @@ cat(sprintf(
   <div class="gk-subnav">
     <div class="gk-subnav-left">
       <span class="gk-brand">Global Goalkeeper Evaluation</span>
-      <div class="gk-tabs">
-        <button id="gk-tab-btn-post" class="gk-tab-btn active" onclick="switchGkTab('post')">Shotstopping Posterior (Animated)</button>
-        <button id="gk-tab-btn-comp" class="gk-tab-btn" onclick="switchGkTab('comp')">Goalkeeper Comparison</button>
-        <button id="gk-tab-btn-save" class="gk-tab-btn" onclick="switchGkTab('save')">SAVE Profile</button>
+      <div class="gk-tabs" role="tablist">
+        <button id="gk-tab-btn-post" class="gk-tab-btn active" role="tab" aria-selected="true" onclick="switchGkTab('post')">Shotstopping Posterior (Animated)</button>
+        <button id="gk-tab-btn-comp" class="gk-tab-btn" role="tab" aria-selected="false" onclick="switchGkTab('comp')">Goalkeeper Comparison</button>
+        <button id="gk-tab-btn-save" class="gk-tab-btn" role="tab" aria-selected="false" onclick="switchGkTab('save')">SAVE Profile</button>
       </div>
     </div>
+    <div id="gk_model_badge" class="gk-model-meta-pill">Calibrated Logit EB</div>
   </div>
 
   <div class="gk-body-container">
     <!-- TAB 1: SHOTSTOPPING POSTERIOR (ANIMATED) -->
     <div id="gk-panel-post" class="gk-layout">
       <div class="gk-sidebar">
-        <h4>Live Evaluation</h4>
-        <p>Watch how the model's estimate of a goalkeeper's true shotstopping ability updates live as they face more shots. A wider curve indicates uncertainty; a narrow curve indicates an established talent baseline.</p>
+        <h4>Live Bayesian Trajectory</h4>
+        <p class="gk-help">Watch how the model updates a goalkeeper's true shotstopping estimate shot by shot. Narrower curves reflect greater sample certainty.</p>
 
-        <label class="gk-label" for="league_filter">Find Goalkeeper by League:</label>
-        <select id="league_filter" class="gk-select"></select>
-
-        <label class="gk-label" for="gk_select_search">Select Goalkeeper:</label>
-        <input type="hidden" id="gk_select">
-        <div class="gk-search-wrap" id="wrap_gk_select">
-          <input type="text" id="gk_select_search" class="gk-search-input" placeholder="Search first or last name..." autocomplete="off">
-          <span class="gk-search-chevron">&#9662;</span>
-          <div id="gk_select_menu" class="gk-search-menu"></div>
+        <div class="gk-selector-grid">
+          <div>
+            <label class="gk-label" for="league_filter">League / Competition:</label>
+            <select id="league_filter" class="gk-select"></select>
+          </div>
+          <div>
+            <label class="gk-label" for="gk_select_search">Select Goalkeeper:</label>
+            <input type="hidden" id="gk_select">
+            <div class="gk-search-wrap" id="wrap_gk_select">
+              <input type="text" id="gk_select_search" class="gk-search-input" placeholder="Search name or club..." autocomplete="off">
+              <span class="gk-search-chevron">&#9662;</span>
+              <div id="gk_select_menu" class="gk-search-menu"></div>
+            </div>
+          </div>
         </div>
 
-        <hr class="gk-divider">
-        <button id="download_plotly" class="gk-btn-outline">Download Plot (PNG)</button>
+        <div class="gk-desktop-only">
+          <div class="gk-top-title">
+            <span>Top Qualified (450+ min)</span>
+            <span>Talent Est.</span>
+          </div>
+          <div id="post_top_list" class="gk-top-list"></div>
+          <hr class="gk-divider">
+        </div>
+
+        <button id="post_jump_save" class="gk-btn-primary" type="button">Open SAVE Player Card &rarr;</button>
+        <button id="download_post_png" class="gk-btn-outline" type="button" style="margin-bottom:0;">Download Posterior Plot (PNG)</button>
       </div>
 
       <div class="gk-main-panel">
-        <div id="gk_posterior_plot" style="width: 100%; height: 560px;"></div>
+        <div class="gk-hud-grid">
+          <div class="gk-hud-card">
+            <div class="gk-hud-label">Sample Snapshot</div>
+            <div class="gk-hud-val" id="hud_shots">&mdash;</div>
+            <div class="gk-hud-sub" id="hud_date">&mdash;</div>
+          </div>
+          <div class="gk-hud-card">
+            <div class="gk-hud-label">Goals Prevented</div>
+            <div class="gk-hud-val" id="hud_gp">&mdash;</div>
+            <div class="gk-hud-sub" id="hud_xgot">&mdash;</div>
+          </div>
+          <div class="gk-hud-card">
+            <div class="gk-hud-label">True Talent Estimate</div>
+            <div class="gk-hud-val" id="hud_mu">&mdash;</div>
+            <div class="gk-hud-sub" id="hud_ci">&mdash;</div>
+          </div>
+          <div class="gk-hud-card">
+            <div class="gk-hud-label">Bayesian Confidence</div>
+            <div class="gk-hud-val" id="hud_prob">&mdash;</div>
+            <div class="gk-hud-sub" id="hud_cert">&mdash;</div>
+          </div>
+        </div>
+
+        <div class="gk-plot-frame">
+          <div id="post_canvas_stage" class="gk-canvas-stage" style="max-width: 100%;">
+            <canvas id="gk_posterior_canvas" width="1800" height="900" class="gk-post-canvas"></canvas>
+            <div id="post_canvas_tooltip" class="gk-canvas-tooltip"></div>
+          </div>
+          <div class="gk-post-controls">
+            <div class="gk-post-btn-group">
+              <button id="post_replay_btn" class="gk-mini-btn primary" type="button">&#9654; Replay Shot 1 &rarr; Final</button>
+              <button id="post_play_btn" class="gk-mini-btn" type="button">Play</button>
+              <button id="post_pause_btn" class="gk-mini-btn" type="button">Pause</button>
+              <button id="post_final_btn" class="gk-mini-btn" type="button">Jump to Final</button>
+            </div>
+            <div class="gk-scrub-wrap">
+              <input id="post_scrub_range" class="gk-scrub-range" type="range" min="0" max="0" value="0">
+              <span id="post_scrub_readout" class="gk-scrub-readout">Shot &mdash;</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -503,87 +1040,158 @@ cat(sprintf(
     <div id="gk-panel-comp" class="gk-layout" style="display: none;">
       <div class="gk-sidebar">
         <h4>Head-to-Head Comparison</h4>
-        <p>Compare the final estimated true shotstopping ability of two goalkeepers.</p>
-        <hr class="gk-divider">
+        <p class="gk-help">Compare posterior shotstopping distributions, probability of superiority, and SAVE efficiency.</p>
+        <hr class="gk-divider gk-desktop-only">
 
         <h5>Goalkeeper A</h5>
-        <label class="gk-label" for="comp_league_a">League A:</label>
-        <select id="comp_league_a" class="gk-select"></select>
-        <label class="gk-label" for="comp_gk_a_search">Select GK A:</label>
-        <input type="hidden" id="comp_gk_a">
-        <div class="gk-search-wrap" id="wrap_comp_gk_a">
-          <input type="text" id="comp_gk_a_search" class="gk-search-input" placeholder="Search first or last name..." autocomplete="off">
-          <span class="gk-search-chevron">&#9662;</span>
-          <div id="comp_gk_a_menu" class="gk-search-menu"></div>
+        <div class="gk-selector-grid">
+          <div>
+            <label class="gk-label" for="comp_league_a">League A:</label>
+            <select id="comp_league_a" class="gk-select"></select>
+          </div>
+          <div>
+            <label class="gk-label" for="comp_gk_a_search">Select GK A:</label>
+            <input type="hidden" id="comp_gk_a">
+            <div class="gk-search-wrap" id="wrap_comp_gk_a">
+              <input type="text" id="comp_gk_a_search" class="gk-search-input" placeholder="Search name or club..." autocomplete="off">
+              <span class="gk-search-chevron">&#9662;</span>
+              <div id="comp_gk_a_menu" class="gk-search-menu"></div>
+            </div>
+          </div>
         </div>
+
+        <button id="comp_swap_btn" class="gk-btn-outline" type="button" style="padding: 0.32rem 0.6rem; font-size: 0.82rem; margin-bottom: 0.2rem;">&#8645; Swap A &amp; B</button>
 
         <hr class="gk-divider">
 
         <h5>Goalkeeper B</h5>
-        <label class="gk-label" for="comp_league_b">League B:</label>
-        <select id="comp_league_b" class="gk-select"></select>
-        <label class="gk-label" for="comp_gk_b_search">Select GK B:</label>
-        <input type="hidden" id="comp_gk_b">
-        <div class="gk-search-wrap" id="wrap_comp_gk_b">
-          <input type="text" id="comp_gk_b_search" class="gk-search-input" placeholder="Search first or last name..." autocomplete="off">
-          <span class="gk-search-chevron">&#9662;</span>
-          <div id="comp_gk_b_menu" class="gk-search-menu"></div>
+        <div class="gk-selector-grid">
+          <div>
+            <label class="gk-label" for="comp_league_b">League B:</label>
+            <select id="comp_league_b" class="gk-select"></select>
+          </div>
+          <div>
+            <label class="gk-label" for="comp_gk_b_search">Select GK B:</label>
+            <input type="hidden" id="comp_gk_b">
+            <div class="gk-search-wrap" id="wrap_comp_gk_b">
+              <input type="text" id="comp_gk_b_search" class="gk-search-input" placeholder="Search name or club..." autocomplete="off">
+              <span class="gk-search-chevron">&#9662;</span>
+              <div id="comp_gk_b_menu" class="gk-search-menu"></div>
+            </div>
+          </div>
         </div>
 
         <hr class="gk-divider">
-        <button id="download_plotly_comp" class="gk-btn-outline">Download Plot (PNG)</button>
+        <label class="gk-label">Card Appearance:</label>
+        <div class="gk-seg-group" id="comp_theme_seg">
+          <button type="button" class="gk-seg-btn active" data-theme="light">Editorial Light</button>
+          <button type="button" class="gk-seg-btn" data-theme="dark">Midnight Navy</button>
+        </div>
+
+        <button id="download_duel_card" class="gk-btn-primary" type="button">Download Duel Card (PNG)</button>
+        <button id="copy_duel_card" class="gk-btn-outline" type="button" style="margin-bottom:0;">Copy Card Image</button>
+        <div id="comp_copy_toast" class="gk-copy-toast"></div>
       </div>
 
       <div class="gk-main-panel">
-        <div id="gk_comp_plot" style="width: 100%; height: 560px;"></div>
+        <div class="gk-stage-bar">
+          <span class="gk-stage-hint">Shareable 2400&times;1450px Head-to-Head Card &bull; Hover curves to inspect probability thresholds</span>
+        </div>
+
+        <div id="comp_card_stage" class="gk-canvas-stage">
+          <canvas id="comp_duel_canvas" width="2400" height="1450" class="gk-card-canvas"></canvas>
+          <div id="comp_canvas_tooltip" class="gk-canvas-tooltip"></div>
+        </div>
       </div>
     </div>
 
-    <!-- TAB 3: SAVE PROFILE -->
+    <!-- TAB 3: SAVE PROFILE PLAYER CARD -->
     <div id="gk-panel-save" class="gk-layout" style="display: none;">
       <div class="gk-sidebar">
-        <h4>SAVE Dashboard</h4>
-        <p>A comprehensive profile of a goalkeeper's shotstopping performance, analyzing empirical performance across Chance Quality (CQ) tiers and game-by-game form.</p>
+        <h4>SAVE Player Card</h4>
+        <p class="gk-help">Shareable scouting profile uniting Calibrated Logit EB posteriors, danger-tier save efficiency, and game-by-game form.</p>
 
-        <label class="gk-label" for="save_league">Find Goalkeeper by League:</label>
-        <select id="save_league" class="gk-select"></select>
-
-        <label class="gk-label" for="save_gk_search">Select Goalkeeper:</label>
-        <input type="hidden" id="save_gk">
-        <div class="gk-search-wrap" id="wrap_save_gk">
-          <input type="text" id="save_gk_search" class="gk-search-input" placeholder="Search first or last name..." autocomplete="off">
-          <span class="gk-search-chevron">&#9662;</span>
-          <div id="save_gk_menu" class="gk-search-menu"></div>
+        <div class="gk-selector-grid">
+          <div>
+            <label class="gk-label" for="save_league">League / Competition:</label>
+            <select id="save_league" class="gk-select"></select>
+          </div>
+          <div>
+            <label class="gk-label" for="save_gk_search">Select Goalkeeper:</label>
+            <input type="hidden" id="save_gk">
+            <div class="gk-search-wrap" id="wrap_save_gk">
+              <input type="text" id="save_gk_search" class="gk-search-input" placeholder="Search name or club..." autocomplete="off">
+              <span class="gk-search-chevron">&#9662;</span>
+              <div id="save_gk_menu" class="gk-search-menu"></div>
+            </div>
+          </div>
         </div>
 
-        <hr class="gk-divider">
-        <button id="download_save_dash" class="gk-btn-outline">Download Dashboard (PNG)</button>
+        <div class="gk-desktop-only">
+          <div class="gk-top-title">
+            <span>Top Qualified (450+ min)</span>
+            <span>Talent Est.</span>
+          </div>
+          <div id="save_top_list" class="gk-top-list"></div>
+          <hr class="gk-divider">
+        </div>
+
+        <div class="gk-selector-grid">
+          <div>
+            <label class="gk-label">Card Appearance:</label>
+            <div class="gk-seg-group" id="save_theme_seg">
+              <button type="button" class="gk-seg-btn active" data-theme="light">Editorial Light</button>
+              <button type="button" class="gk-seg-btn" data-theme="dark">Midnight Navy</button>
+            </div>
+          </div>
+          <div>
+            <label class="gk-label">Rank &amp; Benchmark:</label>
+            <div class="gk-seg-group" id="save_bench_seg">
+              <button type="button" class="gk-seg-btn active" data-bench="league">League Cohort</button>
+              <button type="button" class="gk-seg-btn" data-bench="global">Global Cohort</button>
+            </div>
+          </div>
+        </div>
+
+        <button id="download_save_dash" class="gk-btn-primary" type="button">Download Player Card (PNG)</button>
+        <div class="gk-btn-row-2">
+          <button id="copy_save_card" class="gk-btn-outline" type="button" style="margin-bottom:0;">Copy Image</button>
+          <button id="save_compare_btn" class="gk-btn-outline" type="button" style="margin-bottom:0;">Compare &rarr;</button>
+        </div>
+        <div id="save_copy_toast" class="gk-copy-toast"></div>
       </div>
 
       <div class="gk-main-panel">
-        <div id="save_scale_wrapper" style="width: 100%; overflow: hidden;">
-          <div id="save_dashboard_export_area" style="width: 1280px; height: 720px; padding: 65px 40px; background-color: #1D3549; color: #FFFFFF; font-family: 'Assistant', sans-serif; box-sizing: border-box; transform-origin: top left;">
-            <div class="save-header-grid">
-              <div style="line-height: 0.85;">
-                <span style="font-size: 72px; font-weight: 900; letter-spacing: -3px; color: #FFFFFF;">SAVE</span><span style="font-size: 26px; color: #AAAAAA; font-weight: bold;"> v1</span><br>
-                <span style="font-size: 15px; color: #00A6A6; font-weight: bold;">WoSo.Live</span>
-              </div>
-              <div id="save_demographics_ui"></div>
-            </div>
+        <div class="gk-stage-bar">
+          <span class="gk-stage-hint">2400&times;1500px High-DPI PNG Card &bull; Hover curves, tiers, or match bars to inspect values</span>
+          <span class="gk-stage-hint" id="save_cohort_caption"></span>
+        </div>
 
-            <hr style="border: 0; border-top: 2px solid #4A6E8C; margin-top: 20px; margin-bottom: 28px;">
+        <div class="gk-canvas-stage" id="save_card_stage">
+          <canvas id="save_player_canvas" width="2400" height="1500" class="gk-card-canvas"></canvas>
+          <div id="save_canvas_tooltip" class="gk-canvas-tooltip"></div>
+        </div>
 
-            <div class="save-grid-3">
-              <div style="background-color: #E6E6E6; padding: 20px; height: 430px; box-sizing: border-box;">
-                <div id="save_vol_plot" style="width: 100%; height: 390px;"></div>
-              </div>
-              <div style="background-color: #E6E6E6; padding: 20px; height: 430px; box-sizing: border-box;">
-                <div id="save_sv_plot" style="width: 100%; height: 390px;"></div>
-              </div>
-              <div style="background-color: #E6E6E6; padding: 20px; height: 430px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;">
-                <div id="save_val_plot" style="width: 100%; height: 220px;"></div>
-                <div id="save_form_plot" style="width: 100%; height: 170px;"></div>
-              </div>
+        <div class="gk-companion-box">
+          <div class="gk-companion-header">
+            <span class="gk-companion-title" id="save_log_title">Match-by-Match Shot-Stopping Log</span>
+            <button type="button" id="save_log_toggle" class="gk-companion-toggle">Show Match Log</button>
+          </div>
+          <div id="save_log_body" style="display: none;">
+            <div class="gk-match-table-wrap">
+              <table class="gk-match-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Match Date</th>
+                    <th class="num">xGOT Faced</th>
+                    <th class="num">Goals Allowed</th>
+                    <th class="num">Goals Prevented</th>
+                    <th class="num">Cumulative GP</th>
+                  </tr>
+                </thead>
+                <tbody id="save_match_tbody"></tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -594,36 +1202,117 @@ cat(sprintf(
 
 <script>
 (function() {
+  "use strict";
+
   const LEAGUE_CHOICES = [
-    { label: "All Leagues", value: "all" },
-    { label: "NWSL (USA)", value: "9134" },
-    { label: "USL Super League (USA)", value: "28384" },
-    { label: "NCAA Division I (USA)", value: "18944" },
-    { label: "WSL (ENG)", value: "9227" },
-    { label: "WSL2 (ENG)", value: "10553" },
-    { label: "Liga F (ESP)", value: "1127" },
-    { label: "Premi\u00e8re Ligue (FRA)", value: "9677" },
-    { label: "Frauen-Bundesliga (GER)", value: "232" },
-    { label: "Serie A (ITA)", value: "10640" },
-    { label: "Damallsvenskan (SWE)", value: "214" },
-    { label: "Elitettan (SWE)", value: "19860" },
-    { label: "Kvindeliga (DEN)", value: "9412" },
-    { label: "Campeonato Nacional (POR)", value: "10527" },
-    { label: "Besta deild kvenna (ISL)", value: "10307" },
-    { label: "Toppserien (NOR)", value: "201" },
-    { label: "Kansallinen Liiga (FIN)", value: "1662" },
-    { label: "SWPL 1 (SCO)", value: "2054" },
-    { label: "Brasileir\u00e3o S\u00e9rie A1 (BRA)", value: "10257" },
-    { label: "Liga MX Femenil (MEX)", value: "13593" },
-    { label: "WE-League (JPN)", value: "18653" },
-    { label: "A-League (AUS)", value: "9495" },
-    { label: "UEFA Women's Champions League", value: "696" },
-    { label: "Senior International Matches", value: "intl" },
-    { label: "FIFA U-20 Women's World Cup", value: "804" },
-    { label: "FIFA U-17 Women's World Cup", value: "827" }
+    { label: "All Leagues", short: "Global", value: "all" },
+    { label: "NWSL (USA)", short: "NWSL", value: "9134" },
+    { label: "USL Super League (USA)", short: "USL Super League", value: "28384" },
+    { label: "NCAA Division I (USA)", short: "NCAA D1", value: "18944" },
+    { label: "WSL (ENG)", short: "WSL", value: "9227" },
+    { label: "WSL2 (ENG)", short: "WSL2", value: "10553" },
+    { label: "Liga F (ESP)", short: "Liga F", value: "1127" },
+    { label: "Premi\u00e8re Ligue (FRA)", short: "Premi\u00e8re Ligue", value: "9677" },
+    { label: "Frauen-Bundesliga (GER)", short: "Frauen-Bundesliga", value: "232" },
+    { label: "Serie A (ITA)", short: "Serie A", value: "10640" },
+    { label: "Damallsvenskan (SWE)", short: "Damallsvenskan", value: "214" },
+    { label: "Elitettan (SWE)", short: "Elitettan", value: "19860" },
+    { label: "Kvindeliga (DEN)", short: "Kvindeliga", value: "9412" },
+    { label: "Campeonato Nacional (POR)", short: "Campeonato Nacional", value: "10527" },
+    { label: "Besta deild kvenna (ISL)", short: "Besta deild", value: "10307" },
+    { label: "Toppserien (NOR)", short: "Toppserien", value: "201" },
+    { label: "Kansallinen Liiga (FIN)", short: "Kansallinen Liiga", value: "1662" },
+    { label: "SWPL 1 (SCO)", short: "SWPL 1", value: "2054" },
+    { label: "Brasileir\u00e3o S\u00e9rie A1 (BRA)", short: "Brasileir\u00e3o A1", value: "10257" },
+    { label: "Liga MX Femenil (MEX)", short: "Liga MX Femenil", value: "13593" },
+    { label: "WE-League (JPN)", short: "WE-League", value: "18653" },
+    { label: "A-League (AUS)", short: "A-League", value: "9495" },
+    { label: "UEFA Women's Champions League", short: "UWCL", value: "696" },
+    { label: "Senior International Matches", short: "Senior Intl", value: "intl" },
+    { label: "FIFA U-20 Women's World Cup", short: "FIFA U-20 WWC", value: "804" },
+    { label: "FIFA U-17 Women's World Cup", short: "FIFA U-17 WWC", value: "827" }
   ];
 
+  const LEAGUE_SHORT_BY_ID = {};
+  LEAGUE_CHOICES.forEach(c => { LEAGUE_SHORT_BY_ID[String(c.value)] = c.short; });
+
   const INTL_SET = new Set([3076, 852, 1954, 780, 20378, 477, 878, 437, 290, 32833, 18681, 9558, 11330, 1692, 404]);
+  const DOMESTIC_PRIORITY = [9134, 9227, 28384, 9677, 232, 1127, 10640, 214, 10553, 9495, 13593, 10257, 18653, 201, 9412, 10527, 10307, 1662, 2054, 19860, 18944];
+  const QUAL_MIN_MINS = 450;
+
+  // Same-origin local club badges in quarto_site/logos/ + curated club colors
+  const CLUB_BADGES = {
+    "Adelaide United": { logo: "logos/fm_675725.png", color: "#E30043" },
+    "Angel City FC": { logo: "logos/fm_1335914.png", color: "#E58B7B" },
+    "Arsenal": { logo: "logos/fm_258657.png", color: "#EF0107" },
+    "Aston Villa": { logo: "logos/fm_231494.png", color: "#670E36" },
+    "Bay FC": { logo: "logos/fm_1607273.png", color: "#1B2A4A" },
+    "Birmingham City": { logo: "logos/fm_258658.png", color: "#0047AB" },
+    "Birmingham City W.F.C.": { logo: "logos/fm_258658.png", color: "#0047AB" },
+    "Boston Legacy FC": { logo: "logos/fm_1795723.png", color: "#0A8754" },
+    "Brighton": { logo: "logos/fm_231505.png", color: "#0057B8" },
+    "Brisbane Roar FC": { logo: "logos/fm_675726.png", color: "#F26522" },
+    "Brooklyn FC": { logo: "logos/sofa_938778.png", color: "#1F2937" },
+    "Canberra United FC": { logo: "logos/fm_675727.png", color: "#1B5E20" },
+    "Carolina Ascent": { logo: "logos/sofa_507682.png", color: "#7B3F77" },
+    "Carolina Ascent FC": { logo: "logos/sofa_507682.png", color: "#7B3F77" },
+    "Central Coast Mariners": { logo: "logos/fm_1531330.png", color: "#002E5C" },
+    "Charlton": { logo: "logos/fm_231502.png", color: "#D71920" },
+    "Chelsea": { logo: "logos/fm_258661.png", color: "#034694" },
+    "Chelsea FC": { logo: "logos/fm_258661.png", color: "#034694" },
+    "Chicago Stars": { logo: "logos/fm_189393.png", color: "#1B75BC" },
+    "Crystal Palace": { logo: "logos/fm_614828.png", color: "#1B458F" },
+    "DC Power FC": { logo: "logos/sofa_938777.png", color: "#177BD9" },
+    "Dallas Trinity": { logo: "logos/sofa_938069.png", color: "#54052B" },
+    "Dallas Trinity FC": { logo: "logos/sofa_938069.png", color: "#54052B" },
+    "Denver Summit FC": { logo: "logos/fm_1795705.png", color: "#20604E" },
+    "Everton": { logo: "logos/fm_258663.png", color: "#003399" },
+    "Fleury Merogis U.S": { logo: "logos/fm_862902.png", color: "#C8102E" },
+    "Fort Lauderdale United": { logo: "logos/sofa_1041471.png", color: "#007A6E" },
+    "Fort Lauderdale United FC": { logo: "logos/sofa_1041471.png", color: "#007A6E" },
+    "Gotham FC": { logo: "logos/fm_189397.png", color: "#008EA8" },
+    "NJ/NY Gotham FC": { logo: "logos/fm_189397.png", color: "#008EA8" },
+    "Houston Dash": { logo: "logos/fm_521233.png", color: "#FF6900" },
+    "Kansas City Current": { logo: "logos/fm_1237561.png", color: "#008B8B" },
+    "Le Havre": { logo: "logos/fm_1169987.png", color: "#002D5E" },
+    "Lens": { logo: "logos/fm_1784549.png", color: "#C8102E" },
+    "Lexington SC": { logo: "logos/sofa_465515.png", color: "#007A33" },
+    "Liverpool": { logo: "logos/fm_258665.png", color: "#C8102E" },
+    "London City Lionesses": { logo: "logos/fm_1075419.png", color: "#006B8F" },
+    "Manchester City": { logo: "logos/fm_231488.png", color: "#3A7CA5" },
+    "Manchester United": { logo: "logos/fm_954396.png", color: "#DA291C" },
+    "Marseille": { logo: "logos/fm_626232.png", color: "#009DDC" },
+    "Melbourne City FC": { logo: "logos/fm_675728.png", color: "#3A7CA5" },
+    "Melbourne Victory": { logo: "logos/fm_675734.png", color: "#032E5E" },
+    "Montpellier": { logo: "logos/fm_606039.png", color: "#0B1D33" },
+    "Montpellier FC": { logo: "logos/fm_606039.png", color: "#0B1D33" },
+    "Nantes": { logo: "logos/fm_1661332.png", color: "#007A33" },
+    "Newcastle Jets": { logo: "logos/fm_675729.png", color: "#024C91" },
+    "North Carolina Courage": { logo: "logos/fm_243295.png", color: "#9C8446" },
+    "OL Lyonnes": { logo: "logos/fm_394119.png", color: "#0E3C75" },
+    "Orlando Pride": { logo: "logos/fm_728922.png", color: "#61259E" },
+    "Paris FC": { logo: "logos/fm_862893.png", color: "#0F1626" },
+    "Paris Saint Germain": { logo: "logos/fm_294858.png", color: "#004170" },
+    "Paris Saint-Germain": { logo: "logos/fm_294858.png", color: "#004170" },
+    "Perth Glory": { logo: "logos/fm_675730.png", color: "#5D2881" },
+    "Portland Thorns": { logo: "logos/fm_433029.png", color: "#99242B" },
+    "Racing Louisville": { logo: "logos/fm_1237244.png", color: "#6B4C9A" },
+    "Saint Malo": { logo: "logos/fm_1863827.png", color: "#004B87" },
+    "San Diego Wave FC": { logo: "logos/fm_1335917.png", color: "#D6246E" },
+    "Seattle Reign FC": { logo: "logos/fm_433031.png", color: "#2D476E" },
+    "Sporting Jacksonville": { logo: "logos/sofa_1077193.png", color: "#0082B3" },
+    "Sporting JAX": { logo: "logos/sofa_1077193.png", color: "#0082B3" },
+    "Strasbourg": { logo: "logos/fm_1661333.png", color: "#005CA9" },
+    "Sydney FC": { logo: "logos/fm_675731.png", color: "#2B74A8" },
+    "Tampa Bay Sun FC": { logo: "logos/sofa_1112821.png", color: "#C69214" },
+    "Tottenham Hotspur": { logo: "logos/fm_628117.png", color: "#132257" },
+    "Toulouse": { logo: "logos/fm_1863810.png", color: "#51267D" },
+    "Utah Royals": { logo: "logos/fm_923654.png", color: "#D49B1A" },
+    "Washington Spirit": { logo: "logos/fm_433030.png", color: "#1C2D42" },
+    "Wellington Phoenix": { logo: "logos/fm_1300347.png", color: "#C69214" },
+    "West Ham United": { logo: "logos/fm_231497.png", color: "#7A263A" },
+    "Western Sydney Wanderers FC": { logo: "logos/fm_675732.png", color: "#C60C30" }
+  };
 
   const rawPayload = document.getElementById("gk-app-payload").textContent;
   const payload = JSON.parse(rawPayload);
@@ -644,6 +1333,46 @@ cat(sprintf(
       .replace(/'/g, "&#39;");
   }
 
+  function toArr(v) {
+    if (v === undefined || v === null) return [];
+    return Array.isArray(v) ? v : [v];
+  }
+
+  function formatSigned(val, digits) {
+    const n = Number(val);
+    if (!Number.isFinite(n)) return "\u2014";
+    return (n >= 0 ? "+" : "\u2212") + Math.abs(n).toFixed(digits);
+  }
+
+  function plural(n, singular, pluralWord) {
+    return n === 1 ? singular : (pluralWord || singular + "s");
+  }
+
+  function getOrdinalSuffix(n) {
+    const v = Math.round(Number(n));
+    const mod100 = v % 100;
+    if (mod100 >= 11 && mod100 <= 13) return v + "th";
+    const mod10 = v % 10;
+    if (mod10 === 1) return v + "st";
+    if (mod10 === 2) return v + "nd";
+    if (mod10 === 3) return v + "rd";
+    return v + "th";
+  }
+
+  function ecdfPercentile(vals, target) {
+    if (!vals || vals.length === 0 || !Number.isFinite(target)) return 50;
+    let le = 0;
+    for (let i = 0; i < vals.length; i++) {
+      if (vals[i] <= target) le++;
+    }
+    const raw = (le / vals.length) * 100.0;
+    return Math.max(1, Math.min(99, Math.round(raw)));
+  }
+
+  function slugify(str) {
+    return normSearch(str).replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "") || "goalkeeper";
+  }
+
   function colsToRows(colObj) {
     if (!colObj) return [];
     const keys = Object.keys(colObj);
@@ -656,7 +1385,6 @@ cat(sprintf(
         const key = keys[k];
         r[key] = Array.isArray(colObj[key]) ? colObj[key][i] : colObj[key];
       }
-      r._norm = normSearch(r.player_name);
       rows[i] = r;
     }
     return rows;
@@ -667,11 +1395,11 @@ cat(sprintf(
   const leagueGpRows = colsToRows(payload.league_gp);
   const globalCqRows = colsToRows(payload.globals.cq_avgs);
   const globalGpRow  = colsToRows(payload.globals.gp_avg)[0] || { avg_gp_10xgot: 0, avg_axa_pct: 50 };
-  const globalMaxGp  = Number(payload.globals.max_gp) || 3.0;
-  const globalAvgXgot = Number(payload.globals.avg_xgot) || 0.25;
+  const globalAvgXgot = Number(payload.globals.avg_xgot) || 0.27;
   const rawPriorSd   = Number(payload.model_meta?.prior_sd_gp ?? payload.globals?.prior_sd ?? 0.036);
   const PRIOR_SD     = (Number.isFinite(rawPriorSd) && rawPriorSd > 0) ? rawPriorSd : 0.036;
-  const baselineLabel = /Calibrated/i.test(String(payload.model_meta?.model_name || ""))
+  const modelName    = String(payload.model_meta?.model_name || "Empirical Bayes");
+  const baselineLabel = /Calibrated/i.test(modelName)
     ? "Calibrated xG Model Baseline"
     : "Global xG Model Baseline";
 
@@ -679,14 +1407,8 @@ cat(sprintf(
   const matchesMap = payload.matches || {};
   const cqMap      = payload.cq || {};
 
-  // Registry of searchable goalkeeper comboboxes
-  const comboRegistry = {};
-
-  const N_GRID = 400;
-  const X_SEQ = new Array(N_GRID);
-  const PRIOR_Y = new Array(N_GRID);
+  // Normal PDF & CDF
   const INV_SQRT_2PI = 1 / Math.sqrt(2 * Math.PI);
-
   function dnorm(x, mu, sd) {
     const z = (x - mu) / sd;
     return (INV_SQRT_2PI / sd) * Math.exp(-0.5 * z * z);
@@ -701,71 +1423,323 @@ cat(sprintf(
     return 0.5 * (1 + sign * erf);
   }
 
-  for (let i = 0; i < N_GRID; i++) {
-    const x = -0.2 + (0.4 * i) / (N_GRID - 1);
-    X_SEQ[i] = x;
-    PRIOR_Y[i] = dnorm(x, 0.0, PRIOR_SD);
-  }
+  // Hydrate unified per-keeper summary index (runs once in <15ms)
+  const keeperById = new Map();
+  const keepersByLeague = new Map();
 
-  function getBlueShade(val, minVal = 0, maxVal = 100) {
-    const pct = Math.max(0, Math.min((val - minVal) / Math.max(maxVal - minVal, 1), 1));
-    let r, g, b;
-    if (pct <= 0.5) {
-      const t = pct * 2;
-      r = Math.round(189 + t * (49 - 189));
-      g = Math.round(215 + t * (130 - 215));
-      b = Math.round(231 + t * (189 - 231));
-    } else {
-      const t = (pct - 0.5) * 2;
-      r = Math.round(49 + t * (8 - 49));
-      g = Math.round(130 + t * (81 - 130));
-      b = Math.round(189 + t * (156 - 189));
+  for (let i = 0; i < mappingRows.length; i++) {
+    const row = mappingRows[i];
+    const kid = String(row.keeper_id);
+    const lid = Number(row.league_id);
+    if (!keeperById.has(kid)) {
+      const st = streamMap[kid] || {};
+      const ml = matchesMap[kid] || {};
+      const cq = cqMap[kid] || {};
+
+      const sArr  = toArr(st.s).map(Number);
+      const muArr = toArr(st.m).map(Number);
+      const sdArr = toArr(st.sd).map(Number);
+      const gpArr = toArr(st.gp).map(Number);
+
+      const finalIdx = Math.max(0, sArr.length - 1);
+      const mu = sArr.length ? muArr[finalIdx] : 0;
+      const sd = sArr.length ? sdArr[finalIdx] : PRIOR_SD;
+
+      const cqBins = toArr(cq.b);
+      const cqSf   = toArr(cq.sf).map(Number);
+      const cqGa   = toArr(cq.ga).map(Number);
+      const cqSv   = toArr(cq.sv).map(Number);
+
+      const getSplit = (bin) => {
+        const idx = cqBins.indexOf(bin);
+        return idx >= 0 ? { sf: cqSf[idx] || 0, ga: cqGa[idx] || 0, sv: cqSv[idx] || 0 } : { sf: 0, ga: 0, sv: 0 };
+      };
+      const low  = getSplit("Low");
+      const med  = getSplit("Medium");
+      const high = getSplit("High");
+
+      const totalShots = low.sf + med.sf + high.sf;
+      const goalsAllowed = low.ga + med.ga + high.ga;
+
+      const rawDates = toArr(ml.d);
+      const rawFmt   = toArr(ml.df);
+      const rawX     = toArr(ml.x).map(Number);
+      const rawG     = toArr(ml.g).map(Number);
+      const rawGp    = toArr(ml.gp).map(Number);
+      const matchRows = [];
+      for (let m = 0; m < rawGp.length; m++) {
+        matchRows.push({
+          idx: m,
+          d: rawDates[m] ? String(rawDates[m]) : null,
+          df: rawFmt[m] ? String(rawFmt[m]) : "Unknown Date",
+          x: Number.isFinite(rawX[m]) ? rawX[m] : 0,
+          g: Number.isFinite(rawG[m]) ? rawG[m] : 0,
+          gp: Number.isFinite(rawGp[m]) ? rawGp[m] : 0
+        });
+      }
+      matchRows.sort((a, b) => {
+        if (a.d && b.d) return a.d < b.d ? -1 : (a.d > b.d ? 1 : a.idx - b.idx);
+        if (a.d && !b.d) return -1;
+        if (!a.d && b.d) return 1;
+        return a.idx - b.idx;
+      });
+      let runGp = 0;
+      for (let m = 0; m < matchRows.length; m++) {
+        runGp += matchRows[m].gp;
+        matchRows[m].cumGp = runGp;
+      }
+
+      const totalXgot = rawX.reduce((a, b) => a + (Number.isFinite(b) ? b : 0), 0);
+      const totalGp   = sArr.length ? gpArr[finalIdx] : matchRows.reduce((a, b) => a + b.gp, 0);
+      const totalMins = Number(row.total_minutes) || 0;
+      const ageNum    = (row.age !== null && row.age !== undefined && row.age !== "NA" && !isNaN(Number(row.age)))
+        ? Math.round(Number(row.age)) : null;
+
+      const nMatches   = matchRows.length;
+      const posMatches = matchRows.filter(m => m.gp > 0).length;
+      const cleanSheets = matchRows.filter(m => m.g === 0).length;
+      const axaPct     = nMatches > 0 ? (posMatches / nMatches) * 100 : 0;
+      const gp10Xgot   = totalXgot > 0.05 ? (totalGp / totalXgot) * 10 : 0;
+
+      const pAboveAvg  = (1 - pnorm(0, mu, Math.max(sd, 1e-6))) * 100;
+      const certaintyPct = Math.max(0, Math.min(99, (1 - (sd * sd) / (PRIOR_SD * PRIOR_SD)) * 100));
+
+      const svPct  = totalShots > 0 ? ((totalShots - goalsAllowed) / totalShots) * 100 : 0;
+      const xSvPct = totalShots > 0 ? Math.max(0, Math.min(100, (1 - totalXgot / totalShots) * 100)) : 0;
+      const avgShotXgot = totalShots > 0 ? totalXgot / totalShots : 0;
+
+      keeperById.set(kid, {
+        keeper_id: kid,
+        player_name: String(row.player_name || "Goalkeeper"),
+        team_name: String(row.team_name || "Unknown Club"),
+        _norm: normSearch((row.player_name || "") + " " + (row.team_name || "")),
+        age: ageNum,
+        total_minutes: totalMins,
+        qualified: totalMins >= QUAL_MIN_MINS,
+        leagues: [],
+        primary_league_id: lid,
+        mu,
+        sd,
+        ci_low: mu - 1.96 * sd,
+        ci_high: mu + 1.96 * sd,
+        p_above_avg: pAboveAvg,
+        certainty_pct: certaintyPct,
+        shots_faced: sArr.length ? sArr[finalIdx] : totalShots,
+        total_shots: totalShots,
+        goals_allowed: goalsAllowed,
+        total_xgot: totalXgot,
+        total_gp: totalGp,
+        gp_10xgot: gp10Xgot,
+        axa_pct: axaPct,
+        pos_matches: posMatches,
+        clean_sheets: cleanSheets,
+        n_matches: nMatches,
+        sv_pct: svPct,
+        x_sv_pct: xSvPct,
+        avg_shot_xgot: avgShotXgot,
+        cq_low: low,
+        cq_med: med,
+        cq_high: high,
+        matches: matchRows
+      });
     }
-    return `rgb(${r},${g},${b})`;
+    const kObj = keeperById.get(kid);
+    if (!kObj.leagues.includes(lid)) kObj.leagues.push(lid);
+    if (!keepersByLeague.has(lid)) keepersByLeague.set(lid, []);
+    if (!keepersByLeague.get(lid).some(x => x.keeper_id === kid)) {
+      keepersByLeague.get(lid).push(kObj);
+    }
   }
 
-  function toArr(v) {
-    if (v === undefined || v === null) return [];
-    return Array.isArray(v) ? v : [v];
-  }
-
-  function formatSigned(val, digits) {
-    const n = Number(val) || 0;
-    return (n >= 0 ? "+" : "") + n.toFixed(digits);
-  }
-
-  function buildStatLabel(dateStr, shotNum, cumXgot, cumGp, postMu, postSd) {
-    const avgQual = cumXgot / Math.max(shotNum, 1);
-    const qualDiff = avgQual - globalAvgXgot;
-    const credLower = postMu - 1.96 * postSd;
-    const credUpper = postMu + 1.96 * postSd;
-    return `<b>Date:</b> ${dateStr}<br><b>Shots Against:</b> ${shotNum}<br><b>Expected Goals (xGOT):</b> ${cumXgot.toFixed(2)}<br><b>Average xGOT:</b> ${avgQual.toFixed(2)} (${formatSigned(qualDiff, 2)} vs Global)<br><b>Goals Prevented:</b> ${formatSigned(cumGp, 2)}<br><b>Talent Estimate:</b> ${formatSigned(postMu, 2)}<br><b>95% Credible Interval:</b> [${formatSigned(credLower, 2)}, ${formatSigned(credUpper, 2)}]`;
-  }
-
-  function getFilteredKeepers(leagueFilterVal) {
-    const seen = new Set();
-    const out = [];
-    for (let i = 0; i < mappingRows.length; i++) {
-      const row = mappingRows[i];
-      const lid = Number(row.league_id);
-      let match = false;
-      if (leagueFilterVal === "all") match = true;
-      else if (leagueFilterVal === "intl") match = INTL_SET.has(lid);
-      else match = (lid === Number(leagueFilterVal));
-
-      if (match && !seen.has(row.keeper_id)) {
-        seen.add(row.keeper_id);
-        out.push(row);
+  // Resolve primary domestic league for each keeper
+  keeperById.forEach(k => {
+    let chosen = k.leagues[0];
+    for (let p = 0; p < DOMESTIC_PRIORITY.length; p++) {
+      if (k.leagues.includes(DOMESTIC_PRIORITY[p])) {
+        chosen = DOMESTIC_PRIORITY[p];
+        break;
       }
     }
-    return out;
+    if (!DOMESTIC_PRIORITY.includes(chosen)) {
+      const nonIntl = k.leagues.find(l => !INTL_SET.has(l) && l !== 696);
+      if (nonIntl !== undefined) chosen = nonIntl;
+    }
+    k.primary_league_id = chosen;
+  });
+
+  const allKeepersList = Array.from(keeperById.values()).sort((a, b) => a.player_name.localeCompare(b.player_name));
+
+  document.getElementById("gk_model_badge").textContent =
+    `${modelName} \u2022 ${allKeepersList.length.toLocaleString("en-US")} Keepers`;
+
+  function getFilteredKeepers(leagueFilterVal) {
+    let list;
+    if (leagueFilterVal === "all") {
+      list = allKeepersList.slice();
+    } else if (leagueFilterVal === "intl") {
+      const seen = new Set();
+      list = [];
+      INTL_SET.forEach(lid => {
+        (keepersByLeague.get(lid) || []).forEach(k => {
+          if (!seen.has(k.keeper_id)) { seen.add(k.keeper_id); list.push(k); }
+        });
+      });
+      list.sort((a, b) => a.player_name.localeCompare(b.player_name));
+    } else {
+      list = (keepersByLeague.get(Number(leagueFilterVal)) || []).slice()
+        .sort((a, b) => a.player_name.localeCompare(b.player_name));
+    }
+    return list;
   }
 
-  function getKeeperMeta(keeperId) {
-    return mappingRows.find(r => String(r.keeper_id) === String(keeperId)) || null;
+  function getQualifiedCohort(leagueFilterVal) {
+    const base = getFilteredKeepers(leagueFilterVal);
+    let qual = base.filter(k => k.qualified);
+    if (qual.length === 0) qual = base.slice();
+    qual.sort((a, b) => (b.mu - a.mu) || (a.sd - b.sd));
+    return qual;
   }
 
-  function populateLeagueSelect(selectId) {
+  function pickDefaultKeeperId(leagueFilterVal, offset = 0) {
+    const qual = getQualifiedCohort(leagueFilterVal);
+    if (qual.length === 0) return "";
+    return qual[Math.min(offset, qual.length - 1)].keeper_id;
+  }
+
+  function getBenchmarkInfo(keeper, leagueFilterVal, benchMode) {
+    let activeLgVal = leagueFilterVal;
+    if (benchMode === "global") {
+      activeLgVal = "all";
+    } else if (leagueFilterVal === "all") {
+      activeLgVal = String(keeper.primary_league_id);
+    }
+
+    const lgLabel = LEAGUE_SHORT_BY_ID[String(activeLgVal)] ||
+      (INTL_SET.has(Number(activeLgVal)) ? "Senior Intl" : "League");
+
+    const cohortAll = getFilteredKeepers(activeLgVal);
+    const qualCohort = cohortAll.filter(k => k.qualified).sort((a, b) => (b.mu - a.mu) || (a.sd - b.sd));
+    const rankCohort = qualCohort.length > 0 ? qualCohort : cohortAll.slice().sort((a, b) => (b.mu - a.mu) || (a.sd - b.sd));
+    const rankIdx = rankCohort.findIndex(k => k.keeper_id === keeper.keeper_id);
+    const pctl = ecdfPercentile(rankCohort.map(k => k.mu), keeper.mu);
+    const gp10Pctl = ecdfPercentile(rankCohort.map(k => k.gp_10xgot), keeper.gp_10xgot);
+    const axaPctl  = ecdfPercentile(rankCohort.map(k => k.axa_pct), keeper.axa_pct);
+
+    const isTargetLeague = (lid) => {
+      const nLid = Number(lid);
+      if (activeLgVal === "intl") return INTL_SET.has(nLid);
+      if (activeLgVal !== "all") return nLid === Number(activeLgVal);
+      return true;
+    };
+
+    const glCqMap = {};
+    globalCqRows.forEach(r => { glCqMap[r.cq_bin] = Number(r.avg_sv_pct) * 100; });
+
+    const lgCqAvg = {};
+    ["Low", "Medium", "High"].forEach(bin => {
+      if (activeLgVal === "all") {
+        lgCqAvg[bin] = glCqMap[bin] ?? 50;
+      } else {
+        let shots = 0, goals = 0;
+        leagueCqRows.forEach(r => {
+          if (r.cq_bin === bin && isTargetLeague(r.league_id)) {
+            shots += Number(r.shots);
+            goals += Number(r.goals);
+          }
+        });
+        lgCqAvg[bin] = shots > 0 ? (1 - goals / shots) * 100 : (glCqMap[bin] ?? 50);
+      }
+    });
+
+    let lgGp10 = Number(globalGpRow.avg_gp_10xgot) || 0;
+    let lgAxa  = Number(globalGpRow.avg_axa_pct) || 50;
+    if (activeLgVal !== "all") {
+      let sGp = 0, sX = 0, sPos = 0, sTot = 0;
+      leagueGpRows.forEach(r => {
+        if (isTargetLeague(r.league_id)) {
+          sGp += Number(r.sum_gp);
+          sX  += Number(r.sum_xgot);
+          sPos += Number(r.pos_cnt);
+          sTot += Number(r.tot_cnt);
+        }
+      });
+      if (sTot > 0) {
+        lgGp10 = (sGp / Math.max(sX, 0.1)) * 10;
+        lgAxa  = (sPos / sTot) * 100;
+      }
+    }
+
+    return {
+      activeLgVal,
+      cohortLabel: activeLgVal === "all" ? "Global" : lgLabel,
+      cohortSize: rankCohort.length,
+      rank: rankIdx >= 0 ? rankIdx + 1 : null,
+      qualified: keeper.qualified,
+      pctl,
+      gp10Pctl,
+      axaPctl,
+      lgCqAvg,
+      glCqAvg: glCqMap,
+      lgGp10,
+      lgAxa
+    };
+  }
+
+  // Logo cache for safe same-origin Canvas rendering
+  const logoImageCache = new Map();
+
+  function resolveClubBadge(teamName) {
+    if (CLUB_BADGES[teamName]) return CLUB_BADGES[teamName];
+    const norm = normSearch(teamName);
+    for (const [key, val] of Object.entries(CLUB_BADGES)) {
+      if (normSearch(key) === norm) return val;
+    }
+    return { logo: null, color: "#00747A" };
+  }
+
+  function getLoadedLogo(logoPath, onReady) {
+    if (!logoPath) return null;
+    const entry = logoImageCache.get(logoPath);
+    if (entry) {
+      if (entry.status === "loaded") return entry.img;
+      if (entry.status === "loading" && onReady) entry.waiters.push(onReady);
+      return null;
+    }
+    const img = new Image();
+    const rec = { status: "loading", img, waiters: onReady ? [onReady] : [] };
+    logoImageCache.set(logoPath, rec);
+    img.onload = () => {
+      rec.status = "loaded";
+      const ws = rec.waiters.slice();
+      rec.waiters.length = 0;
+      ws.forEach(fn => fn());
+    };
+    img.onerror = () => {
+      rec.status = "error";
+      rec.waiters.length = 0;
+    };
+    img.src = logoPath;
+    return null;
+  }
+
+  let fontsPromise = null;
+  function ensureFonts() {
+    if (!fontsPromise) {
+      const waitFonts = (document.fonts && document.fonts.ready)
+        ? Promise.all([
+            document.fonts.load("800 60px Assistant").catch(() => {}),
+            document.fonts.load("700 32px Assistant").catch(() => {}),
+            document.fonts.load("600 22px Assistant").catch(() => {}),
+            document.fonts.ready
+          ])
+        : Promise.resolve();
+      const timeout = new Promise(res => setTimeout(res, 1200));
+      fontsPromise = Promise.race([waitFonts, timeout]);
+    }
+    return fontsPromise;
+  }
+
+  function populateLeagueSelect(selectId, defaultVal = "9134") {
     const sel = document.getElementById(selectId);
     sel.innerHTML = "";
     LEAGUE_CHOICES.forEach(ch => {
@@ -774,7 +1748,11 @@ cat(sprintf(
       opt.textContent = ch.label;
       sel.appendChild(opt);
     });
+    sel.value = defaultVal;
   }
+
+  // Searchable combobox
+  const comboRegistry = {};
 
   function setupSearchableCombo(baseId, onSelectCallback) {
     const hiddenEl = document.getElementById(baseId);
@@ -791,7 +1769,7 @@ cat(sprintf(
     };
 
     function renderMenu(queryStr) {
-      const q = normSearch(queryStr);
+      const q = normSearch(queryStr).trim();
       state.filtered = q
         ? state.items.filter(k => k._norm.includes(q))
         : state.items;
@@ -805,30 +1783,38 @@ cat(sprintf(
         return;
       }
 
-      state.highlightIdx = Math.max(0, state.filtered.findIndex(k => String(k.keeper_id) === String(state.selectedId)));
-
+      state.highlightIdx = Math.max(0, state.filtered.findIndex(k => k.keeper_id === state.selectedId));
+      const frag = document.createDocumentFragment();
       state.filtered.forEach((k, idx) => {
         const div = document.createElement("div");
         div.className = "gk-search-option" + (idx === state.highlightIdx ? " active" : "");
-        div.textContent = k.player_name;
+        const nSpan = document.createElement("span");
+        nSpan.className = "gk-search-option-name";
+        nSpan.textContent = k.player_name;
+        const sSpan = document.createElement("span");
+        sSpan.className = "gk-search-option-sub";
+        sSpan.textContent = k.team_name;
+        div.appendChild(nSpan);
+        div.appendChild(sSpan);
         div.addEventListener("mousedown", (e) => {
           e.preventDefault();
           selectKeeper(k.keeper_id, k.player_name, true);
           closeMenu();
         });
-        menuEl.appendChild(div);
+        frag.appendChild(div);
       });
+      menuEl.appendChild(frag);
 
       const activeNode = menuEl.children[state.highlightIdx];
       if (activeNode) activeNode.scrollIntoView({ block: "nearest" });
     }
 
     function selectKeeper(id, name, triggerCallback) {
-      state.selectedId = String(id);
-      state.selectedLabel = String(name);
+      state.selectedId = String(id || "");
+      state.selectedLabel = String(name || "");
       hiddenEl.value = state.selectedId;
       inputEl.value = state.selectedLabel;
-      if (triggerCallback && onSelectCallback) onSelectCallback();
+      if (triggerCallback && onSelectCallback) onSelectCallback(state.selectedId);
     }
 
     function openMenu() {
@@ -845,20 +1831,15 @@ cat(sprintf(
       inputEl.value = state.selectedLabel;
     }
 
-    inputEl.addEventListener("focus", () => {
-      openMenu();
-    });
-
+    inputEl.addEventListener("focus", openMenu);
     inputEl.addEventListener("click", (e) => {
       e.stopPropagation();
       if (!menuEl.classList.contains("open")) openMenu();
     });
-
     inputEl.addEventListener("input", () => {
       if (!menuEl.classList.contains("open")) menuEl.classList.add("open");
       renderMenu(inputEl.value);
     });
-
     inputEl.addEventListener("keydown", (e) => {
       if (!menuEl.classList.contains("open")) return;
       if (e.key === "ArrowDown") {
@@ -877,8 +1858,8 @@ cat(sprintf(
         }
       } else if (e.key === "Enter") {
         e.preventDefault();
-        if (state.filtered.length > 0 && state.filtered[state.highlightIdx]) {
-          const picked = state.filtered[state.highlightIdx];
+        const picked = state.filtered[state.highlightIdx];
+        if (picked) {
           selectKeeper(picked.keeper_id, picked.player_name, true);
           closeMenu();
           inputEl.blur();
@@ -892,19 +1873,28 @@ cat(sprintf(
     wrapEl.addEventListener("click", (e) => e.stopPropagation());
 
     comboRegistry[baseId] = {
-      setItems: function(keepers, defaultIndex) {
+      setItems(keepers, preferredId, defaultIdx = 0) {
         state.items = keepers;
-        const existing = keepers.find(k => String(k.keeper_id) === String(state.selectedId));
+        const pref = preferredId ? keepers.find(k => k.keeper_id === preferredId) : null;
+        if (pref) {
+          selectKeeper(pref.keeper_id, pref.player_name, false);
+          return;
+        }
+        const existing = keepers.find(k => k.keeper_id === state.selectedId);
         if (existing) {
           selectKeeper(existing.keeper_id, existing.player_name, false);
         } else if (keepers.length > 0) {
-          const idx = Math.min(defaultIndex || 0, keepers.length - 1);
+          const idx = Math.min(defaultIdx || 0, keepers.length - 1);
           selectKeeper(keepers[idx].keeper_id, keepers[idx].player_name, false);
         } else {
           selectKeeper("", "", false);
         }
       },
-      closeMenu: closeMenu
+      setSelected(kid) {
+        const hit = state.items.find(k => k.keeper_id === kid);
+        if (hit) selectKeeper(hit.keeper_id, hit.player_name, false);
+      },
+      closeMenu
     };
   }
 
@@ -912,657 +1902,1861 @@ cat(sprintf(
     Object.keys(comboRegistry).forEach(k => comboRegistry[k].closeMenu());
   });
 
-  function updateKeeperSelect(leagueSelectId, gkSelectId, defaultIndex = 0) {
-    const leagueVal = document.getElementById(leagueSelectId).value;
-    const keepers = getFilteredKeepers(leagueVal);
-    if (comboRegistry[gkSelectId]) {
-      comboRegistry[gkSelectId].setItems(keepers, defaultIndex);
+  function renderTopList(containerId, leagueVal, activeKeeperId, onPick) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    const top = getQualifiedCohort(leagueVal).slice(0, 5);
+    el.innerHTML = "";
+    top.forEach((k, idx) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "gk-top-item" + (k.keeper_id === activeKeeperId ? " active" : "");
+      btn.innerHTML = `
+        <span class="gk-top-rank">#${idx + 1}</span>
+        <span class="gk-top-name">${escapeHtml(k.player_name)}<span class="gk-top-sub">${escapeHtml(k.team_name)} &bull; ${k.shots_faced} sh</span></span>
+        <span class="gk-top-val ${k.mu < 0 ? "neg" : ""}">${formatSigned(k.mu, 3)}</span>
+      `;
+      btn.addEventListener("click", () => onPick(k.keeper_id));
+      el.appendChild(btn);
+    });
+  }
+
+  // =========================================================================
+  // SHARED CANVAS PRIMITIVES
+  // =========================================================================
+  const THEMES = {
+    light: {
+      bg: "#F5F7FA",
+      cardBg: "#FFFFFF",
+      cardBorder: "#D9E1EA",
+      subBg: "#F8FAFC",
+      crestPlate: "#F4F6F9",
+      crestBorder: "#D9E1EA",
+      ink: "#0F1E2C",
+      inkSub: "#4B5C6E",
+      inkMuted: "#738496",
+      rule: "#E3E9F0",
+      ruleStrong: "#1D3549",
+      teal: "#00747A",
+      crimson: "#B83A3A",
+      priorStroke: "#7B8C9E",
+      priorFill: "rgba(123, 140, 158, 0.11)",
+      trackBg: "#E9EEF4",
+      needle: "#1D3549",
+      pillBg: "#EFF5F8",
+      pillBorder: "#CBD8E4",
+      dietHigh: "#C44536",
+      dietMed: "#E09F3E",
+      dietLow: "#5E86A8"
+    },
+    dark: {
+      bg: "#0E1B26",
+      cardBg: "#152635",
+      cardBorder: "#273F54",
+      subBg: "#1A2E40",
+      crestPlate: "#EDF2F7",
+      crestBorder: "#3A556E",
+      ink: "#F4F5EF",
+      inkSub: "#ADC0D1",
+      inkMuted: "#7D95AA",
+      rule: "#263D52",
+      ruleStrong: "#35536E",
+      teal: "#20B2AA",
+      crimson: "#E26A5A",
+      priorStroke: "#839BB0",
+      priorFill: "rgba(131, 155, 176, 0.12)",
+      trackBg: "#1F3549",
+      needle: "#EEEDCE",
+      pillBg: "#1B3144",
+      pillBorder: "#2E4A63",
+      dietHigh: "#DF6A58",
+      dietMed: "#E4A749",
+      dietLow: "#5C8DB8"
+    }
+  };
+
+  function roundRectPath(ctx, x, y, w, h, r) {
+    const rad = Math.min(r, w * 0.5, h * 0.5);
+    ctx.beginPath();
+    ctx.moveTo(x + rad, y);
+    ctx.lineTo(x + w - rad, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + rad);
+    ctx.lineTo(x + w, y + h - rad);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - rad, y + h);
+    ctx.lineTo(x + rad, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - rad);
+    ctx.lineTo(x, y + rad);
+    ctx.quadraticCurveTo(x, y, x + rad, y);
+    ctx.closePath();
+  }
+
+  function fillStrokeRoundRect(ctx, x, y, w, h, r, fill, stroke, lw = 2) {
+    roundRectPath(ctx, x, y, w, h, r);
+    if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+    if (stroke) { ctx.lineWidth = lw; ctx.strokeStyle = stroke; ctx.stroke(); }
+  }
+
+  function fitTextFont(ctx, text, maxW, weight, startPx, minPx, family = "Assistant, sans-serif") {
+    let px = startPx;
+    while (px > minPx) {
+      ctx.font = `${weight} ${px}px ${family}`;
+      if (ctx.measureText(text).width <= maxW) break;
+      px -= 2;
+    }
+    ctx.font = `${weight} ${px}px ${family}`;
+    return px;
+  }
+
+  function truncateText(ctx, text, maxW) {
+    if (ctx.measureText(text).width <= maxW) return text;
+    let t = text;
+    while (t.length > 2 && ctx.measureText(t + "\u2026").width > maxW) {
+      t = t.slice(0, -1);
+    }
+    return t + "\u2026";
+  }
+
+  function clubInitials(teamName) {
+    const words = String(teamName || "GK")
+      .replace(/\b(FC|WFC|AFC|SC|CF|W\.F\.C\.)\b/gi, "")
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+    if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
+    if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+    return "GK";
+  }
+
+  function drawClubCrest(ctx, teamName, cx, cy, size, theme, onImageLoaded) {
+    const badge = resolveClubBadge(teamName);
+    const half = size * 0.5;
+    const img = badge.logo ? getLoadedLogo(badge.logo, onImageLoaded) : null;
+    if (img && img.naturalWidth > 0 && img.naturalHeight > 0) {
+      // Crisp light neutral crest plate so dark club badges remain legible in Midnight Navy mode
+      fillStrokeRoundRect(ctx, cx - half, cy - half, size, size, 16, theme.crestPlate, theme.crestBorder, 2);
+      const pad = size * 0.13;
+      const box = size - pad * 2;
+      const ratio = Math.min(box / img.naturalWidth, box / img.naturalHeight);
+      const dw = img.naturalWidth * ratio;
+      const dh = img.naturalHeight * ratio;
+      ctx.drawImage(img, cx - dw * 0.5, cy - dh * 0.5, dw, dh);
+      return badge.color;
+    }
+
+    fillStrokeRoundRect(ctx, cx - half, cy - half, size, size, 16, theme.subBg, theme.cardBorder, 2);
+    ctx.save();
+    const sw = size * 0.62;
+    const sh = size * 0.68;
+    const sx = cx - sw * 0.5;
+    const sy = cy - sh * 0.5;
+    ctx.beginPath();
+    ctx.moveTo(sx, sy + 6);
+    ctx.lineTo(sx + sw, sy + 6);
+    ctx.lineTo(sx + sw, sy + sh * 0.58);
+    ctx.quadraticCurveTo(sx + sw, sy + sh * 0.88, cx, sy + sh);
+    ctx.quadraticCurveTo(sx, sy + sh * 0.88, sx, sy + sh * 0.58);
+    ctx.closePath();
+    ctx.fillStyle = badge.color || "#1D3549";
+    ctx.fill();
+    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = theme.cardBorder;
+    ctx.stroke();
+
+    ctx.fillStyle = "#FFFFFF";
+    ctx.font = `800 ${Math.round(size * 0.29)}px Assistant, sans-serif`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(clubInitials(teamName), cx, cy + 1);
+    ctx.restore();
+    return badge.color;
+  }
+
+  // =========================================================================
+  // TAB 1: SHOTSTOPPING POSTERIOR (NATIVE HIGH-DPI 60FPS CANVAS + LIVE HUD)
+  // =========================================================================
+  const postAnimState = {
+    keeper: null,
+    frames: [],
+    frameIdx: 0,
+    rafId: null,
+    lastTick: 0,
+    stepMs: 24,
+    yLimit: 15,
+    plotMeta: null
+  };
+
+  function stopPostAnim() {
+    if (postAnimState.rafId !== null) {
+      cancelAnimationFrame(postAnimState.rafId);
+      postAnimState.rafId = null;
     }
   }
 
-  // --- TAB 1: ANIMATED POSTERIOR PLOT ---
+  function updatePostHud(fIdx) {
+    const f = postAnimState.frames[fIdx];
+    if (!f) return;
+    const totalShots = postAnimState.frames[postAnimState.frames.length - 1].s;
+
+    document.getElementById("hud_shots").textContent = `Shot ${f.s} of ${totalShots}`;
+    document.getElementById("hud_date").textContent = f.d || "Unknown Date";
+
+    const gpEl = document.getElementById("hud_gp");
+    gpEl.textContent = formatSigned(f.gp, 2);
+    gpEl.style.color = f.gp >= 0 ? "#00747A" : "#B83A3A";
+    const avgQ = f.x / Math.max(f.s, 1);
+    document.getElementById("hud_xgot").textContent = `${f.x.toFixed(2)} xGOT (${avgQ.toFixed(2)}/shot)`;
+
+    const muEl = document.getElementById("hud_mu");
+    muEl.textContent = `${formatSigned(f.mu, 3)} GP/sh`;
+    muEl.style.color = f.mu >= 0 ? "#00747A" : "#B83A3A";
+    document.getElementById("hud_ci").textContent =
+      `${formatSigned(f.mu * 100, 1)}/100 sh \u2022 95% CI [${formatSigned(f.ciLo, 3)}, ${formatSigned(f.ciHi, 3)}]`;
+
+    const probEl = document.getElementById("hud_prob");
+    probEl.textContent = `${f.pAbove.toFixed(1)}% Above Avg`;
+    probEl.style.color = f.pAbove >= 60 ? "#00747A" : (f.pAbove <= 40 ? "#B83A3A" : "#1D3549");
+    document.getElementById("hud_cert").textContent = `Sample Certainty: ${Math.round(f.cert)}%`;
+
+    const scrub = document.getElementById("post_scrub_range");
+    scrub.value = String(fIdx);
+    document.getElementById("post_scrub_readout").textContent = `Shot ${f.s} (${f.d})`;
+  }
+
+  function drawPosteriorFrameCanvas(fIdx) {
+    const canvas = document.getElementById("gk_posterior_canvas");
+    const k = postAnimState.keeper;
+    const f = postAnimState.frames[fIdx];
+    if (!canvas || !k || !f) return;
+
+    postAnimState.frameIdx = fIdx;
+    updatePostHud(fIdx);
+
+    const W = 1800, H = 900;
+    const ctx = canvas.getContext("2d");
+    const theme = THEMES.light;
+
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillRect(0, 0, W, H);
+
+    // Header
+    ctx.save();
+    ctx.textBaseline = "alphabetic";
+    ctx.textAlign = "left";
+    ctx.fillStyle = theme.ink;
+    ctx.font = "800 34px Assistant, sans-serif";
+    const hdrName = `${k.player_name}  \u2022  ${k.team_name}`;
+    ctx.fillText(truncateText(ctx, hdrName, 1180), 68, 56);
+
+    ctx.fillStyle = theme.inkSub;
+    ctx.font = "600 20px Assistant, sans-serif";
+    ctx.fillText(`Live Posterior Evolution vs. ${baselineLabel}  (${modelName})`, 68, 86);
+
+    // Right shot badge
+    const totalShots = postAnimState.frames[postAnimState.frames.length - 1].s;
+    const shotTag = `SHOT ${f.s} OF ${totalShots}   \u2022   ${f.d.toUpperCase()}`;
+    ctx.font = "700 18px Assistant, sans-serif";
+    const tagW = Math.min(460, ctx.measureText(shotTag).width + 36);
+    fillStrokeRoundRect(ctx, W - 68 - tagW, 28, tagW, 40, 7, theme.pillBg, theme.pillBorder, 1.5);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = theme.ink;
+    ctx.fillText(shotTag, W - 68 - tagW * 0.5, 48);
+    ctx.restore();
+
+    // Plot box
+    const pX = 96, pW = W - 164;
+    const pTop = 148, pBot = 716;
+    const pH = pBot - pTop;
+    const xMin = -0.145, xMax = 0.145;
+    const xToPx = (x) => pX + ((x - xMin) / (xMax - xMin)) * pW;
+    const yToPx = (y) => pBot - (y / postAnimState.yLimit) * pH;
+
+    postAnimState.plotMeta = { x0: pX, x1: pX + pW, y0: pTop, y1: pBot, xMin, xMax, mu: f.mu, sd: f.sd };
+
+    ctx.save();
+    // Vertical gridlines
+    const ticks = [-0.12, -0.08, -0.04, 0, 0.04, 0.08, 0.12];
+    ticks.forEach(t => {
+      const tx = xToPx(t);
+      ctx.strokeStyle = (t === 0) ? theme.needle : theme.rule;
+      ctx.lineWidth = (t === 0) ? 2 : 1.2;
+      if (t === 0) ctx.setLineDash([7, 5]); else ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.moveTo(tx, pTop);
+      ctx.lineTo(tx, pBot);
+      ctx.stroke();
+    });
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = theme.inkMuted;
+    ctx.font = "700 17px Assistant, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "bottom";
+    ctx.fillText("Pro Avg (0.000)", xToPx(0), pTop - 8);
+
+    // Legend top-right
+    const isPos = f.mu >= 0;
+    const curveCol = isPos ? theme.teal : theme.crimson;
+    const legR = pX + pW;
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    ctx.font = "600 17px Assistant, sans-serif";
+    ctx.strokeStyle = theme.priorStroke;
+    ctx.lineWidth = 2.5;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    ctx.moveTo(legR - 360, pTop + 12);
+    ctx.lineTo(legR - 324, pTop + 12);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = theme.inkSub;
+    ctx.fillText("Pro Baseline Prior", legR - 314, pTop + 12);
+
+    ctx.strokeStyle = curveCol;
+    ctx.lineWidth = 3.5;
+    ctx.beginPath();
+    ctx.moveTo(legR - 150, pTop + 12);
+    ctx.lineTo(legR - 114, pTop + 12);
+    ctx.stroke();
+    ctx.fillStyle = theme.ink;
+    ctx.fillText("Live Posterior", legR - 104, pTop + 12);
+
+    // Draw Prior
+    const steps = 280;
+    ctx.beginPath();
+    ctx.moveTo(xToPx(xMin), pBot);
+    for (let i = 0; i <= steps; i++) {
+      const xv = xMin + ((xMax - xMin) * i) / steps;
+      ctx.lineTo(xToPx(xv), yToPx(dnorm(xv, 0, PRIOR_SD)));
+    }
+    ctx.lineTo(xToPx(xMax), pBot);
+    ctx.closePath();
+    ctx.fillStyle = theme.priorFill;
+    ctx.fill();
+
+    ctx.beginPath();
+    for (let i = 0; i <= steps; i++) {
+      const xv = xMin + ((xMax - xMin) * i) / steps;
+      const py = yToPx(dnorm(xv, 0, PRIOR_SD));
+      if (i === 0) ctx.moveTo(xToPx(xv), py); else ctx.lineTo(xToPx(xv), py);
+    }
+    ctx.setLineDash([7, 5]);
+    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = theme.priorStroke;
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw Posterior
+    const grad = ctx.createLinearGradient(0, pTop, 0, pBot);
+    grad.addColorStop(0, isPos ? "rgba(0, 116, 122, 0.34)" : "rgba(184, 58, 58, 0.32)");
+    grad.addColorStop(1, isPos ? "rgba(0, 116, 122, 0.03)" : "rgba(184, 58, 58, 0.03)");
+
+    ctx.beginPath();
+    ctx.moveTo(xToPx(xMin), pBot);
+    for (let i = 0; i <= steps; i++) {
+      const xv = xMin + ((xMax - xMin) * i) / steps;
+      ctx.lineTo(xToPx(xv), yToPx(dnorm(xv, f.mu, f.sd)));
+    }
+    ctx.lineTo(xToPx(xMax), pBot);
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    ctx.beginPath();
+    for (let i = 0; i <= steps; i++) {
+      const xv = xMin + ((xMax - xMin) * i) / steps;
+      const py = yToPx(dnorm(xv, f.mu, f.sd));
+      if (i === 0) ctx.moveTo(xToPx(xv), py); else ctx.lineTo(xToPx(xv), py);
+    }
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = curveCol;
+    ctx.stroke();
+
+    // Peak line & pill
+    const pkX = xToPx(f.mu);
+    const pkY = yToPx(f.peakY);
+    ctx.setLineDash([4, 4]);
+    ctx.lineWidth = 2.2;
+    ctx.strokeStyle = curveCol;
+    ctx.beginPath();
+    ctx.moveTo(pkX, pkY);
+    ctx.lineTo(pkX, pBot);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.beginPath();
+    ctx.arc(pkX, pkY, 6, 0, Math.PI * 2);
+    ctx.fillStyle = curveCol;
+    ctx.fill();
+
+    const muLbl = formatSigned(f.mu, 3);
+    fillStrokeRoundRect(ctx, pkX - 40, Math.max(pTop + 6, pkY - 38), 80, 26, 5, curveCol, null);
+    ctx.fillStyle = "#FFFFFF";
+    ctx.font = "700 15px Assistant, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(muLbl, pkX, Math.max(pTop + 19, pkY - 25));
+
+    // Baseline + 95% CI bracket
+    ctx.strokeStyle = theme.ruleStrong;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(pX, pBot);
+    ctx.lineTo(pX + pW, pBot);
+    ctx.stroke();
+
+    const ciX0 = Math.max(pX, xToPx(f.ciLo));
+    const ciX1 = Math.min(pX + pW, xToPx(f.ciHi));
+    const ciY = pBot + 20;
+    ctx.strokeStyle = curveCol;
+    ctx.lineWidth = 5;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(ciX0, ciY);
+    ctx.lineTo(ciX1, ciY);
+    ctx.stroke();
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(ciX0, ciY - 7); ctx.lineTo(ciX0, ciY + 7);
+    ctx.moveTo(ciX1, ciY - 7); ctx.lineTo(ciX1, ciY + 7);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(pkX, ciY, 6.5, 0, Math.PI * 2);
+    ctx.fillStyle = curveCol;
+    ctx.fill();
+
+    // X ticks & title
+    ctx.fillStyle = theme.inkSub;
+    ctx.font = "600 18px Assistant, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    ticks.forEach(t => {
+      const lbl = t === 0 ? "0.00 (Avg)" : (t > 0 ? "+" + t.toFixed(2) : "\u2212" + Math.abs(t).toFixed(2));
+      ctx.fillText(lbl, xToPx(t), pBot + 38);
+    });
+    ctx.fillStyle = theme.inkMuted;
+    ctx.font = "700 17px Assistant, sans-serif";
+    ctx.fillText("\u2190 Below Average   \u2022   True Talent Estimate (Calibrated Goals Prevented per Shot)   \u2022   Elite Shotstopper \u2192", pX + pW * 0.5, pBot + 70);
+
+    // Compact telemetry footer inside PNG
+    fillStrokeRoundRect(ctx, 68, 822, W - 136, 56, 8, theme.subBg, theme.cardBorder, 1.5);
+    const footItems = [
+      `GOALS PREVENTED: ${formatSigned(f.gp, 2)} (${f.x.toFixed(2)} xGOT)`,
+      `TALENT: ${formatSigned(f.mu * 100, 2)} / 100 SHOTS`,
+      `PROB ABOVE AVG: ${f.pAbove.toFixed(1)}%`,
+      `SAMPLE CERTAINTY: ${Math.round(f.cert)}%`,
+      `WOSO.LIVE`
+    ];
+    ctx.textBaseline = "middle";
+    ctx.font = "700 16px Assistant, sans-serif";
+    const segW = (W - 160) / footItems.length;
+    footItems.forEach((txt, i) => {
+      ctx.fillStyle = i === footItems.length - 1 ? theme.teal : theme.ink;
+      ctx.textAlign = "center";
+      ctx.fillText(txt, 80 + segW * (i + 0.5), 850);
+    });
+    ctx.restore();
+  }
+
+  function startPostPlayback(fromBeginning) {
+    stopPostAnim();
+    const n = postAnimState.frames.length;
+    if (n <= 1) return;
+    if (fromBeginning || postAnimState.frameIdx >= n - 1) {
+      drawPosteriorFrameCanvas(0);
+    }
+    postAnimState.stepMs = Math.max(14, Math.min(50, Math.round(3200 / n)));
+    postAnimState.lastTick = performance.now();
+
+    const stepLoop = (now) => {
+      if (now - postAnimState.lastTick >= postAnimState.stepMs) {
+        const adv = Math.max(1, Math.floor((now - postAnimState.lastTick) / postAnimState.stepMs));
+        const nextIdx = Math.min(n - 1, postAnimState.frameIdx + adv);
+        postAnimState.lastTick = now;
+        drawPosteriorFrameCanvas(nextIdx);
+        if (nextIdx >= n - 1) {
+          stopPostAnim();
+          return;
+        }
+      }
+      postAnimState.rafId = requestAnimationFrame(stepLoop);
+    };
+    postAnimState.rafId = requestAnimationFrame(stepLoop);
+  }
+
   function renderPosteriorPlot() {
+    stopPostAnim();
     const gkId = document.getElementById("gk_select").value;
+    const leagueVal = document.getElementById("league_filter").value;
+    const keeper = keeperById.get(gkId);
+    renderTopList("post_top_list", leagueVal, gkId, (pickedId) => {
+      comboRegistry["gk_select"].setSelected(pickedId);
+      renderPosteriorPlot();
+    });
+
     const st = streamMap[gkId];
-    if (!st) return;
+    if (!st || !keeper) return;
 
-    const sArr  = toArr(st.s);
-    const muArr = toArr(st.m);
-    const sdArr = toArr(st.sd);
-    const gpArr = toArr(st.gp);
-    const xArr  = toArr(st.x);
+    const sArr  = toArr(st.s).map(Number);
+    const muArr = toArr(st.m).map(Number);
+    const sdArr = toArr(st.sd).map(Number);
+    const gpArr = toArr(st.gp).map(Number);
+    const xArr  = toArr(st.x).map(Number);
     const dArr  = toArr(st.d);
-
     const nFrames = sArr.length;
     if (nFrames === 0) return;
 
-    const meta = getKeeperMeta(gkId);
-    const selectedName = (meta && meta.player_name) ? meta.player_name : "Goalkeeper";
-    const safeName = escapeHtml(selectedName);
-
     let maxY = Math.max(5.0, dnorm(0.0, 0.0, PRIOR_SD));
-    const frameCurves = new Array(nFrames);
-    const peakYs = new Array(nFrames);
-    const statLabels = new Array(nFrames);
-
-    for (let f = 0; f < nFrames; f++) {
-      const mu = Number(muArr[f]);
-      const sd = Number(sdArr[f]);
-      const yVec = new Array(N_GRID);
-      for (let i = 0; i < N_GRID; i++) {
-        const yVal = dnorm(X_SEQ[i], mu, sd);
-        yVec[i] = yVal;
-        if (yVal > maxY) maxY = yVal;
-      }
-      frameCurves[f] = yVec;
-      peakYs[f] = dnorm(mu, mu, sd);
-      statLabels[f] = buildStatLabel(dArr[f] || "Unknown Date", Number(sArr[f]), Number(xArr[f] || 0), Number(gpArr[f] || 0), mu, sd);
-    }
-
-    const yLimit = Math.max(maxY * 1.2, 5.0);
-    const frameDur = Math.max(18, Math.min(65, Math.round(3200 / Math.max(nFrames, 1))));
-
-    const initIdx = 0;
-    const initMu = Number(muArr[initIdx]);
-
-    const traces = [
-      {
-        x: [initMu, initMu],
-        y: [0, peakYs[initIdx]],
-        type: "scatter",
-        mode: "lines",
-        line: { color: "#00747A", dash: "dot", width: 2 },
-        hoverinfo: "none",
-        showlegend: false
-      },
-      {
-        x: X_SEQ,
-        y: PRIOR_Y,
-        type: "scatter",
-        mode: "lines",
-        line: { color: "#666666", dash: "dash", width: 2 },
-        fill: "tozeroy",
-        fillcolor: "rgba(136,136,136,0.2)",
-        name: baselineLabel,
-        hoverinfo: "none",
-        showlegend: false
-      },
-      {
-        x: X_SEQ,
-        y: frameCurves[initIdx],
-        type: "scatter",
-        mode: "lines",
-        line: { color: "#00747A", width: 3 },
-        fill: "tozeroy",
-        fillcolor: "rgba(0,116,122,0.4)",
-        name: "Keeper's Live Estimate",
-        hoverinfo: "none",
-        showlegend: false
-      },
-      {
-        x: [-0.145],
-        y: [yLimit * 0.70],
-        type: "scatter",
-        mode: "text",
-        text: [statLabels[initIdx]],
-        textposition: "middle right",
-        textfont: { family: "Assistant", size: 14, color: "#111111" },
-        hoverinfo: "none",
-        showlegend: false
-      }
-    ];
-
     const frames = new Array(nFrames);
-    const sliderSteps = new Array(nFrames);
 
     for (let f = 0; f < nFrames; f++) {
-      const fName = String(sArr[f]);
-      const mu = Number(muArr[f]);
+      const mu = muArr[f];
+      const sd = sdArr[f];
+      const peakY = dnorm(mu, mu, sd);
+      if (peakY > maxY) maxY = peakY;
       frames[f] = {
-        name: fName,
-        data: [
-          { x: [mu, mu], y: [0, peakYs[f]] },
-          { x: X_SEQ, y: frameCurves[f] },
-          { x: [-0.145], y: [yLimit * 0.70], text: [statLabels[f]] }
-        ],
-        traces: [0, 2, 3]
-      };
-
-      sliderSteps[f] = {
-        label: fName,
-        method: "animate",
-        args: [[fName], { mode: "immediate", frame: { duration: frameDur, redraw: false }, transition: { duration: frameDur } }]
+        s: sArr[f],
+        mu,
+        sd,
+        ciLo: mu - 1.96 * sd,
+        ciHi: mu + 1.96 * sd,
+        gp: gpArr[f] || 0,
+        x: xArr[f] || 0,
+        d: dArr[f] || "Unknown Date",
+        pAbove: (1 - pnorm(0, mu, Math.max(sd, 1e-6))) * 100,
+        cert: Math.max(0, Math.min(99, (1 - (sd * sd) / (PRIOR_SD * PRIOR_SD)) * 100)),
+        peakY
       };
     }
 
-    const layout = {
-      title: {
-        text: `<b>${safeName} | Shotstopping Performance</b><br><sup>Grey = ${baselineLabel} | Teal = Live Keeper Estimate</sup>`,
-        font: { family: "Assistant", size: 18 }
-      },
-      margin: { t: 90, b: 110, l: 55, r: 50 },
-      xaxis: {
-        title: "<b>True Talent Estimate (Calibrated Goals Prevented per Shot)</b><br>\u2190 Below Average | Elite Shotstopper \u2192",
-        range: [-0.15, 0.15],
-        tickvals: [-0.15, -0.10, -0.05, 0, 0.05, 0.10, 0.15],
-        ticktext: ["-0.150", "-0.100", "-0.050", "0.000", "+0.050", "+0.100", "+0.150"],
-        zeroline: false
-      },
-      yaxis: {
-        title: "Certainty (Density)",
-        range: [0, yLimit],
-        showgrid: false,
-        zeroline: false
-      },
-      showlegend: false,
-      font: { family: "Assistant" },
-      updatemenus: [{
-        type: "buttons",
-        showactive: false,
-        x: 0,
-        y: -0.22,
-        xanchor: "left",
-        yanchor: "top",
-        direction: "left",
-        pad: { t: 0, r: 10 },
-        buttons: [
-          {
-            label: "Play",
-            method: "animate",
-            args: [null, { fromcurrent: true, frame: { duration: frameDur, redraw: false }, transition: { duration: frameDur } }]
-          },
-          {
-            label: "Pause",
-            method: "animate",
-            args: [[null], { mode: "immediate", frame: { duration: 0, redraw: false }, transition: { duration: 0 } }]
-          }
-        ]
-      }],
-      sliders: [{
-        active: 0,
-        steps: sliderSteps,
-        x: 0.12,
-        len: 0.88,
-        y: -0.20,
-        xanchor: "left",
-        yanchor: "top",
-        currentvalue: {
-          visible: true,
-          prefix: "Timeline: Shot ",
-          xanchor: "right",
-          font: { color: "#00747A", size: 14, family: "Assistant" }
-        },
-        transition: { duration: frameDur }
-      }]
-    };
+    postAnimState.keeper = keeper;
+    postAnimState.frames = frames;
+    postAnimState.yLimit = Math.max(maxY * 1.24, 5.0);
 
-    const el = document.getElementById("gk_posterior_plot");
-    Plotly.purge(el);
-    Plotly.newPlot(el, traces, layout, { displayModeBar: false, responsive: true }).then(() => {
-      Plotly.addFrames(el, frames);
+    const scrub = document.getElementById("post_scrub_range");
+    scrub.min = "0";
+    scrub.max = String(nFrames - 1);
+
+    ensureFonts().then(() => {
+      drawPosteriorFrameCanvas(nFrames - 1);
     });
   }
 
-  // --- TAB 2: HEAD-TO-HEAD COMPARISON PLOT ---
-  function renderCompPlot() {
-    const gkA = document.getElementById("comp_gk_a").value;
-    const gkB = document.getElementById("comp_gk_b").value;
-    if (!gkA || !gkB) return;
+  // =========================================================================
+  // TAB 3: SHAREABLE SAVE PLAYER CARD (2400 x 1500 HIGH-DPI CANVAS)
+  // =========================================================================
+  let saveTheme = "light";
+  let saveBench = "league";
+  let saveHitboxes = [];
+  let savePlotMeta = null;
 
-    const stA = streamMap[gkA];
-    const stB = streamMap[gkB];
-    if (!stA || !stB) return;
-
-    const sA = toArr(stA.s), muA = toArr(stA.m), sdA = toArr(stA.sd), gpA = toArr(stA.gp);
-    const sB = toArr(stB.s), muB = toArr(stB.m), sdB = toArr(stB.sd), gpB = toArr(stB.gp);
-
-    const idxA = sA.length - 1;
-    const idxB = sB.length - 1;
-    if (idxA < 0 || idxB < 0) return;
-
-    const fMuA = Number(muA[idxA]), fSdA = Number(sdA[idxA]), fShotsA = Number(sA[idxA]), fGpA = Number(gpA[idxA]);
-    const fMuB = Number(muB[idxB]), fSdB = Number(sdB[idxB]), fShotsB = Number(sB[idxB]), fGpB = Number(gpB[idxB]);
-
-    const metaA = getKeeperMeta(gkA);
-    const metaB = getKeeperMeta(gkB);
-    const nameA = (metaA && metaA.player_name) ? metaA.player_name : "Goalkeeper A";
-    const nameB = (metaB && metaB.player_name) ? metaB.player_name : "Goalkeeper B";
-    const safeNameA = escapeHtml(nameA);
-    const safeNameB = escapeHtml(nameB);
-
-    const yA = new Array(N_GRID);
-    const yB = new Array(N_GRID);
-    let maxY = 5.0;
-
-    for (let i = 0; i < N_GRID; i++) {
-      yA[i] = dnorm(X_SEQ[i], fMuA, fSdA);
-      yB[i] = dnorm(X_SEQ[i], fMuB, fSdB);
-      if (yA[i] > maxY) maxY = yA[i];
-      if (yB[i] > maxY) maxY = yB[i];
-    }
-
-    const yLimit = Math.max(maxY * 1.2, 5.0);
-
-    const labelA = `<b>${safeNameA}</b><br>Shots Faced: ${fShotsA}<br>Goals Prevented: ${formatSigned(fGpA, 2)}<br>Talent Est: ${formatSigned(fMuA, 2)}`;
-    const labelB = `<b>${safeNameB}</b><br>Shots Faced: ${fShotsB}<br>Goals Prevented: ${formatSigned(fGpB, 2)}<br>Talent Est: ${formatSigned(fMuB, 2)}`;
-
-    const diffSd = Math.sqrt(fSdA * fSdA + fSdB * fSdB);
-    const probA = (1 - pnorm(0, fMuA - fMuB, diffSd)) * 100;
-    const probCaption = (probA >= 50)
-      ? `<i>${safeNameA} is ${probA.toFixed(1)}% likely to be a better true shotstopper than ${safeNameB}.</i>`
-      : `<i>${safeNameB} is ${(100 - probA).toFixed(1)}% likely to be a better true shotstopper than ${safeNameA}.</i>`;
-
-    const traces = [
-      {
-        x: X_SEQ, y: yA, type: "scatter", mode: "lines",
-        line: { color: "#00747A", width: 3 },
-        fill: "tozeroy", fillcolor: "rgba(0,116,122,0.4)",
-        name: nameA, hoverinfo: "none"
-      },
-      {
-        x: X_SEQ, y: yB, type: "scatter", mode: "lines",
-        line: { color: "#D6604D", width: 3 },
-        fill: "tozeroy", fillcolor: "rgba(214,96,77,0.4)",
-        name: nameB, hoverinfo: "none"
-      },
-      {
-        x: [fMuA, fMuA], y: [0, dnorm(fMuA, fMuA, fSdA)],
-        type: "scatter", mode: "lines",
-        line: { color: "#00747A", dash: "dot", width: 2 },
-        showlegend: false, hoverinfo: "none"
-      },
-      {
-        x: [fMuB, fMuB], y: [0, dnorm(fMuB, fMuB, fSdB)],
-        type: "scatter", mode: "lines",
-        line: { color: "#D6604D", dash: "dot", width: 2 },
-        showlegend: false, hoverinfo: "none"
-      },
-      {
-        x: [-0.145], y: [yLimit * 0.88],
-        type: "scatter", mode: "text", text: [labelA],
-        textposition: "middle right",
-        textfont: { family: "Assistant", size: 13, color: "#00747A" },
-        showlegend: false, hoverinfo: "none"
-      },
-      {
-        x: [-0.145], y: [yLimit * 0.60],
-        type: "scatter", mode: "text", text: [labelB],
-        textposition: "middle right",
-        textfont: { family: "Assistant", size: 13, color: "#D6604D" },
-        showlegend: false, hoverinfo: "none"
-      }
-    ];
-
-    const layout = {
-      title: {
-        text: "<b>Goalkeeper Head-to-Head Comparison</b><br><sup>Final Posterior Distributions</sup>",
-        font: { family: "Assistant", size: 18 }
-      },
-      margin: { t: 90, b: 170, l: 55, r: 50 },
-      xaxis: {
-        title: "<b>True Talent Estimate (Calibrated Goals Prevented per Shot)</b><br>\u2190 Below Average | Elite Shotstopper \u2192",
-        range: [-0.15, 0.15],
-        tickvals: [-0.15, -0.10, -0.05, 0, 0.05, 0.10, 0.15],
-        ticktext: ["-0.150", "-0.100", "-0.050", "0.000", "+0.050", "+0.100", "+0.150"],
-        zeroline: false
-      },
-      yaxis: {
-        title: "Certainty (Density)",
-        range: [0, yLimit],
-        showgrid: false,
-        zeroline: false
-      },
-      legend: { orientation: "h", x: 0.5, xanchor: "center", y: -0.22, yanchor: "top" },
-      annotations: [{
-        x: 0.5, y: -0.38, xref: "paper", yref: "paper",
-        text: probCaption, showarrow: false,
-        font: { family: "Assistant", size: 13, color: "#555555" }
-      }],
-      font: { family: "Assistant" }
-    };
-
-    Plotly.react("gk_comp_plot", traces, layout, { displayModeBar: false, responsive: true });
-  }
-
-  // --- TAB 3: SAVE PROFILE DASHBOARD ---
-  function renderSaveProfile() {
+  function drawPlayerCardCanvas() {
+    const canvas = document.getElementById("save_player_canvas");
     const gkId = document.getElementById("save_gk").value;
-    const saveLeague = document.getElementById("save_league").value;
-    if (!gkId) return;
+    const leagueVal = document.getElementById("save_league").value;
+    const keeper = keeperById.get(gkId);
+    if (!canvas || !keeper) return;
 
-    const meta = getKeeperMeta(gkId);
-    if (!meta) return;
+    renderTopList("save_top_list", leagueVal, gkId, (pickedId) => {
+      comboRegistry["save_gk"].setSelected(pickedId);
+      renderSaveProfile();
+    });
 
-    const demoEl = document.getElementById("save_demographics_ui");
-    const ageStr = (meta.age === null || meta.age === undefined || isNaN(meta.age)) ? "N/A" : Math.round(meta.age);
-    const safePlayer = escapeHtml(String(meta.player_name).toUpperCase());
-    const safeTeam = escapeHtml(String(meta.team_name).toUpperCase());
-    demoEl.innerHTML = `
-      <div class="save-demo-grid">
-        <div style="line-height: 1.1; margin-top: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-          <span style="color:#AAAAAA; font-size:13px;">Player</span><br>
-          <span style="font-size:24px; font-weight:bold; color:#FFFFFF;">${safePlayer}</span>
-        </div>
-        <div style="line-height: 1.1; margin-top: 20px; white-space: nowrap;">
-          <span style="color:#AAAAAA; font-size:13px;">Age:</span>
-          <span style="font-size:18px; font-weight:bold; color:#FFFFFF;"> ${ageStr}</span>
-        </div>
-        <div style="line-height: 1.1; margin-top: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-          <span style="color:#AAAAAA; font-size:13px;">Team:</span>
-          <span style="font-size:18px; font-weight:bold; color:#FFFFFF;"> ${safeTeam}</span>
-        </div>
-      </div>
-    `;
+    const bench = getBenchmarkInfo(keeper, leagueVal, saveBench);
+    document.getElementById("save_cohort_caption").textContent =
+      `Benchmark: ${bench.cohortLabel} (${bench.cohortSize} qualified 450+ min)`;
 
-    const mLog = matchesMap[gkId] || { d: [], df: [], x: [], g: [], gp: [] };
-    const mDates = toArr(mLog.d);
-    const mDatesFmt = toArr(mLog.df);
-    const mXgot = toArr(mLog.x).map(Number);
-    const mGp = toArr(mLog.gp).map(Number);
+    const theme = THEMES[saveTheme] || THEMES.light;
+    const W = 2400, H = 1500;
+    const ctx = canvas.getContext("2d");
+    saveHitboxes = [];
+    savePlotMeta = null;
 
-    const cqRaw = cqMap[gkId] || { b: [], sf: [], ga: [], sv: [] };
-    const cqBins = toArr(cqRaw.b);
-    const cqSf   = toArr(cqRaw.sf).map(Number);
-    const cqSv   = toArr(cqRaw.sv).map(Number);
+    // 1. Canvas Background + Club Accent Bar
+    ctx.fillStyle = theme.bg;
+    ctx.fillRect(0, 0, W, H);
 
-    const getSplit = (binName) => {
-      const idx = cqBins.indexOf(binName);
-      return idx >= 0 ? { sf: cqSf[idx], sv: cqSv[idx] } : { sf: 0, sv: 0 };
-    };
+    const clubBadge = resolveClubBadge(keeper.team_name);
+    ctx.fillStyle = clubBadge.color || theme.teal;
+    ctx.fillRect(0, 0, W, 11);
 
-    const lowSplit  = getSplit("Low");
-    const medSplit  = getSplit("Medium");
-    const highSplit = getSplit("High");
+    // 2. Masthead (y: 44..198)
+    const redrawSafe = () => requestAnimationFrame(drawPlayerCardCanvas);
+    drawClubCrest(ctx, keeper.team_name, 124, 116, 120, theme, redrawSafe);
 
-    const totalMinutes = Math.max(Number(meta.total_minutes) || 1, 1);
-    const p90Factor = 90 / totalMinutes;
+    ctx.save();
+    ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
+    const nameUpper = keeper.player_name.toUpperCase();
+    fitTextFont(ctx, nameUpper, 1260, 800, 62, 38);
+    ctx.fillStyle = theme.ink;
+    ctx.fillText(nameUpper, 212, 110);
 
-    const totalShots = lowSplit.sf + medSplit.sf + highSplit.sf;
-    const totalXgot  = mXgot.reduce((a, b) => a + b, 0);
+    const metaParts = [keeper.team_name.toUpperCase()];
+    const lgDisp = LEAGUE_SHORT_BY_ID[String(keeper.primary_league_id)] ||
+      (INTL_SET.has(Number(keeper.primary_league_id)) ? "SENIOR INTL" : "");
+    if (lgDisp) metaParts.push(lgDisp.toUpperCase());
+    if (keeper.age !== null) metaParts.push(`AGE ${keeper.age}`);
+    metaParts.push(`${Math.round(keeper.total_minutes).toLocaleString("en-US")} MINS`);
+    metaParts.push(`${keeper.n_matches} ${plural(keeper.n_matches, "MATCH", "MATCHES")}`);
+    const metaStr = metaParts.join("   \u2022   ");
+    ctx.fillStyle = theme.inkSub;
+    ctx.font = "600 24px Assistant, sans-serif";
+    ctx.fillText(truncateText(ctx, metaStr, 1260), 212, 152);
+    ctx.restore();
 
-    const shotsP90 = totalShots * p90Factor;
-    const xgotP90  = totalXgot * p90Factor;
-    const lowP90   = lowSplit.sf * p90Factor;
-    const medP90   = medSplit.sf * p90Factor;
-    const highP90  = highSplit.sf * p90Factor;
+    // Right Masthead: SAVE Mark + Cohort Rank/Pctl Badge
+    ctx.save();
+    ctx.textAlign = "right";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillStyle = theme.ink;
+    ctx.font = "800 42px Assistant, sans-serif";
+    ctx.fillText("SAVE", 2208, 92);
+    ctx.fillStyle = theme.teal;
+    ctx.font = "700 24px Assistant, sans-serif";
+    ctx.fillText("PROFILE", 2336, 92);
 
-    const drawTotal = (totalShots / Math.max(totalShots, 200)) * 100;
-    const drawShots = (shotsP90 / Math.max(shotsP90, 8)) * 100;
-    const drawXgot  = (xgotP90 / Math.max(xgotP90, 2.5)) * 100;
-    const drawHigh  = (highP90 / Math.max(shotsP90, 8)) * 100;
-    const drawMed   = (medP90 / Math.max(shotsP90, 8)) * 100;
-    const drawLow   = (lowP90 / Math.max(shotsP90, 8)) * 100;
+    const rankStr = bench.qualified && bench.rank !== null
+      ? `${getOrdinalSuffix(bench.pctl).toUpperCase()} PCTL   \u2022   #${bench.rank} OF ${bench.cohortSize} IN ${bench.cohortLabel.toUpperCase()}`
+      : `UNQUALIFIED (<450 MIN)   \u2022   ${bench.cohortLabel.toUpperCase()} BENCHMARK`;
+    ctx.font = "700 21px Assistant, sans-serif";
+    const pillW = Math.min(760, Math.max(380, ctx.measureText(rankStr).width + 46));
+    const pillX = 2336 - pillW;
+    fillStrokeRoundRect(ctx, pillX, 114, pillW, 50, 8, theme.pillBg, theme.pillBorder, 2);
 
-    // 1. Volume Plot
-    const yLabelsVol = ["xGOT/90", "CQ Mix/90", "Shots/90", "Total Shots"];
-    const barW = 0.4;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = bench.qualified
+      ? (bench.pctl >= 50 ? theme.teal : theme.crimson)
+      : theme.inkSub;
+    ctx.fillText(truncateText(ctx, rankStr, pillW - 24), pillX + pillW * 0.5, 140);
+    ctx.restore();
 
-    const volTraces = [
-      {
-        x: [0, 0, 0, drawTotal], y: yLabelsVol, type: "bar", orientation: "h", width: barW,
-        marker: { color: getBlueShade(drawTotal) }, hoverinfo: "text", hoverlabel: { align: "left" },
-        hovertext: ["", "", "", `<b>Total Shots: ${totalShots.toFixed(0)}</b><br>Absolute volume of non-penalty shots faced.`]
-      },
-      {
-        x: [0, 0, drawShots, 0], y: yLabelsVol, type: "bar", orientation: "h", width: barW,
-        marker: { color: getBlueShade(drawShots) }, hoverinfo: "text", hoverlabel: { align: "left" },
-        hovertext: ["", "", `<b>Shots/90: ${shotsP90.toFixed(2)}</b><br>Non-penalty shots faced per 90 minutes.`, ""]
-      },
-      {
-        x: [0, drawHigh, 0, 0], y: yLabelsVol, type: "bar", orientation: "h", width: barW,
-        marker: { color: "#E34A33" }, hoverinfo: "text", hoverlabel: { align: "left" },
-        hovertext: ["", `<b>High CQ/90: ${highP90.toFixed(2)}</b><br>Shots > 0.35 xGOT per 90.`, "", ""]
-      },
-      {
-        x: [0, drawMed, 0, 0], y: yLabelsVol, type: "bar", orientation: "h", width: barW,
-        marker: { color: "#FD8D3C" }, hoverinfo: "text", hoverlabel: { align: "left" },
-        hovertext: ["", `<b>Medium CQ/90: ${medP90.toFixed(2)}</b><br>Shots between 0.11 - 0.35 xGOT per 90.`, "", ""]
-      },
-      {
-        x: [0, drawLow, 0, 0], y: yLabelsVol, type: "bar", orientation: "h", width: barW,
-        marker: { color: "#FEB24C" }, hoverinfo: "text", hoverlabel: { align: "left" },
-        hovertext: ["", `<b>Low CQ/90: ${lowP90.toFixed(2)}</b><br>Shots \u2264 0.10 xGOT per 90.`, "", ""]
-      },
-      {
-        x: [drawXgot, 0, 0, 0], y: yLabelsVol, type: "bar", orientation: "h", width: barW,
-        marker: { color: getBlueShade(drawXgot) }, hoverinfo: "text", hoverlabel: { align: "left" },
-        hovertext: [`<b>xGOT/90: ${xgotP90.toFixed(2)}</b><br>Expected Goals on Target faced per 90 minutes.`, "", "", ""]
-      }
-    ];
+    ctx.strokeStyle = theme.ruleStrong;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(64, 198);
+    ctx.lineTo(2336, 198);
+    ctx.stroke();
 
-    const volLayout = {
-      barmode: "stack", showlegend: false,
-      paper_bgcolor: "#E6E6E6", plot_bgcolor: "#E6E6E6",
-      xaxis: { title: "", showgrid: false, zeroline: false, showticklabels: false, range: [0, 100] },
-      yaxis: { title: "", showgrid: true, gridcolor: "#FFFFFF", gridwidth: 2, showticklabels: false, categoryorder: "array", categoryarray: yLabelsVol },
-      margin: { l: 10, r: 20, t: 10, b: 10 },
-      annotations: [
-        {
-          x: drawTotal >= 28 ? 2 : drawTotal + 1.5, y: "Total Shots",
-          text: `<b>Total Shots: ${totalShots.toFixed(0)}</b>`, showarrow: false, xanchor: "left",
-          font: { size: 13, color: drawTotal >= 28 ? "#FFFFFF" : "#1D3549", family: "Assistant" }
-        },
-        {
-          x: drawShots >= 28 ? 2 : drawShots + 1.5, y: "Shots/90",
-          text: `<b>Shots/90: ${shotsP90.toFixed(2)}</b>`, showarrow: false, xanchor: "left",
-          font: { size: 13, color: drawShots >= 28 ? "#FFFFFF" : "#1D3549", family: "Assistant" }
-        },
-        {
-          x: drawXgot >= 28 ? 2 : drawXgot + 1.5, y: "xGOT/90",
-          text: `<b>xGOT/90: ${xgotP90.toFixed(2)}</b>`, showarrow: false, xanchor: "left",
-          font: { size: 13, color: drawXgot >= 28 ? "#FFFFFF" : "#1D3549", family: "Assistant" }
-        },
-        {
-          x: drawHigh / 2, y: "CQ Mix/90",
-          text: drawHigh >= 8 ? `<b>HD: ${highP90.toFixed(1)}</b>` : "",
-          showarrow: false, font: { color: "#FFFFFF", size: 12, family: "Assistant" }
-        },
-        {
-          x: drawHigh + (drawMed / 2), y: "CQ Mix/90",
-          text: drawMed >= 8 ? `<b>MD: ${medP90.toFixed(1)}</b>` : "",
-          showarrow: false, font: { color: "#111111", size: 12, family: "Assistant" }
-        },
-        {
-          x: drawHigh + drawMed + (drawLow / 2), y: "CQ Mix/90",
-          text: drawLow >= 8 ? `<b>LD: ${lowP90.toFixed(1)}</b>` : "",
-          showarrow: false, font: { color: "#111111", size: 12, family: "Assistant" }
-        }
-      ]
-    };
+    // 3. Hero Split Row (y: 226..796)
+    // LEFT HERO PANEL: BAYESIAN SHOT-STOPPING POSTERIOR (x: 64..1320)
+    const lpX = 64, lpY = 226, lpW = 1256, lpH = 570;
+    fillStrokeRoundRect(ctx, lpX, lpY, lpW, lpH, 12, theme.cardBg, theme.cardBorder, 2);
 
-    Plotly.react("save_vol_plot", volTraces, volLayout, { displayModeBar: false, responsive: true });
+    ctx.save();
+    ctx.textBaseline = "alphabetic";
+    ctx.textAlign = "left";
+    ctx.fillStyle = theme.inkMuted;
+    ctx.font = "800 20px Assistant, sans-serif";
+    ctx.fillText("BAYESIAN TRUE TALENT MODEL", lpX + 36, lpY + 46);
 
-    const isTargetLeague = (lid) => {
-      const nLid = Number(lid);
-      if (saveLeague === "intl") return INTL_SET.has(nLid);
-      if (saveLeague !== "all") return nLid === Number(saveLeague);
-      return nLid === Number(meta.league_id);
-    };
+    ctx.textAlign = "right";
+    ctx.font = "600 19px Assistant, sans-serif";
+    ctx.fillText(modelName.toUpperCase(), lpX + lpW - 36, lpY + 46);
+    ctx.restore();
 
-    // 2. Save Percentage by CQ Tier Plot
-    const binsOrder = ["Low", "Medium", "High"];
-    const labelsOrder = ["LDSv%", "MDSv%", "HDSv%"];
-    const svValues = [];
-    const lgSvValues = [];
-    const glSvValues = [];
-    const svColors = [];
-    const svTooltips = [];
+    const isPosMu = keeper.mu >= 0;
+    const muColor = isPosMu ? theme.teal : theme.crimson;
 
-    for (let i = 0; i < 3; i++) {
-      const bName = binsOrder[i];
-      const lbl = labelsOrder[i];
-      const sp = getSplit(bName);
-      const gkSv = (sp.sv || 0) * 100;
+    ctx.save();
+    ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
 
-      const glRow = globalCqRows.find(r => r.cq_bin === bName);
-      const glSv = glRow ? Number(glRow.avg_sv_pct) * 100 : 50;
+    // KPI 1: True Talent Estimate
+    ctx.fillStyle = theme.inkMuted;
+    ctx.font = "700 17px Assistant, sans-serif";
+    ctx.fillText("TRUE TALENT ESTIMATE", lpX + 36, lpY + 90);
 
-      let lgShots = 0, lgGoals = 0;
-      leagueCqRows.forEach(r => {
-        if (r.cq_bin === bName && isTargetLeague(r.league_id)) {
-          lgShots += Number(r.shots);
-          lgGoals += Number(r.goals);
-        }
-      });
-      const lgSv = lgShots > 0 ? (1 - lgGoals / lgShots) * 100 : glSv;
+    ctx.fillStyle = muColor;
+    ctx.font = "800 48px Assistant, sans-serif";
+    const muTxt = formatSigned(keeper.mu, 3);
+    ctx.fillText(muTxt, lpX + 36, lpY + 144);
+    const muW = ctx.measureText(muTxt).width;
+    ctx.fillStyle = theme.inkSub;
+    ctx.font = "600 20px Assistant, sans-serif";
+    ctx.fillText("GP / shot", lpX + 44 + muW, lpY + 144);
 
-      svValues.push(gkSv);
-      lgSvValues.push(lgSv);
-      glSvValues.push(glSv);
-      svColors.push(getBlueShade(gkSv));
-      svTooltips.push(`<b>${lbl}: ${gkSv.toFixed(1)}%</b><br>League Average: ${lgSv.toFixed(1)}%<br>Global Average: ${glSv.toFixed(1)}%<br>Save percentage for this Chance Quality tier.`);
+    ctx.fillStyle = theme.ink;
+    ctx.font = "700 20px Assistant, sans-serif";
+    ctx.fillText(`${formatSigned(keeper.mu * 100, 2)} Goals / 100 Shots`, lpX + 36, lpY + 180);
+
+    ctx.strokeStyle = theme.rule;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(lpX + 420, lpY + 76);
+    ctx.lineTo(lpX + 420, lpY + 186);
+    ctx.stroke();
+
+    // KPI 2: Prob Above Average
+    ctx.fillStyle = theme.inkMuted;
+    ctx.font = "700 17px Assistant, sans-serif";
+    ctx.fillText("PROB. ABOVE AVERAGE", lpX + 452, lpY + 90);
+
+    const pColor = keeper.p_above_avg >= 60 ? theme.teal : (keeper.p_above_avg <= 40 ? theme.crimson : theme.ink);
+    ctx.fillStyle = pColor;
+    ctx.font = "800 48px Assistant, sans-serif";
+    const pTxt = keeper.p_above_avg >= 99.95 ? ">99.9%" : (keeper.p_above_avg <= 0.05 ? "<0.1%" : `${keeper.p_above_avg.toFixed(1)}%`);
+    ctx.fillText(pTxt, lpX + 452, lpY + 144);
+
+    ctx.fillStyle = theme.inkSub;
+    ctx.font = "600 19px Assistant, sans-serif";
+    ctx.fillText("P(True Talent > 0.000)", lpX + 452, lpY + 180);
+
+    ctx.beginPath();
+    ctx.moveTo(lpX + 802, lpY + 76);
+    ctx.lineTo(lpX + 802, lpY + 186);
+    ctx.stroke();
+
+    // KPI 3: Sample Certainty + Precision Bar + 95% CI
+    ctx.fillStyle = theme.inkMuted;
+    ctx.font = "700 17px Assistant, sans-serif";
+    ctx.fillText("SAMPLE CERTAINTY", lpX + 834, lpY + 90);
+
+    ctx.fillStyle = theme.ink;
+    ctx.font = "800 48px Assistant, sans-serif";
+    const certTxt = `${Math.round(keeper.certainty_pct)}%`;
+    ctx.fillText(certTxt, lpX + 834, lpY + 142);
+    const certW = ctx.measureText(certTxt).width;
+
+    const shotLabelX = lpX + 848 + certW;
+    ctx.fillStyle = theme.inkSub;
+    ctx.font = "600 19px Assistant, sans-serif";
+    ctx.fillText(`${keeper.shots_faced} ${plural(keeper.shots_faced, "shot")}`, shotLabelX, lpY + 126);
+
+    const barY = lpY + 138;
+    const barW = Math.max(120, lpX + lpW - 36 - shotLabelX);
+    fillStrokeRoundRect(ctx, shotLabelX, barY, barW, 8, 4, theme.trackBg, null);
+    if (keeper.certainty_pct > 0) {
+      fillStrokeRoundRect(ctx, shotLabelX, barY, Math.max(8, barW * (keeper.certainty_pct / 100)), 8, 4, theme.teal, null);
     }
 
-    const svShapes = [0, 1, 2].map(i => ({
-      type: "line",
-      x0: lgSvValues[i], x1: lgSvValues[i],
-      y0: i - barW / 2, y1: i + barW / 2,
-      line: { color: "#333333", width: 3 }
-    }));
+    ctx.fillStyle = theme.inkSub;
+    ctx.font = "600 19px Assistant, sans-serif";
+    ctx.fillText(`95% CI: [${formatSigned(keeper.ci_low, 3)}, ${formatSigned(keeper.ci_high, 3)}]`, lpX + 834, lpY + 180);
+    ctx.restore();
 
-    const svAnnotations = [0, 1, 2].map(i => {
-      const val = svValues[i];
-      const isWide = val >= 28;
-      return {
-        x: isWide ? 2 : Math.max(val, 0) + 1.5,
-        y: labelsOrder[i],
-        text: `<b>${labelsOrder[i]}: ${val.toFixed(1)}</b>`,
-        showarrow: false, xanchor: "left",
-        font: { color: isWide ? "#FFFFFF" : "#1D3549", size: 13, family: "Assistant" }
-      };
-    });
-    svAnnotations.push({
-      x: (lgSvValues[0] || 50) + 2,
-      y: -0.3,
-      text: "Lg Avg",
-      showarrow: false, xanchor: "left",
-      font: { size: 12, color: "#555555", family: "Assistant" }
-    });
+    // Posterior Bell Curve Plot Area (extra top headroom so Pro Avg never collides)
+    const pPlotX = lpX + 48;
+    const pPlotW = lpW - 96;
+    const pPlotTop = lpY + 230;
+    const pPlotBot = lpY + 468;
+    const pPlotH = pPlotBot - pPlotTop;
 
-    const svTrace = [{
-      x: svValues, y: labelsOrder, type: "bar", orientation: "h", width: barW,
-      marker: { color: svColors }, hoverinfo: "text", hoverlabel: { align: "left" }, hovertext: svTooltips
-    }];
+    const xMin = -0.14;
+    const xMax =  0.14;
+    const xToPx = (x) => pPlotX + ((x - xMin) / (xMax - xMin)) * pPlotW;
 
-    const svLayout = {
-      shapes: svShapes, showlegend: false,
-      paper_bgcolor: "#E6E6E6", plot_bgcolor: "#E6E6E6",
-      xaxis: { title: "", showgrid: false, zeroline: false, showticklabels: false, range: [0, 100] },
-      yaxis: { title: "", showgrid: true, gridcolor: "#FFFFFF", gridwidth: 2, showticklabels: false, categoryorder: "array", categoryarray: labelsOrder },
-      margin: { l: 10, r: 20, t: 10, b: 10 },
-      annotations: svAnnotations
+    let peakMax = dnorm(0, 0, PRIOR_SD);
+    const postPeak = dnorm(keeper.mu, keeper.mu, keeper.sd);
+    if (postPeak > peakMax) peakMax = postPeak;
+    const yLim = peakMax * 1.24;
+    const yToPx = (y) => pPlotBot - (y / yLim) * pPlotH;
+
+    savePlotMeta = {
+      x0: pPlotX, x1: pPlotX + pPlotW, y0: pPlotTop, y1: pPlotBot,
+      xMin, xMax, mu: keeper.mu, sd: keeper.sd
     };
 
-    Plotly.react("save_sv_plot", svTrace, svLayout, { displayModeBar: false, responsive: true });
+    ctx.save();
+    const xTicks = [-0.10, -0.05, 0, 0.05, 0.10];
+    xTicks.forEach(t => {
+      const tx = xToPx(t);
+      ctx.strokeStyle = (t === 0) ? theme.needle : theme.rule;
+      ctx.lineWidth = (t === 0) ? 2 : 1.2;
+      if (t === 0) ctx.setLineDash([6, 5]);
+      else ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.moveTo(tx, pPlotTop);
+      ctx.lineTo(tx, pPlotBot);
+      ctx.stroke();
+    });
+    ctx.setLineDash([]);
 
-    // 3. Value & Consistency Plot (AxA% & GP/10xGOT)
-    let lgSumGp = 0, lgSumXgot = 0, lgPosCnt = 0, lgTotCnt = 0;
-    leagueGpRows.forEach(r => {
-      if (isTargetLeague(r.league_id)) {
-        lgSumGp   += Number(r.sum_gp);
-        lgSumXgot += Number(r.sum_xgot);
-        lgPosCnt  += Number(r.pos_cnt);
-        lgTotCnt  += Number(r.tot_cnt);
-      }
+    ctx.fillStyle = theme.inkMuted;
+    ctx.font = "700 17px Assistant, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "bottom";
+    ctx.fillText("Pro Avg (0.000)", xToPx(0), pPlotTop - 6);
+
+    // Drawn visual line legend top-right of plot
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    ctx.font = "600 17px Assistant, sans-serif";
+    const legR = pPlotX + pPlotW;
+    ctx.strokeStyle = theme.priorStroke;
+    ctx.lineWidth = 2.5;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    ctx.moveTo(legR - 306, pPlotTop + 10);
+    ctx.lineTo(legR - 274, pPlotTop + 10);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = theme.inkSub;
+    ctx.fillText("Pro Prior", legR - 266, pPlotTop + 10);
+
+    ctx.strokeStyle = muColor;
+    ctx.lineWidth = 3.5;
+    ctx.beginPath();
+    ctx.moveTo(legR - 172, pPlotTop + 10);
+    ctx.lineTo(legR - 140, pPlotTop + 10);
+    ctx.stroke();
+    ctx.fillStyle = theme.ink;
+    ctx.fillText("Keeper Posterior", legR - 132, pPlotTop + 10);
+
+    // Prior Curve
+    const steps = 260;
+    ctx.beginPath();
+    ctx.moveTo(xToPx(xMin), pPlotBot);
+    for (let i = 0; i <= steps; i++) {
+      const xv = xMin + ((xMax - xMin) * i) / steps;
+      ctx.lineTo(xToPx(xv), yToPx(dnorm(xv, 0, PRIOR_SD)));
+    }
+    ctx.lineTo(xToPx(xMax), pPlotBot);
+    ctx.closePath();
+    ctx.fillStyle = theme.priorFill;
+    ctx.fill();
+
+    ctx.beginPath();
+    for (let i = 0; i <= steps; i++) {
+      const xv = xMin + ((xMax - xMin) * i) / steps;
+      const py = yToPx(dnorm(xv, 0, PRIOR_SD));
+      if (i === 0) ctx.moveTo(xToPx(xv), py); else ctx.lineTo(xToPx(xv), py);
+    }
+    ctx.setLineDash([7, 5]);
+    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = theme.priorStroke;
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Keeper Posterior Curve
+    const grad = ctx.createLinearGradient(0, pPlotTop, 0, pPlotBot);
+    grad.addColorStop(0, isPosMu ? (saveTheme === "dark" ? "rgba(32,178,170,0.44)" : "rgba(0,116,122,0.34)") : (saveTheme === "dark" ? "rgba(226,106,90,0.44)" : "rgba(184,58,58,0.34)"));
+    grad.addColorStop(1, isPosMu ? "rgba(0,116,122,0.03)" : "rgba(184,58,58,0.03)");
+
+    ctx.beginPath();
+    ctx.moveTo(xToPx(xMin), pPlotBot);
+    for (let i = 0; i <= steps; i++) {
+      const xv = xMin + ((xMax - xMin) * i) / steps;
+      ctx.lineTo(xToPx(xv), yToPx(dnorm(xv, keeper.mu, keeper.sd)));
+    }
+    ctx.lineTo(xToPx(xMax), pPlotBot);
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    ctx.beginPath();
+    for (let i = 0; i <= steps; i++) {
+      const xv = xMin + ((xMax - xMin) * i) / steps;
+      const py = yToPx(dnorm(xv, keeper.mu, keeper.sd));
+      if (i === 0) ctx.moveTo(xToPx(xv), py); else ctx.lineTo(xToPx(xv), py);
+    }
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = muColor;
+    ctx.stroke();
+
+    const peakX = xToPx(keeper.mu);
+    const peakY = yToPx(postPeak);
+    ctx.setLineDash([4, 4]);
+    ctx.lineWidth = 2.2;
+    ctx.strokeStyle = muColor;
+    ctx.beginPath();
+    ctx.moveTo(peakX, peakY);
+    ctx.lineTo(peakX, pPlotBot);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.beginPath();
+    ctx.arc(peakX, peakY, 6, 0, Math.PI * 2);
+    ctx.fillStyle = muColor;
+    ctx.fill();
+
+    ctx.strokeStyle = theme.ruleStrong;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(pPlotX, pPlotBot);
+    ctx.lineTo(pPlotX + pPlotW, pPlotBot);
+    ctx.stroke();
+
+    const ciX0 = Math.max(pPlotX, xToPx(keeper.ci_low));
+    const ciX1 = Math.min(pPlotX + pPlotW, xToPx(keeper.ci_high));
+    const ciY = pPlotBot + 18;
+    ctx.strokeStyle = muColor;
+    ctx.lineWidth = 5;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(ciX0, ciY);
+    ctx.lineTo(ciX1, ciY);
+    ctx.stroke();
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(ciX0, ciY - 7); ctx.lineTo(ciX0, ciY + 7);
+    ctx.moveTo(ciX1, ciY - 7); ctx.lineTo(ciX1, ciY + 7);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(peakX, ciY, 6.5, 0, Math.PI * 2);
+    ctx.fillStyle = muColor;
+    ctx.fill();
+
+    ctx.fillStyle = theme.inkSub;
+    ctx.font = "600 18px Assistant, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    xTicks.forEach(t => {
+      const lbl = t === 0 ? "0.00" : (t > 0 ? "+" + t.toFixed(2) : "\u2212" + Math.abs(t).toFixed(2));
+      ctx.fillText(lbl, xToPx(t), pPlotBot + 36);
     });
 
-    const refGp10 = lgTotCnt > 0 ? (lgSumGp / Math.max(lgSumXgot, 0.1)) * 10 : Number(globalGpRow.avg_gp_10xgot);
-    const refAxa  = lgTotCnt > 0 ? (lgPosCnt / Math.max(lgTotCnt, 1)) * 100 : Number(globalGpRow.avg_axa_pct);
+    ctx.fillStyle = theme.inkMuted;
+    ctx.font = "600 17px Assistant, sans-serif";
+    ctx.fillText("\u2190 Below Average    \u2022    95% Credible Interval Bracket    \u2022    Elite Shotstopper \u2192", pPlotX + pPlotW * 0.5, pPlotBot + 66);
+    ctx.restore();
 
-    const sumMatchGp = mGp.reduce((a, b) => a + b, 0);
-    const gp10Xgot   = (sumMatchGp / Math.max(totalXgot, 0.1)) * 10;
-    const posMatches = mGp.filter(v => v > 0).length;
-    const axaPct     = (posMatches / Math.max(mGp.length, 1)) * 100;
+    // RIGHT HERO PANEL: SEASON LEDGER & SHOT DIET (x: 1356..2336)
+    const rpX = 1356, rpY = 226, rpW = 980, rpH = 570;
+    fillStrokeRoundRect(ctx, rpX, rpY, rpW, rpH, 12, theme.cardBg, theme.cardBorder, 2);
 
-    const visGp    = Math.min(Math.max((gp10Xgot + 5) * 10, 0), 100);
-    const visAvgGp = Math.min(Math.max((refGp10 + 5) * 10, 0), 100);
-    const valLabels = ["AxA%", "GP/10xGOT"];
+    ctx.save();
+    ctx.textBaseline = "alphabetic";
+    ctx.textAlign = "left";
+    ctx.fillStyle = theme.inkMuted;
+    ctx.font = "800 20px Assistant, sans-serif";
+    ctx.fillText("SEASON SHOT-STOPPING LEDGER", rpX + 36, rpY + 46);
 
-    const valShapes = [
-      { type: "line", x0: refAxa, x1: refAxa, y0: -barW / 2, y1: barW / 2, line: { color: "#333333", width: 3 } },
-      { type: "line", x0: visAvgGp, x1: visAvgGp, y0: 1 - barW / 2, y1: 1 + barW / 2, line: { color: "#333333", width: 3 } }
-    ];
+    ctx.textAlign = "right";
+    ctx.font = "600 19px Assistant, sans-serif";
+    ctx.fillText(`BENCHMARK: ${bench.cohortLabel.toUpperCase()} AVG`, rpX + rpW - 36, rpY + 46);
 
-    const valTooltips = [
-      `<b>AxA%: ${axaPct.toFixed(1)}%</b><br>League Average: ${refAxa.toFixed(1)}%<br>Global Average: ${Number(globalGpRow.avg_axa_pct).toFixed(1)}%<br>Above Expected Appearance %.<br>Percentage of matches where Goals Prevented > 0.`,
-      `<b>GP/10xGOT: ${formatSigned(gp10Xgot, 3)}</b><br>League Average: ${formatSigned(refGp10, 3)}<br>Global Average: ${formatSigned(globalGpRow.avg_gp_10xgot, 3)}<br>Goals Prevented per 10 xGOT faced.`
-    ];
+    const midX = rpX + rpW * 0.5;
+    const midY = rpY + 228;
+    ctx.strokeStyle = theme.rule;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(rpX + 36, midY);
+    ctx.lineTo(rpX + rpW - 36, midY);
+    ctx.moveTo(midX, rpY + 74);
+    ctx.lineTo(midX, rpY + 378);
+    ctx.moveTo(rpX + 36, rpY + 390);
+    ctx.lineTo(rpX + rpW - 36, rpY + 390);
+    ctx.stroke();
 
-    const valTrace = [{
-      x: [axaPct, visGp], y: valLabels, type: "bar", orientation: "h", width: barW,
-      marker: { color: [getBlueShade(axaPct), getBlueShade(visGp)] },
-      hoverinfo: "text", hoverlabel: { align: "left" }, hovertext: valTooltips
-    }];
+    ctx.textAlign = "left";
 
-    const valLayout = {
-      shapes: valShapes, showlegend: false,
-      paper_bgcolor: "#E6E6E6", plot_bgcolor: "#E6E6E6",
-      xaxis: { title: "", showgrid: false, zeroline: false, showticklabels: false, range: [0, 100] },
-      yaxis: { title: "", showgrid: true, gridcolor: "#FFFFFF", gridwidth: 2, showticklabels: false, categoryorder: "array", categoryarray: valLabels },
-      margin: { l: 10, r: 20, t: 10, b: 0 },
-      annotations: [
-        {
-          x: axaPct >= 28 ? 2 : axaPct + 1.5, y: "AxA%",
-          text: `<b>AxA%: ${axaPct.toFixed(1)}</b>`, showarrow: false, xanchor: "left",
-          font: { color: axaPct >= 28 ? "#FFFFFF" : "#1D3549", size: 13, family: "Assistant" }
-        },
-        {
-          x: visGp >= 35 ? 2 : visGp + 1.5, y: "GP/10xGOT",
-          text: `<b>GP/10xGOT: ${formatSigned(gp10Xgot, 3)}</b>`, showarrow: false, xanchor: "left",
-          font: { color: visGp >= 35 ? "#FFFFFF" : "#1D3549", size: 13, family: "Assistant" }
-        }
-      ]
-    };
+    // Cell 1: Goals Prevented
+    ctx.fillStyle = theme.inkMuted;
+    ctx.font = "700 17px Assistant, sans-serif";
+    ctx.fillText("GOALS PREVENTED (GP)", rpX + 36, rpY + 104);
+    ctx.fillStyle = keeper.total_gp >= 0 ? theme.teal : theme.crimson;
+    ctx.font = "800 50px Assistant, sans-serif";
+    ctx.fillText(formatSigned(keeper.total_gp, 2), rpX + 36, rpY + 160);
+    ctx.fillStyle = theme.inkSub;
+    ctx.font = "600 19px Assistant, sans-serif";
+    ctx.fillText(`${keeper.total_xgot.toFixed(2)} xGOT Faced  \u2022  ${keeper.goals_allowed} GA`, rpX + 36, rpY + 196);
 
-    Plotly.react("save_val_plot", valTrace, valLayout, { displayModeBar: false, responsive: true });
+    // Cell 2: GP / 10 xGOT
+    const c2X = midX + 34;
+    ctx.fillStyle = theme.inkMuted;
+    ctx.font = "700 17px Assistant, sans-serif";
+    ctx.fillText("GP / 10 xGOT FACED", c2X, rpY + 104);
+    ctx.fillStyle = keeper.gp_10xgot >= bench.lgGp10 ? theme.teal : theme.crimson;
+    ctx.font = "800 50px Assistant, sans-serif";
+    ctx.fillText(formatSigned(keeper.gp_10xgot, 2), c2X, rpY + 160);
+    ctx.fillStyle = theme.inkSub;
+    ctx.font = "600 19px Assistant, sans-serif";
+    const gp10BenchStr = bench.qualified
+      ? `${bench.cohortLabel} Avg: ${formatSigned(bench.lgGp10, 2)}  \u2022  ${getOrdinalSuffix(bench.gp10Pctl)} Pctl`
+      : `${bench.cohortLabel} Avg: ${formatSigned(bench.lgGp10, 2)}`;
+    ctx.fillText(gp10BenchStr, c2X, rpY + 196);
 
-    // 4. Game-by-Game Form Plot
-    const formColors = mGp.map(v => v > 0 ? "#3182BD" : "#DE2D26");
-    const formTooltips = mGp.map((v, idx) =>
-      `<b>Date:</b> ${mDatesFmt[idx] || mDates[idx]}<br><b>Goals Prevented:</b> ${formatSigned(v, 2)}<br><b>Match xGOT:</b> ${Number(mXgot[idx]).toFixed(2)}`
+    // Cell 3: Save % vs xSv%
+    const svDiff = keeper.sv_pct - keeper.x_sv_pct;
+    ctx.fillStyle = theme.inkMuted;
+    ctx.font = "700 17px Assistant, sans-serif";
+    ctx.fillText("SAVE % vs EXPECTED (xSv%)", rpX + 36, rpY + 266);
+    ctx.fillStyle = theme.ink;
+    ctx.font = "800 50px Assistant, sans-serif";
+    const svTxt = `${keeper.sv_pct.toFixed(1)}%`;
+    ctx.fillText(svTxt, rpX + 36, rpY + 322);
+    const svW = ctx.measureText(svTxt).width;
+    ctx.fillStyle = theme.inkSub;
+    ctx.font = "600 21px Assistant, sans-serif";
+    ctx.fillText(`vs ${keeper.x_sv_pct.toFixed(1)}% exp.`, rpX + 48 + svW, rpY + 322);
+    ctx.fillStyle = svDiff >= 0 ? theme.teal : theme.crimson;
+    ctx.font = "700 19px Assistant, sans-serif";
+    ctx.fillText(`${formatSigned(svDiff, 1)} pts vs Expected Save Rate`, rpX + 36, rpY + 356);
+
+    // Cell 4: AxA% Consistency
+    ctx.fillStyle = theme.inkMuted;
+    ctx.font = "700 17px Assistant, sans-serif";
+    ctx.fillText("MATCH CONSISTENCY (AxA%)", c2X, rpY + 266);
+    ctx.fillStyle = keeper.axa_pct >= bench.lgAxa ? theme.teal : theme.crimson;
+    ctx.font = "800 50px Assistant, sans-serif";
+    ctx.fillText(`${keeper.axa_pct.toFixed(1)}%`, c2X, rpY + 322);
+    ctx.fillStyle = theme.inkSub;
+    ctx.font = "600 19px Assistant, sans-serif";
+    ctx.fillText(`${keeper.pos_matches} of ${keeper.n_matches} ${plural(keeper.n_matches, "Match", "Matches")} > 0 GP  \u2022  Avg: ${bench.lgAxa.toFixed(1)}%`, c2X, rpY + 356);
+
+    // Bottom Strip: Workload & Shot Diet Mix
+    const minsSafe = keeper.total_minutes > 0 ? keeper.total_minutes : null;
+    const p90 = minsSafe ? 90 / minsSafe : 0;
+    const sh90 = keeper.total_shots * p90;
+    const x90  = keeper.total_xgot * p90;
+    const qDiff = keeper.avg_shot_xgot - globalAvgXgot;
+
+    ctx.fillStyle = theme.inkMuted;
+    ctx.font = "800 17px Assistant, sans-serif";
+    ctx.fillText("WORKLOAD & SHOT DIET", rpX + 36, rpY + 428);
+
+    ctx.textAlign = "right";
+    ctx.fillStyle = theme.ink;
+    ctx.font = "700 19px Assistant, sans-serif";
+    const wlText = minsSafe
+      ? `${sh90.toFixed(2)} Shots/90   \u2022   ${x90.toFixed(2)} xGOT/90   \u2022   ${keeper.avg_shot_xgot.toFixed(3)} xGOT/Shot (${formatSigned(qDiff, 3)} vs Avg)`
+      : `${keeper.total_shots} Shots Faced   \u2022   ${keeper.avg_shot_xgot.toFixed(3)} xGOT/Shot`;
+    ctx.fillText(wlText, rpX + rpW - 36, rpY + 428);
+
+    const sdBarX = rpX + 36;
+    const sdBarY = rpY + 450;
+    const sdBarW = rpW - 72;
+    const sdBarH = 42;
+    const totCQ = Math.max(1, keeper.total_shots);
+    const pHigh = keeper.cq_high.sf / totCQ;
+    const pMed  = keeper.cq_med.sf / totCQ;
+    const pLow  = keeper.cq_low.sf / totCQ;
+
+    ctx.save();
+    roundRectPath(ctx, sdBarX, sdBarY, sdBarW, sdBarH, 7);
+    ctx.clip();
+    const wH = sdBarW * pHigh;
+    const wM = sdBarW * pMed;
+    const wL = sdBarW - wH - wM;
+    ctx.fillStyle = theme.dietHigh;
+    ctx.fillRect(sdBarX, sdBarY, wH, sdBarH);
+    ctx.fillStyle = theme.dietMed;
+    ctx.fillRect(sdBarX + wH, sdBarY, wM, sdBarH);
+    ctx.fillStyle = theme.dietLow;
+    ctx.fillRect(sdBarX + wH + wM, sdBarY, wL, sdBarH);
+
+    ctx.fillStyle = theme.cardBg;
+    if (wH > 1 && wM > 1) ctx.fillRect(sdBarX + wH - 1, sdBarY, 2.5, sdBarH);
+    if ((wH + wM) > 1 && wL > 1) ctx.fillRect(sdBarX + wH + wM - 1, sdBarY, 2.5, sdBarH);
+
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = "700 18px Assistant, sans-serif";
+    if (wH >= 78) {
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillText(`HD ${Math.round(pHigh * 100)}%`, sdBarX + wH * 0.5, sdBarY + sdBarH * 0.5);
+    }
+    if (wM >= 78) {
+      ctx.fillStyle = "#111827";
+      ctx.fillText(`MD ${Math.round(pMed * 100)}%`, sdBarX + wH + wM * 0.5, sdBarY + sdBarH * 0.5);
+    }
+    if (wL >= 78) {
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillText(`LD ${Math.round(pLow * 100)}%`, sdBarX + wH + wM + wL * 0.5, sdBarY + sdBarH * 0.5);
+    }
+    ctx.restore();
+
+    saveHitboxes.push(
+      { x: sdBarX, y: sdBarY, w: wH, h: sdBarH, text: `<b>High Danger (>0.35 xGOT)</b><br>${keeper.cq_high.sf} shots (${(pHigh * 100).toFixed(1)}%)` },
+      { x: sdBarX + wH, y: sdBarY, w: wM, h: sdBarH, text: `<b>Medium Danger (0.11\u20130.35 xGOT)</b><br>${keeper.cq_med.sf} shots (${(pMed * 100).toFixed(1)}%)` },
+      { x: sdBarX + wH + wM, y: sdBarY, w: wL, h: sdBarH, text: `<b>Low Danger (\u22640.10 xGOT)</b><br>${keeper.cq_low.sf} shots (${(pLow * 100).toFixed(1)}%)` }
     );
 
-    const formTrace = [{
-      x: mDates, y: mGp, type: "bar",
-      marker: { color: formColors },
-      width: 86400000 * 4,
-      hoverinfo: "text", hoverlabel: { align: "left" }, hovertext: formTooltips
-    }];
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    const legY = rpY + 524;
+    const segLegends = [
+      { col: theme.dietHigh, lbl: `High (>0.35): ${keeper.cq_high.sf} sh (${Math.round(pHigh * 100)}%)` },
+      { col: theme.dietMed,  lbl: `Med (0.11\u20130.35): ${keeper.cq_med.sf} sh (${Math.round(pMed * 100)}%)` },
+      { col: theme.dietLow,  lbl: `Low (\u22640.10): ${keeper.cq_low.sf} sh (${Math.round(pLow * 100)}%)` }
+    ];
+    let lx = sdBarX;
+    segLegends.forEach((sl) => {
+      fillStrokeRoundRect(ctx, lx, legY - 8, 16, 16, 3, sl.col, null);
+      ctx.fillStyle = theme.inkSub;
+      ctx.font = "600 18px Assistant, sans-serif";
+      ctx.fillText(sl.lbl, lx + 24, legY);
+      lx += 302;
+    });
+    ctx.restore();
 
-    const formLayout = {
-      showlegend: false,
-      paper_bgcolor: "#E6E6E6", plot_bgcolor: "#E6E6E6",
-      xaxis: { title: "", showgrid: false, tickfont: { family: "Assistant", size: 12, color: "#555555" } },
-      yaxis: {
-        title: "",
-        range: [-globalMaxGp * 1.05, globalMaxGp * 1.05],
-        showgrid: true, gridcolor: "#FFFFFF", gridwidth: 2,
-        zeroline: true, zerolinecolor: "#333333", zerolinewidth: 2,
-        tickfont: { family: "Assistant", size: 12, color: "#555555" }
-      },
-      margin: { t: 5, b: 22, l: 32, r: 20 }
-    };
+    // 4. Bottom Split Row (y: 824..1422)
+    // BOTTOM-LEFT: SAVE EFFICIENCY BY CHANCE QUALITY (x: 64..1182)
+    const blX = 64, blY = 824, blW = 1118, blH = 598;
+    fillStrokeRoundRect(ctx, blX, blY, blW, blH, 12, theme.cardBg, theme.cardBorder, 2);
 
-    Plotly.react("save_form_plot", formTrace, formLayout, { displayModeBar: false, responsive: true });
-    scaleDashboard();
-  }
+    ctx.save();
+    ctx.textBaseline = "alphabetic";
+    ctx.textAlign = "left";
+    ctx.fillStyle = theme.inkMuted;
+    ctx.font = "800 20px Assistant, sans-serif";
+    ctx.fillText("SAVE EFFICIENCY BY CHANCE QUALITY", blX + 36, blY + 46);
 
-  function scaleDashboard() {
-    const wrapper = document.getElementById("save_scale_wrapper");
-    const dash = document.getElementById("save_dashboard_export_area");
-    if (wrapper && dash && wrapper.clientWidth > 0) {
-      const scale = wrapper.clientWidth / 1280;
-      if (scale < 1) {
-        dash.style.transform = `scale(${scale})`;
-        wrapper.style.height = `${720 * scale}px`;
+    ctx.textAlign = "right";
+    ctx.font = "600 19px Assistant, sans-serif";
+    ctx.fillText(`VERTICAL NEEDLE = ${bench.cohortLabel.toUpperCase()} AVG`, blX + blW - 36, blY + 46);
+
+    const tiers = [
+      { key: "High", title: "High Danger (HDSv%)", sub: "> 0.35 xGOT  \u2022  1v1s & Top-Corner Strikes", split: keeper.cq_high },
+      { key: "Medium", title: "Medium Danger (MDSv%)", sub: "0.11 \u2013 0.35 xGOT  \u2022  In-Box Contested Shots", split: keeper.cq_med },
+      { key: "Low", title: "Low Danger (LDSv%)", sub: "\u2264 0.10 xGOT  \u2022  Long-Range & Routine Saves", split: keeper.cq_low }
+    ];
+
+    const barTrackX = blX + 36;
+    const barTrackW = blW - 72;
+    const barTrackH = 38;
+
+    tiers.forEach((tier, idx) => {
+      const ty = blY + 108 + idx * 158;
+      const sf = tier.split.sf;
+      const ga = tier.split.ga;
+      const svPct = sf > 0 ? ((sf - ga) / sf) * 100 : null;
+      const lgAvg = bench.lgCqAvg[tier.key] ?? 50;
+      const glAvg = bench.glCqAvg[tier.key] ?? lgAvg;
+
+      ctx.textAlign = "left";
+      ctx.textBaseline = "alphabetic";
+      ctx.fillStyle = theme.ink;
+      ctx.font = "700 24px Assistant, sans-serif";
+      ctx.fillText(tier.title, barTrackX, ty);
+
+      ctx.fillStyle = theme.inkMuted;
+      ctx.font = "600 18px Assistant, sans-serif";
+      ctx.fillText(tier.sub, barTrackX, ty + 25);
+
+      ctx.textAlign = "right";
+      if (svPct !== null) {
+        const diff = svPct - lgAvg;
+        const barCol = diff >= 0 ? theme.teal : theme.crimson;
+        const diffStr = `${formatSigned(diff, 1)} pts vs ${bench.cohortLabel}`;
+
+        ctx.fillStyle = barCol;
+        ctx.font = "700 20px Assistant, sans-serif";
+        ctx.fillText(diffStr, barTrackX + barTrackW, ty + 24);
+
+        const saves = sf - ga;
+        const countTxt = `(${saves}/${sf})`;
+        ctx.fillStyle = theme.inkSub;
+        ctx.font = "600 20px Assistant, sans-serif";
+        const countW = ctx.measureText(countTxt).width;
+        ctx.fillText(countTxt, barTrackX + barTrackW, ty);
+
+        ctx.fillStyle = theme.ink;
+        ctx.font = "800 32px Assistant, sans-serif";
+        ctx.fillText(`${svPct.toFixed(1)}%`, barTrackX + barTrackW - countW - 12, ty);
       } else {
-        dash.style.transform = "none";
-        wrapper.style.height = "720px";
+        ctx.fillStyle = theme.inkMuted;
+        ctx.font = "700 24px Assistant, sans-serif";
+        ctx.fillText("\u2014 (0 shots faced)", barTrackX + barTrackW, ty + 6);
       }
+
+      const by = ty + 42;
+      fillStrokeRoundRect(ctx, barTrackX, by, barTrackW, barTrackH, 7, theme.trackBg, null);
+
+      if (svPct !== null && svPct > 0) {
+        const fw = Math.max(12, barTrackW * Math.min(1, svPct / 100));
+        const barCol = (svPct >= lgAvg) ? theme.teal : theme.crimson;
+        fillStrokeRoundRect(ctx, barTrackX, by, fw, barTrackH, 7, barCol, null);
+      }
+
+      const nx = barTrackX + barTrackW * (Math.max(0, Math.min(100, lgAvg)) / 100);
+      ctx.strokeStyle = theme.needle;
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(nx, by - 7);
+      ctx.lineTo(nx, by + barTrackH + 7);
+      ctx.stroke();
+
+      ctx.fillStyle = theme.inkSub;
+      ctx.font = "700 17px Assistant, sans-serif";
+      ctx.textAlign = nx > barTrackX + barTrackW - 110 ? "right" : (nx < barTrackX + 90 ? "left" : "center");
+      ctx.textBaseline = "top";
+      ctx.fillText(`Avg: ${lgAvg.toFixed(1)}%`, nx, by + barTrackH + 11);
+
+      saveHitboxes.push({
+        x: barTrackX, y: by - 10, w: barTrackW, h: barTrackH + 24,
+        text: svPct !== null
+          ? `<b>${tier.title}</b><br>Saved: ${sf - ga} / ${sf} (${svPct.toFixed(1)}%)<br>${bench.cohortLabel} Avg: ${lgAvg.toFixed(1)}%  |  Global Avg: ${glAvg.toFixed(1)}%`
+          : `<b>${tier.title}</b><br>0 shots faced in this danger tier`
+      });
+    });
+
+    ctx.fillStyle = theme.inkMuted;
+    ctx.font = "600 16px Assistant, sans-serif";
+    ctx.textBaseline = "alphabetic";
+    [0, 25, 50, 75, 100].forEach(pct => {
+      const px = barTrackX + barTrackW * (pct / 100);
+      ctx.textAlign = pct === 0 ? "left" : (pct === 100 ? "right" : "center");
+      ctx.fillText(`${pct}%`, px, blY + blH - 18);
+    });
+    ctx.restore();
+
+    // BOTTOM-RIGHT: GAME-BY-GAME GOALS PREVENTED FORM (x: 1218..2336)
+    const brX = 1218, brY = 824, brW = 1118, brH = 598;
+    fillStrokeRoundRect(ctx, brX, brY, brW, brH, 12, theme.cardBg, theme.cardBorder, 2);
+
+    ctx.save();
+    ctx.textBaseline = "alphabetic";
+    ctx.textAlign = "left";
+    ctx.fillStyle = theme.inkMuted;
+    ctx.font = "800 20px Assistant, sans-serif";
+    ctx.fillText("GAME-BY-GAME GOALS PREVENTED", brX + 36, brY + 46);
+
+    ctx.textAlign = "right";
+    ctx.font = "600 19px Assistant, sans-serif";
+    const matchStr = `${keeper.n_matches} ${plural(keeper.n_matches, "MATCH", "MATCHES")}`;
+    const csStr    = `${keeper.clean_sheets} ${plural(keeper.clean_sheets, "CLEAN SHEET", "CLEAN SHEETS")}`;
+    ctx.fillText(`${matchStr}  \u2022  ${csStr}`, brX + brW - 36, brY + 46);
+
+    const mRows = keeper.matches || [];
+    let bestM = null, worstM = null, maxAbsM = 1.5;
+    mRows.forEach(m => {
+      if (!bestM || m.gp > bestM.gp) bestM = m;
+      if (!worstM || m.gp < worstM.gp) worstM = m;
+      if (Math.abs(m.gp) > maxAbsM) maxAbsM = Math.abs(m.gp);
+    });
+    const yBound = Math.ceil(maxAbsM * 1.15 * 2) / 2;
+
+    const validDates = mRows.filter(m => m.d).map(m => m.df);
+    const spanStr = validDates.length >= 2
+      ? `${validDates[0]} \u2013 ${validDates[validDates.length - 1]}`
+      : (validDates.length === 1 ? validDates[0] : "Date Range Unavailable");
+
+    ctx.textAlign = "left";
+    ctx.fillStyle = theme.inkSub;
+    ctx.font = "600 19px Assistant, sans-serif";
+    ctx.fillText(spanStr, brX + 36, brY + 84);
+
+    if (bestM && worstM) {
+      ctx.textAlign = "right";
+      ctx.fillText(`Peak: ${formatSigned(bestM.gp, 2)} GP   \u2022   Low: ${formatSigned(worstM.gp, 2)} GP`, brX + brW - 36, brY + 84);
     }
+
+    const fPlotX = brX + 86;
+    const fPlotW = brW - 122;
+    const fPlotTop = brY + 122;
+    const fPlotBot = brY + 510;
+    const fMidY = (fPlotTop + fPlotBot) * 0.5;
+    const fHalfH = (fPlotBot - fPlotTop) * 0.5;
+
+    const gLevels = [yBound, yBound * 0.5, 0, -yBound * 0.5, -yBound];
+    gLevels.forEach(lvl => {
+      const gy = fMidY - (lvl / yBound) * fHalfH;
+      ctx.strokeStyle = (lvl === 0) ? theme.needle : theme.rule;
+      ctx.lineWidth = (lvl === 0) ? 2.5 : 1.2;
+      ctx.beginPath();
+      ctx.moveTo(fPlotX, gy);
+      ctx.lineTo(fPlotX + fPlotW, gy);
+      ctx.stroke();
+
+      ctx.fillStyle = theme.inkMuted;
+      ctx.font = "600 17px Assistant, sans-serif";
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+      const lbl = lvl === 0 ? "0.0" : formatSigned(lvl, 1);
+      ctx.fillText(lbl, fPlotX - 12, gy);
+    });
+
+    if (mRows.length > 0) {
+      const slotW = fPlotW / mRows.length;
+      const gap = slotW > 14 ? Math.min(6, slotW * 0.22) : (slotW > 6 ? 1.5 : 0.8);
+      const bw = Math.max(2, Math.min(34, slotW - gap));
+      const startOff = mRows.length * slotW < fPlotW ? (fPlotW - mRows.length * slotW) * 0.5 : 0;
+
+      mRows.forEach((m, idx) => {
+        const cx = fPlotX + startOff + (idx + 0.5) * slotW;
+        const bx = cx - bw * 0.5;
+        const bh = Math.max(2, (Math.abs(m.gp) / yBound) * fHalfH);
+        const isPos = m.gp > 0;
+        const by = isPos ? (fMidY - bh) : fMidY;
+        const col = isPos ? theme.teal : theme.crimson;
+
+        ctx.fillStyle = col;
+        ctx.fillRect(bx, by, bw, bh);
+
+        saveHitboxes.push({
+          x: bx - gap * 0.5, y: fPlotTop, w: bw + gap, h: fPlotBot - fPlotTop,
+          text: `<b>Match ${idx + 1} (${m.df})</b><br>Goals Prevented: ${formatSigned(m.gp, 2)}<br>xGOT Faced: ${m.x.toFixed(2)}  |  Goals Allowed: ${m.g}`
+        });
+      });
+    }
+
+    ctx.strokeStyle = theme.needle;
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    ctx.moveTo(fPlotX, fMidY);
+    ctx.lineTo(fPlotX + fPlotW, fMidY);
+    ctx.stroke();
+
+    ctx.textBaseline = "alphabetic";
+    ctx.fillStyle = theme.inkMuted;
+    ctx.font = "600 17px Assistant, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Chronological Match Appearances (Oldest \u2192 Most Recent)", fPlotX + fPlotW * 0.5, brY + brH - 42);
+
+    fillStrokeRoundRect(ctx, fPlotX, brY + brH - 25, 14, 14, 3, theme.teal, null);
+    ctx.textAlign = "left";
+    ctx.fillStyle = theme.inkSub;
+    ctx.font = "600 16px Assistant, sans-serif";
+    ctx.fillText("Outperformed xGOT (GP > 0)", fPlotX + 20, brY + brH - 13);
+
+    fillStrokeRoundRect(ctx, fPlotX + 270, brY + brH - 25, 14, 14, 3, theme.crimson, null);
+    ctx.fillText("Allowed Above xGOT (GP \u2264 0)", fPlotX + 290, brY + brH - 13);
+    ctx.restore();
+
+    // 5. Card Footer
+    ctx.save();
+    ctx.textBaseline = "alphabetic";
+    ctx.fillStyle = theme.inkMuted;
+    ctx.font = "700 18px Assistant, sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("WOSO.LIVE   \u2022   GLOBAL GOALKEEPER EVALUATION", 64, 1468);
+
+    const lastDateStr = validDates.length > 0 ? `Latest Match: ${validDates[validDates.length - 1]}` : "Non-Penalty xGOT Shots";
+    ctx.textAlign = "right";
+    ctx.font = "600 18px Assistant, sans-serif";
+    ctx.fillText(`${modelName}  \u2022  Non-Penalty xGOT  \u2022  ${lastDateStr}`, 2336, 1468);
+    ctx.restore();
   }
+
+  function renderSaveMatchTable(keeper) {
+    const tbody = document.getElementById("save_match_tbody");
+    const titleEl = document.getElementById("save_log_title");
+    if (!tbody || !keeper) return;
+    titleEl.textContent = `${keeper.player_name} \u2014 Match-by-Match Shot-Stopping Log (${keeper.n_matches} ${plural(keeper.n_matches, "match", "matches")})`;
+    const rows = (keeper.matches || []).slice().reverse();
+    if (rows.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#64748B;padding:1rem;">No match log records available.</td></tr>`;
+      return;
+    }
+    tbody.innerHTML = rows.map((m, i) => {
+      const seqNum = rows.length - i;
+      const cls = m.gp > 0 ? "gk-val-pos" : "gk-val-neg";
+      const cumCls = m.cumGp >= 0 ? "gk-val-pos" : "gk-val-neg";
+      return `<tr>
+        <td>${seqNum}</td>
+        <td>${escapeHtml(m.df)}</td>
+        <td class="num">${m.x.toFixed(2)}</td>
+        <td class="num">${m.g}</td>
+        <td class="num"><span class="${cls}">${formatSigned(m.gp, 2)}</span></td>
+        <td class="num"><span class="${cumCls}">${formatSigned(m.cumGp, 2)}</span></td>
+      </tr>`;
+    }).join("");
+  }
+
+  function renderSaveProfile() {
+    const gkId = document.getElementById("save_gk").value;
+    const keeper = keeperById.get(gkId);
+    if (!keeper) return;
+    renderSaveMatchTable(keeper);
+    ensureFonts().then(() => {
+      drawPlayerCardCanvas();
+    });
+  }
+
+  // =========================================================================
+  // TAB 2: HEAD-TO-HEAD DUEL CARD (2400 x 1450 HIGH-DPI CANVAS)
+  // =========================================================================
+  let compTheme = "light";
+  let compPlotMeta = null;
+
+  function drawDuelCardCanvas() {
+    const canvas = document.getElementById("comp_duel_canvas");
+    const gkAId = document.getElementById("comp_gk_a").value;
+    const gkBId = document.getElementById("comp_gk_b").value;
+    const kA = keeperById.get(gkAId);
+    const kB = keeperById.get(gkBId);
+    if (!canvas || !kA || !kB) return;
+
+    const theme = THEMES[compTheme] || THEMES.light;
+    const colA = theme.teal;
+    const colB = compTheme === "dark" ? "#EB8258" : "#C8553D";
+    const fillA = compTheme === "dark" ? "rgba(32, 178, 170, 0.28)" : "rgba(0, 116, 122, 0.25)";
+    const fillB = compTheme === "dark" ? "rgba(235, 130, 88, 0.28)" : "rgba(200, 85, 61, 0.24)";
+
+    const W = 2400, H = 1450;
+    const ctx = canvas.getContext("2d");
+    compPlotMeta = null;
+
+    ctx.fillStyle = theme.bg;
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.fillStyle = colA;
+    ctx.fillRect(0, 0, W * 0.5, 11);
+    ctx.fillStyle = colB;
+    ctx.fillRect(W * 0.5, 0, W * 0.5, 11);
+
+    const redrawSafe = () => requestAnimationFrame(drawDuelCardCanvas);
+    const lgA = document.getElementById("comp_league_a").value;
+    const lgB = document.getElementById("comp_league_b").value;
+    const benchA = getBenchmarkInfo(kA, lgA, "league");
+    const benchB = getBenchmarkInfo(kB, lgB, "league");
+
+    drawClubCrest(ctx, kA.team_name, 124, 118, 116, theme, redrawSafe);
+    drawClubCrest(ctx, kB.team_name, 2276, 118, 116, theme, redrawSafe);
+
+    ctx.save();
+    ctx.textBaseline = "alphabetic";
+    ctx.textAlign = "left";
+    fitTextFont(ctx, kA.player_name.toUpperCase(), 820, 800, 50, 32);
+    ctx.fillStyle = colA;
+    ctx.fillText(kA.player_name.toUpperCase(), 208, 108);
+    ctx.fillStyle = theme.inkSub;
+    ctx.font = "600 22px Assistant, sans-serif";
+    const rankATxt = benchA.qualified && benchA.rank ? `#${benchA.rank} in ${benchA.cohortLabel} (${getOrdinalSuffix(benchA.pctl)})` : benchA.cohortLabel;
+    ctx.fillText(truncateText(ctx, `${kA.team_name.toUpperCase()}  \u2022  ${rankATxt}  \u2022  ${kA.shots_faced} SHOTS`, 840), 208, 148);
+
+    fillStrokeRoundRect(ctx, 1152, 84, 96, 56, 28, theme.pillBg, theme.pillBorder, 2);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = theme.ink;
+    ctx.font = "800 24px Assistant, sans-serif";
+    ctx.fillText("VS", 1200, 112);
+
+    ctx.textBaseline = "alphabetic";
+    ctx.textAlign = "right";
+    fitTextFont(ctx, kB.player_name.toUpperCase(), 820, 800, 50, 32);
+    ctx.fillStyle = colB;
+    ctx.fillText(kB.player_name.toUpperCase(), 2192, 108);
+    ctx.fillStyle = theme.inkSub;
+    ctx.font = "600 22px Assistant, sans-serif";
+    const rankBTxt = benchB.qualified && benchB.rank ? `#${benchB.rank} in ${benchB.cohortLabel} (${getOrdinalSuffix(benchB.pctl)})` : benchB.cohortLabel;
+    ctx.fillText(truncateText(ctx, `${kB.shots_faced} SHOTS  \u2022  ${rankBTxt}  \u2022  ${kB.team_name.toUpperCase()}`, 840), 2192, 148);
+    ctx.restore();
+
+    // Superiority Banner
+    const diffSd = Math.sqrt(kA.sd * kA.sd + kB.sd * kB.sd);
+    const probA = (1 - pnorm(0, kA.mu - kB.mu, Math.max(diffSd, 1e-6))) * 100;
+    const probB = 100 - probA;
+
+    const banX = 64, banY = 196, banW = 2272, banH = 148;
+    fillStrokeRoundRect(ctx, banX, banY, banW, banH, 12, theme.cardBg, theme.cardBorder, 2);
+
+    ctx.save();
+    ctx.textBaseline = "alphabetic";
+    ctx.textAlign = "center";
+    const verdictName = probA >= 50 ? kA.player_name : kB.player_name;
+    const verdictProb = Math.max(probA, probB);
+    ctx.fillStyle = theme.inkMuted;
+    ctx.font = "800 18px Assistant, sans-serif";
+    ctx.fillText("BAYESIAN PROBABILITY OF SUPERIORITY  \u2022  P(TRUE TALENT A > TRUE TALENT B)", 1200, banY + 36);
+
+    ctx.fillStyle = theme.ink;
+    ctx.font = "800 32px Assistant, sans-serif";
+    ctx.fillText(`${verdictName.toUpperCase()} IS ${verdictProb.toFixed(1)}% LIKELY TO BE THE SUPERIOR SHOTSTOPPER`, 1200, banY + 76);
+
+    const sBarX = banX + 48, sBarY = banY + 94, sBarW = banW - 96, sBarH = 32;
+    const wA = sBarW * (probA / 100);
+    ctx.save();
+    roundRectPath(ctx, sBarX, sBarY, sBarW, sBarH, 7);
+    ctx.clip();
+    ctx.fillStyle = colA;
+    ctx.fillRect(sBarX, sBarY, wA, sBarH);
+    ctx.fillStyle = colB;
+    ctx.fillRect(sBarX + wA, sBarY, sBarW - wA, sBarH);
+    ctx.fillStyle = theme.cardBg;
+    ctx.fillRect(sBarX + wA - 1.5, sBarY, 3, sBarH);
+    ctx.restore();
+
+    ctx.textBaseline = "middle";
+    ctx.font = "800 18px Assistant, sans-serif";
+    ctx.fillStyle = "#FFFFFF";
+    if (wA > 140) {
+      ctx.textAlign = "left";
+      ctx.fillText(`${probA.toFixed(1)}%`, sBarX + 16, sBarY + sBarH * 0.5);
+    }
+    if ((sBarW - wA) > 140) {
+      ctx.textAlign = "right";
+      ctx.fillText(`${probB.toFixed(1)}%`, sBarX + sBarW - 16, sBarY + sBarH * 0.5);
+    }
+    ctx.restore();
+
+    // Lower Split: Posterior Distributions (Left) + Tale of the Tape (Right)
+    const lpX = 64, lpY = 368, lpW = 1230, lpH = 1004;
+    fillStrokeRoundRect(ctx, lpX, lpY, lpW, lpH, 12, theme.cardBg, theme.cardBorder, 2);
+
+    ctx.save();
+    ctx.textBaseline = "alphabetic";
+    ctx.textAlign = "left";
+    ctx.fillStyle = theme.inkMuted;
+    ctx.font = "800 20px Assistant, sans-serif";
+    ctx.fillText("POSTERIOR TALENT DISTRIBUTIONS", lpX + 36, lpY + 46);
+    ctx.textAlign = "right";
+    ctx.font = "600 18px Assistant, sans-serif";
+    ctx.fillText("OVERLAPPING 95% CREDIBLE INTERVALS", lpX + lpW - 36, lpY + 46);
+
+    fillStrokeRoundRect(ctx, lpX + 36, lpY + 72, 18, 18, 4, colA, null);
+    ctx.textAlign = "left";
+    ctx.fillStyle = theme.ink;
+    ctx.font = "700 21px Assistant, sans-serif";
+    ctx.fillText(`${kA.player_name} (${formatSigned(kA.mu, 3)} \u00B1 ${(1.96 * kA.sd).toFixed(3)})`, lpX + 64, lpY + 88);
+
+    fillStrokeRoundRect(ctx, lpX + 36, lpY + 106, 18, 18, 4, colB, null);
+    ctx.fillText(`${kB.player_name} (${formatSigned(kB.mu, 3)} \u00B1 ${(1.96 * kB.sd).toFixed(3)})`, lpX + 64, lpY + 122);
+
+    // Dashed Prior legend on right of legend band
+    ctx.strokeStyle = theme.priorStroke;
+    ctx.lineWidth = 2.5;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    ctx.moveTo(lpX + lpW - 230, lpY + 82);
+    ctx.lineTo(lpX + lpW - 196, lpY + 82);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = theme.inkSub;
+    ctx.font = "600 18px Assistant, sans-serif";
+    ctx.fillText("Pro Baseline Prior", lpX + lpW - 188, lpY + 88);
+
+    const pX0 = lpX + 48, pW = lpW - 96;
+    const pTop = lpY + 188, pBot = lpY + 768;
+    const pH = pBot - pTop;
+    const xMin = -0.14, xMax = 0.14;
+    const xToPx = (x) => pX0 + ((x - xMin) / (xMax - xMin)) * pW;
+
+    const peakA = dnorm(kA.mu, kA.mu, kA.sd);
+    const peakB = dnorm(kB.mu, kB.mu, kB.sd);
+    const yLim = Math.max(peakA, peakB, dnorm(0, 0, PRIOR_SD)) * 1.20;
+    const yToPx = (y) => pBot - (y / yLim) * pH;
+
+    compPlotMeta = { x0: pX0, x1: pX0 + pW, y0: pTop, y1: pBot, xMin, xMax, kA, kB };
+
+    const ticks = [-0.10, -0.05, 0, 0.05, 0.10];
+    ticks.forEach(t => {
+      const tx = xToPx(t);
+      ctx.strokeStyle = (t === 0) ? theme.needle : theme.rule;
+      ctx.lineWidth = (t === 0) ? 2 : 1.2;
+      if (t === 0) ctx.setLineDash([6, 5]); else ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.moveTo(tx, pTop);
+      ctx.lineTo(tx, pBot);
+      ctx.stroke();
+    });
+    ctx.setLineDash([]);
+    ctx.fillStyle = theme.inkMuted;
+    ctx.font = "700 17px Assistant, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Pro Avg (0.000)", xToPx(0), pTop - 10);
+
+    const steps = 260;
+    ctx.beginPath();
+    for (let i = 0; i <= steps; i++) {
+      const xv = xMin + ((xMax - xMin) * i) / steps;
+      const py = yToPx(dnorm(xv, 0, PRIOR_SD));
+      if (i === 0) ctx.moveTo(xToPx(xv), py); else ctx.lineTo(xToPx(xv), py);
+    }
+    ctx.setLineDash([6, 5]);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = theme.priorStroke;
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    [
+      { k: kA, col: colA, fill: fillA, pk: peakA },
+      { k: kB, col: colB, fill: fillB, pk: peakB }
+    ].forEach(({ k, col, fill, pk }) => {
+      ctx.beginPath();
+      ctx.moveTo(xToPx(xMin), pBot);
+      for (let i = 0; i <= steps; i++) {
+        const xv = xMin + ((xMax - xMin) * i) / steps;
+        ctx.lineTo(xToPx(xv), yToPx(dnorm(xv, k.mu, k.sd)));
+      }
+      ctx.lineTo(xToPx(xMax), pBot);
+      ctx.closePath();
+      ctx.fillStyle = fill;
+      ctx.fill();
+
+      ctx.beginPath();
+      for (let i = 0; i <= steps; i++) {
+        const xv = xMin + ((xMax - xMin) * i) / steps;
+        const py = yToPx(dnorm(xv, k.mu, k.sd));
+        if (i === 0) ctx.moveTo(xToPx(xv), py); else ctx.lineTo(xToPx(xv), py);
+      }
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = col;
+      ctx.stroke();
+
+      const mx = xToPx(k.mu);
+      const my = yToPx(pk);
+      ctx.setLineDash([4, 4]);
+      ctx.lineWidth = 2.2;
+      ctx.strokeStyle = col;
+      ctx.beginPath();
+      ctx.moveTo(mx, my);
+      ctx.lineTo(mx, pBot);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    });
+
+    ctx.strokeStyle = theme.ruleStrong;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(pX0, pBot);
+    ctx.lineTo(pX0 + pW, pBot);
+    ctx.stroke();
+
+    [
+      { k: kA, col: colA, yOff: 26 },
+      { k: kB, col: colB, yOff: 62 }
+    ].forEach(({ k, col, yOff }) => {
+      const cy = pBot + yOff;
+      const x0 = Math.max(pX0, xToPx(k.ci_low));
+      const x1 = Math.min(pX0 + pW, xToPx(k.ci_high));
+      const xm = xToPx(k.mu);
+      ctx.strokeStyle = col;
+      ctx.lineWidth = 5;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(x0, cy);
+      ctx.lineTo(x1, cy);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(xm, cy, 7, 0, Math.PI * 2);
+      ctx.fillStyle = col;
+      ctx.fill();
+    });
+
+    ctx.fillStyle = theme.inkSub;
+    ctx.font = "600 18px Assistant, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    ticks.forEach(t => {
+      const lbl = t === 0 ? "0.00" : (t > 0 ? "+" + t.toFixed(2) : "\u2212" + Math.abs(t).toFixed(2));
+      ctx.fillText(lbl, xToPx(t), pBot + 96);
+    });
+    ctx.fillStyle = theme.inkMuted;
+    ctx.font = "600 18px Assistant, sans-serif";
+    ctx.fillText("True Talent Estimate (Calibrated Goals Prevented per Shot)  \u2022  95% Credible Intervals Shown", pX0 + pW * 0.5, pBot + 132);
+    ctx.restore();
+
+    // RIGHT PANEL: TALE OF THE TAPE
+    const rpX = 1324, rpY = 368, rpW = 1012, rpH = 1004;
+    fillStrokeRoundRect(ctx, rpX, rpY, rpW, rpH, 12, theme.cardBg, theme.cardBorder, 2);
+
+    ctx.save();
+    ctx.textBaseline = "alphabetic";
+    ctx.textAlign = "left";
+    ctx.fillStyle = theme.inkMuted;
+    ctx.font = "800 20px Assistant, sans-serif";
+    ctx.fillText("HEAD-TO-HEAD TALE OF THE TAPE", rpX + 36, rpY + 46);
+    ctx.textAlign = "right";
+    ctx.font = "600 18px Assistant, sans-serif";
+    ctx.fillText("BOLD INDICATES LEADER", rpX + rpW - 36, rpY + 46);
+
+    const metrics = [
+      {
+        label: "TRUE TALENT (GP / 100 SHOTS)",
+        vA: kA.mu * 100, vB: kB.mu * 100,
+        fA: formatSigned(kA.mu * 100, 2), fB: formatSigned(kB.mu * 100, 2),
+        subA: `${formatSigned(kA.mu, 3)}/sh  \u2022  ${Math.round(kA.certainty_pct)}% cert.`,
+        subB: `${formatSigned(kB.mu, 3)}/sh  \u2022  ${Math.round(kB.certainty_pct)}% cert.`,
+        maxRef: Math.max(7.0, Math.abs(kA.mu * 100), Math.abs(kB.mu * 100)), zeroShift: false
+      },
+      {
+        label: "GOALS PREVENTED (TOTAL)",
+        vA: kA.total_gp, vB: kB.total_gp,
+        fA: formatSigned(kA.total_gp, 2), fB: formatSigned(kB.total_gp, 2),
+        subA: `${kA.total_xgot.toFixed(1)} xGOT  \u2022  ${kA.goals_allowed} GA`,
+        subB: `${kB.total_xgot.toFixed(1)} xGOT  \u2022  ${kB.goals_allowed} GA`,
+        maxRef: Math.max(10, Math.abs(kA.total_gp), Math.abs(kB.total_gp)), zeroShift: false
+      },
+      {
+        label: "GP / 10 xGOT FACED",
+        vA: kA.gp_10xgot, vB: kB.gp_10xgot,
+        fA: formatSigned(kA.gp_10xgot, 2), fB: formatSigned(kB.gp_10xgot, 2),
+        subA: `${kA.n_matches} ${plural(kA.n_matches, "match", "matches")}`,
+        subB: `${kB.n_matches} ${plural(kB.n_matches, "match", "matches")}`,
+        maxRef: Math.max(5.0, Math.abs(kA.gp_10xgot), Math.abs(kB.gp_10xgot)), zeroShift: false
+      },
+      {
+        label: "SAVE % ABOVE EXPECTED (Sv% \u2212 xSv%)",
+        vA: kA.sv_pct - kA.x_sv_pct, vB: kB.sv_pct - kB.x_sv_pct,
+        fA: formatSigned(kA.sv_pct - kA.x_sv_pct, 1) + "%", fB: formatSigned(kB.sv_pct - kB.x_sv_pct, 1) + "%",
+        subA: `${kA.sv_pct.toFixed(1)}% vs ${kA.x_sv_pct.toFixed(1)}%`,
+        subB: `${kB.sv_pct.toFixed(1)}% vs ${kB.x_sv_pct.toFixed(1)}%`,
+        maxRef: Math.max(12.0, Math.abs(kA.sv_pct - kA.x_sv_pct), Math.abs(kB.sv_pct - kB.x_sv_pct)), zeroShift: false
+      },
+      {
+        label: "HIGH-DANGER SAVE % (HDSv%)",
+        vA: kA.cq_high.sf > 0 ? ((kA.cq_high.sf - kA.cq_high.ga) / kA.cq_high.sf) * 100 : null,
+        vB: kB.cq_high.sf > 0 ? ((kB.cq_high.sf - kB.cq_high.ga) / kB.cq_high.sf) * 100 : null,
+        fA: kA.cq_high.sf > 0 ? (((kA.cq_high.sf - kA.cq_high.ga) / kA.cq_high.sf) * 100).toFixed(1) + "%" : "\u2014",
+        fB: kB.cq_high.sf > 0 ? (((kB.cq_high.sf - kB.cq_high.ga) / kB.cq_high.sf) * 100).toFixed(1) + "%" : "\u2014",
+        subA: `${kA.cq_high.sf - kA.cq_high.ga}/${kA.cq_high.sf} HD saved`,
+        subB: `${kB.cq_high.sf - kB.cq_high.ga}/${kB.cq_high.sf} HD saved`,
+        maxRef: 100, zeroShift: true
+      },
+      {
+        label: "MATCH CONSISTENCY (AxA%)",
+        vA: kA.axa_pct, vB: kB.axa_pct,
+        fA: `${kA.axa_pct.toFixed(1)}%`, fB: `${kB.axa_pct.toFixed(1)}%`,
+        subA: `${kA.pos_matches}/${kA.n_matches} > 0 GP`,
+        subB: `${kB.pos_matches}/${kB.n_matches} > 0 GP`,
+        maxRef: 100, zeroShift: true
+      }
+    ];
+
+    const cX = rpX + rpW * 0.5;
+    const halfBarW = 420;
+    metrics.forEach((m, idx) => {
+      const ry = rpY + 112 + idx * 145;
+      if (idx > 0) {
+        ctx.strokeStyle = theme.rule;
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(rpX + 36, ry - 32);
+        ctx.lineTo(rpX + rpW - 36, ry - 32);
+        ctx.stroke();
+      }
+
+      const bothNum = m.vA !== null && m.vB !== null;
+      const aLeads = bothNum && m.vA > m.vB;
+      const bLeads = bothNum && m.vB > m.vA;
+
+      ctx.textAlign = "center";
+      ctx.textBaseline = "alphabetic";
+      ctx.fillStyle = theme.inkMuted;
+      ctx.font = "800 17px Assistant, sans-serif";
+      ctx.fillText(m.label, cX, ry);
+
+      ctx.textAlign = "left";
+      ctx.fillStyle = aLeads ? colA : theme.ink;
+      ctx.font = `${aLeads ? 800 : 600} 34px Assistant, sans-serif`;
+      ctx.fillText(m.fA, rpX + 36, ry + 36);
+      ctx.fillStyle = theme.inkSub;
+      ctx.font = "600 17px Assistant, sans-serif";
+      ctx.fillText(m.subA, rpX + 36, ry + 60);
+
+      ctx.textAlign = "right";
+      ctx.fillStyle = bLeads ? colB : theme.ink;
+      ctx.font = `${bLeads ? 800 : 600} 34px Assistant, sans-serif`;
+      ctx.fillText(m.fB, rpX + rpW - 36, ry + 36);
+      ctx.fillStyle = theme.inkSub;
+      ctx.font = "600 17px Assistant, sans-serif";
+      ctx.fillText(m.subB, rpX + rpW - 36, ry + 60);
+
+      const barY = ry + 74;
+      const barH = 16;
+      const leftTrackX = cX - halfBarW - 8;
+      const rightTrackX = cX + 8;
+
+      fillStrokeRoundRect(ctx, leftTrackX, barY, halfBarW, barH, 4, theme.trackBg, null);
+      fillStrokeRoundRect(ctx, rightTrackX, barY, halfBarW, barH, 4, theme.trackBg, null);
+
+      const magA = m.vA === null ? 0 : (m.zeroShift ? Math.max(0, Math.min(1, m.vA / m.maxRef)) : Math.max(0.05, Math.min(1, (m.vA + m.maxRef) / (2 * m.maxRef))));
+      const magB = m.vB === null ? 0 : (m.zeroShift ? Math.max(0, Math.min(1, m.vB / m.maxRef)) : Math.max(0.05, Math.min(1, (m.vB + m.maxRef) / (2 * m.maxRef))));
+
+      if (m.vA !== null) {
+        const wLeft = halfBarW * magA;
+        fillStrokeRoundRect(ctx, cX - 8 - wLeft, barY, wLeft, barH, 4, colA, null);
+      }
+      if (m.vB !== null) {
+        const wRight = halfBarW * magB;
+        fillStrokeRoundRect(ctx, rightTrackX, barY, wRight, barH, 4, colB, null);
+      }
+    });
+    ctx.restore();
+
+    ctx.save();
+    ctx.textBaseline = "alphabetic";
+    ctx.fillStyle = theme.inkMuted;
+    ctx.font = "700 18px Assistant, sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("WOSO.LIVE   \u2022   BAYESIAN HEAD-TO-HEAD COMPARISON", 64, 1418);
+    ctx.textAlign = "right";
+    ctx.font = "600 18px Assistant, sans-serif";
+    ctx.fillText(`${modelName}  \u2022  Non-Penalty xGOT Shots`, 2336, 1418);
+    ctx.restore();
+  }
+
+  function renderCompView() {
+    ensureFonts().then(() => drawDuelCardCanvas());
+  }
+
+  // =========================================================================
+  // CANVAS TOOLTIP INTERACTIVITY & EXPORT HELPERS
+  // =========================================================================
+  function attachCanvasHover(canvasId, tooltipId, resolveHtmlFn) {
+    const canvas = document.getElementById(canvasId);
+    const tip = document.getElementById(tooltipId);
+    if (!canvas || !tip) return;
+
+    canvas.addEventListener("mousemove", (e) => {
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width <= 0 || rect.height <= 0) return;
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const cx = (e.clientX - rect.left) * scaleX;
+      const cy = (e.clientY - rect.top) * scaleY;
+      const html = resolveHtmlFn(cx, cy);
+      if (!html) {
+        tip.style.display = "none";
+        return;
+      }
+      tip.innerHTML = html;
+      tip.style.display = "block";
+      const localX = e.clientX - rect.left;
+      const localY = e.clientY - rect.top;
+      const tipW = tip.offsetWidth || 180;
+      const leftPos = (localX + 16 + tipW > rect.width) ? Math.max(8, localX - tipW - 14) : (localX + 14);
+      tip.style.left = `${leftPos}px`;
+      tip.style.top = `${Math.max(8, localY - 14)}px`;
+    });
+
+    canvas.addEventListener("mouseleave", () => {
+      tip.style.display = "none";
+    });
+  }
+
+  function downloadCanvasPng(canvasId, filename) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+    }, "image/png");
+  }
+
+  function copyCanvasToClipboard(canvasId, toastId) {
+    const canvas = document.getElementById(canvasId);
+    const toast = document.getElementById(toastId);
+    if (!canvas || !toast) return;
+    const showToast = (msg) => {
+      toast.textContent = msg;
+      setTimeout(() => { if (toast.textContent === msg) toast.textContent = ""; }, 2600);
+    };
+    if (!navigator.clipboard || typeof ClipboardItem === "undefined") {
+      showToast("Use Download PNG (clipboard unsupported here)");
+      return;
+    }
+    canvas.toBlob(async (blob) => {
+      if (!blob) return;
+      try {
+        await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+        showToast("Copied PNG to clipboard");
+      } catch (_err) {
+        showToast("Clipboard blocked \u2014 use Download PNG");
+      }
+    }, "image/png");
+  }
+
+  // =========================================================================
+  // TAB SWITCHING & INITIALIZATION
+  // =========================================================================
+  let currentTab = "post";
+  let saveManuallyPicked = false;
 
   window.switchGkTab = function(tab) {
+    currentTab = tab;
     document.getElementById("gk-panel-post").style.display = (tab === "post") ? "grid" : "none";
     document.getElementById("gk-panel-comp").style.display = (tab === "comp") ? "grid" : "none";
     document.getElementById("gk-panel-save").style.display = (tab === "save") ? "grid" : "none";
@@ -1571,78 +3765,243 @@ cat(sprintf(
     document.getElementById("gk-tab-btn-comp").classList.toggle("active", tab === "comp");
     document.getElementById("gk-tab-btn-save").classList.toggle("active", tab === "save");
 
-    if (tab === "post") renderPosteriorPlot();
-    else if (tab === "comp") renderCompPlot();
-    else if (tab === "save") {
+    if (tab === "post") {
+      renderPosteriorPlot();
+    } else if (tab === "comp") {
+      renderCompView();
+    } else if (tab === "save") {
+      if (!saveManuallyPicked) {
+        const postLg = document.getElementById("league_filter").value;
+        const postGk = document.getElementById("gk_select").value;
+        if (postGk) {
+          document.getElementById("save_league").value = postLg;
+          comboRegistry["save_gk"].setItems(getFilteredKeepers(postLg), postGk, 0);
+        }
+      }
       renderSaveProfile();
-      setTimeout(scaleDashboard, 80);
     }
   };
 
+  function setupThemeGroup(groupId, onThemeChange) {
+    const grp = document.getElementById(groupId);
+    if (!grp) return;
+    grp.querySelectorAll(".gk-seg-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        grp.querySelectorAll(".gk-seg-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        onThemeChange(btn.dataset.theme);
+      });
+    });
+  }
+
   function initGkApp() {
-    ["league_filter", "comp_league_a", "comp_league_b", "save_league"].forEach(populateLeagueSelect);
+    ["league_filter", "comp_league_a", "comp_league_b", "save_league"].forEach(id => populateLeagueSelect(id, "9134"));
 
-    setupSearchableCombo("gk_select", renderPosteriorPlot);
-    setupSearchableCombo("comp_gk_a", renderCompPlot);
-    setupSearchableCombo("comp_gk_b", renderCompPlot);
-    setupSearchableCombo("save_gk", renderSaveProfile);
+    setupSearchableCombo("gk_select", () => renderPosteriorPlot());
+    setupSearchableCombo("comp_gk_a", () => renderCompView());
+    setupSearchableCombo("comp_gk_b", () => renderCompView());
+    setupSearchableCombo("save_gk", () => { saveManuallyPicked = true; renderSaveProfile(); });
 
-    updateKeeperSelect("league_filter", "gk_select", 0);
-    updateKeeperSelect("comp_league_a", "comp_gk_a", 0);
-    updateKeeperSelect("comp_league_b", "comp_gk_b", 1);
-    updateKeeperSelect("save_league", "save_gk", 0);
+    const defA = pickDefaultKeeperId("9134", 0);
+    const defB = pickDefaultKeeperId("9134", 1);
 
-    document.getElementById("league_filter").addEventListener("change", () => {
-      updateKeeperSelect("league_filter", "gk_select", 0);
+    comboRegistry["gk_select"].setItems(getFilteredKeepers("9134"), defA, 0);
+    comboRegistry["comp_gk_a"].setItems(getFilteredKeepers("9134"), defA, 0);
+    comboRegistry["comp_gk_b"].setItems(getFilteredKeepers("9134"), defB, 1);
+    comboRegistry["save_gk"].setItems(getFilteredKeepers("9134"), defA, 0);
+
+    document.getElementById("league_filter").addEventListener("change", (e) => {
+      const lv = e.target.value;
+      comboRegistry["gk_select"].setItems(getFilteredKeepers(lv), pickDefaultKeeperId(lv, 0), 0);
       renderPosteriorPlot();
     });
 
-    document.getElementById("comp_league_a").addEventListener("change", () => {
-      updateKeeperSelect("comp_league_a", "comp_gk_a", 0);
-      renderCompPlot();
-    });
-    document.getElementById("comp_league_b").addEventListener("change", () => {
-      updateKeeperSelect("comp_league_b", "comp_gk_b", 1);
-      renderCompPlot();
+    document.getElementById("comp_league_a").addEventListener("change", (e) => {
+      const lv = e.target.value;
+      comboRegistry["comp_gk_a"].setItems(getFilteredKeepers(lv), pickDefaultKeeperId(lv, 0), 0);
+      renderCompView();
     });
 
-    document.getElementById("save_league").addEventListener("change", () => {
-      updateKeeperSelect("save_league", "save_gk", 0);
+    document.getElementById("comp_league_b").addEventListener("change", (e) => {
+      const lv = e.target.value;
+      comboRegistry["comp_gk_b"].setItems(getFilteredKeepers(lv), pickDefaultKeeperId(lv, 0), 1);
+      renderCompView();
+    });
+
+    document.getElementById("save_league").addEventListener("change", (e) => {
+      saveManuallyPicked = true;
+      const lv = e.target.value;
+      comboRegistry["save_gk"].setItems(getFilteredKeepers(lv), pickDefaultKeeperId(lv, 0), 0);
       renderSaveProfile();
     });
 
-    document.getElementById("download_plotly").addEventListener("click", () => {
-      const el = document.getElementById("gk_posterior_plot");
-      const origSliders = el.layout.sliders || [];
-      const origMenus = el.layout.updatemenus || [];
-      Plotly.relayout(el, { sliders: [], updatemenus: [] }).then(() => {
-        return Plotly.downloadImage(el, { format: "png", width: 1200, height: 750, scale: 3, filename: "goalkeeper_posterior" });
-      }).then(() => {
-        Plotly.relayout(el, { sliders: origSliders, updatemenus: origMenus });
-      });
+    // Tab 1 Playback controls
+    document.getElementById("post_replay_btn").addEventListener("click", () => startPostPlayback(true));
+    document.getElementById("post_play_btn").addEventListener("click", () => startPostPlayback(false));
+    document.getElementById("post_pause_btn").addEventListener("click", () => stopPostAnim());
+    document.getElementById("post_final_btn").addEventListener("click", () => {
+      stopPostAnim();
+      if (postAnimState.frames.length > 0) drawPosteriorFrameCanvas(postAnimState.frames.length - 1);
+    });
+    document.getElementById("post_scrub_range").addEventListener("input", (e) => {
+      stopPostAnim();
+      drawPosteriorFrameCanvas(Number(e.target.value));
     });
 
-    document.getElementById("download_plotly_comp").addEventListener("click", () => {
-      const el = document.getElementById("gk_comp_plot");
-      Plotly.downloadImage(el, { format: "png", width: 1200, height: 750, scale: 3, filename: "goalkeeper_head_to_head_comparison" });
+    document.getElementById("post_jump_save").addEventListener("click", () => {
+      const lv = document.getElementById("league_filter").value;
+      const kid = document.getElementById("gk_select").value;
+      saveManuallyPicked = true;
+      document.getElementById("save_league").value = lv;
+      comboRegistry["save_gk"].setItems(getFilteredKeepers(lv), kid, 0);
+      switchGkTab("save");
+    });
+
+    document.getElementById("download_post_png").addEventListener("click", () => {
+      const k = keeperById.get(document.getElementById("gk_select").value);
+      const fname = (k ? slugify(k.player_name) : "goalkeeper") + "_posterior.png";
+      downloadCanvasPng("gk_posterior_canvas", fname);
+    });
+
+    // Tab 2 Controls
+    document.getElementById("comp_swap_btn").addEventListener("click", () => {
+      const lgA = document.getElementById("comp_league_a").value;
+      const lgB = document.getElementById("comp_league_b").value;
+      const idA = document.getElementById("comp_gk_a").value;
+      const idB = document.getElementById("comp_gk_b").value;
+      document.getElementById("comp_league_a").value = lgB;
+      document.getElementById("comp_league_b").value = lgA;
+      comboRegistry["comp_gk_a"].setItems(getFilteredKeepers(lgB), idB, 0);
+      comboRegistry["comp_gk_b"].setItems(getFilteredKeepers(lgA), idA, 0);
+      renderCompView();
+    });
+
+    setupThemeGroup("comp_theme_seg", (t) => {
+      compTheme = t;
+      saveTheme = t;
+      document.querySelectorAll("#save_theme_seg .gk-seg-btn").forEach(b => b.classList.toggle("active", b.dataset.theme === t));
+      drawDuelCardCanvas();
+    });
+
+    document.getElementById("download_duel_card").addEventListener("click", () => {
+      const kA = keeperById.get(document.getElementById("comp_gk_a").value);
+      const kB = keeperById.get(document.getElementById("comp_gk_b").value);
+      const fname = `${slugify(kA?.player_name || "gk_a")}_vs_${slugify(kB?.player_name || "gk_b")}_duel.png`;
+      downloadCanvasPng("comp_duel_canvas", fname);
+    });
+
+    document.getElementById("copy_duel_card").addEventListener("click", () => {
+      copyCanvasToClipboard("comp_duel_canvas", "comp_copy_toast");
+    });
+
+    // Tab 3 Controls
+    setupThemeGroup("save_theme_seg", (t) => {
+      saveTheme = t;
+      compTheme = t;
+      document.querySelectorAll("#comp_theme_seg .gk-seg-btn").forEach(b => b.classList.toggle("active", b.dataset.theme === t));
+      drawPlayerCardCanvas();
+    });
+
+    const benchSeg = document.getElementById("save_bench_seg");
+    benchSeg.querySelectorAll(".gk-seg-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        benchSeg.querySelectorAll(".gk-seg-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        saveBench = btn.dataset.bench;
+        drawPlayerCardCanvas();
+      });
     });
 
     document.getElementById("download_save_dash").addEventListener("click", () => {
-      const dash = document.getElementById("save_dashboard_export_area");
-      const origTransform = dash.style.transform;
-      dash.style.transform = "none";
-      html2canvas(dash, { backgroundColor: "#1D3549", scale: 2 }).then(canvas => {
-        dash.style.transform = origTransform;
-        const link = document.createElement("a");
-        link.download = "SAVE_Dashboard_Export.png";
-        link.href = canvas.toDataURL("image/png");
-        link.click();
-      });
+      const k = keeperById.get(document.getElementById("save_gk").value);
+      const fname = `${slugify(k?.player_name || "goalkeeper")}_save_card.png`;
+      downloadCanvasPng("save_player_canvas", fname);
     });
 
-    window.addEventListener("resize", scaleDashboard);
+    document.getElementById("copy_save_card").addEventListener("click", () => {
+      copyCanvasToClipboard("save_player_canvas", "save_copy_toast");
+    });
 
-    renderPosteriorPlot();
+    document.getElementById("save_compare_btn").addEventListener("click", () => {
+      const lv = document.getElementById("save_league").value;
+      const kid = document.getElementById("save_gk").value;
+      document.getElementById("comp_league_a").value = lv;
+      comboRegistry["comp_gk_a"].setItems(getFilteredKeepers(lv), kid, 0);
+      const curB = document.getElementById("comp_gk_b").value;
+      if (curB === kid) {
+        const alt = getQualifiedCohort(lv).find(k => k.keeper_id !== kid);
+        if (alt) {
+          document.getElementById("comp_league_b").value = lv;
+          comboRegistry["comp_gk_b"].setItems(getFilteredKeepers(lv), alt.keeper_id, 0);
+        }
+      }
+      switchGkTab("comp");
+    });
+
+    document.getElementById("save_log_toggle").addEventListener("click", () => {
+      const body = document.getElementById("save_log_body");
+      const btn  = document.getElementById("save_log_toggle");
+      const open = body.style.display === "none";
+      body.style.display = open ? "block" : "none";
+      btn.textContent = open ? "Hide Match Log" : "Show Match Log";
+    });
+
+    // Hover tooltips across all 3 high-DPI Canvases
+    attachCanvasHover("gk_posterior_canvas", "post_canvas_tooltip", (cx, cy) => {
+      const m = postAnimState.plotMeta;
+      if (m && cx >= m.x0 && cx <= m.x1 && cy >= m.y0 && cy <= m.y1) {
+        const xv = m.xMin + ((cx - m.x0) / (m.x1 - m.x0)) * (m.xMax - m.xMin);
+        const pGreater = (1 - pnorm(xv, m.mu, Math.max(m.sd, 1e-6))) * 100;
+        return `<b>Threshold: ${formatSigned(xv, 3)} GP/Shot</b><br>P(True Talent > ${formatSigned(xv, 3)}): <b>${pGreater.toFixed(1)}%</b>`;
+      }
+      return null;
+    });
+
+    attachCanvasHover("save_player_canvas", "save_canvas_tooltip", (cx, cy) => {
+      for (let i = saveHitboxes.length - 1; i >= 0; i--) {
+        const h = saveHitboxes[i];
+        if (cx >= h.x && cx <= h.x + h.w && cy >= h.y && cy <= h.y + h.h) return h.text;
+      }
+      if (savePlotMeta && cx >= savePlotMeta.x0 && cx <= savePlotMeta.x1 && cy >= savePlotMeta.y0 && cy <= savePlotMeta.y1) {
+        const xv = savePlotMeta.xMin + ((cx - savePlotMeta.x0) / (savePlotMeta.x1 - savePlotMeta.x0)) * (savePlotMeta.xMax - savePlotMeta.xMin);
+        const pGreater = (1 - pnorm(xv, savePlotMeta.mu, Math.max(savePlotMeta.sd, 1e-6))) * 100;
+        return `<b>Talent Threshold: ${formatSigned(xv, 3)} GP/Shot</b><br>P(True Talent > ${formatSigned(xv, 3)}): <b>${pGreater.toFixed(1)}%</b>`;
+      }
+      return null;
+    });
+
+    attachCanvasHover("comp_duel_canvas", "comp_canvas_tooltip", (cx, cy) => {
+      if (compPlotMeta && cx >= compPlotMeta.x0 && cx <= compPlotMeta.x1 && cy >= compPlotMeta.y0 && cy <= compPlotMeta.y1) {
+        const xv = compPlotMeta.xMin + ((cx - compPlotMeta.x0) / (compPlotMeta.x1 - compPlotMeta.x0)) * (compPlotMeta.xMax - compPlotMeta.xMin);
+        const pA = (1 - pnorm(xv, compPlotMeta.kA.mu, Math.max(compPlotMeta.kA.sd, 1e-6))) * 100;
+        const pB = (1 - pnorm(xv, compPlotMeta.kB.mu, Math.max(compPlotMeta.kB.sd, 1e-6))) * 100;
+        return `<b>Threshold: ${formatSigned(xv, 3)} GP/Shot</b><br>${escapeHtml(compPlotMeta.kA.player_name)}: ${pA.toFixed(1)}% above<br>${escapeHtml(compPlotMeta.kB.player_name)}: ${pB.toFixed(1)}% above`;
+      }
+      return null;
+    });
+
+    // Support URL hash / query deep links (e.g. ?tab=save or #save)
+    const params = new URLSearchParams(window.location.search);
+    const reqTab = (params.get("tab") || window.location.hash.replace("#", "") || "").toLowerCase();
+    const reqKeeper = params.get("keeper");
+    if (reqKeeper && keeperById.has(reqKeeper)) {
+      const k = keeperById.get(reqKeeper);
+      const lg = String(k.primary_league_id);
+      const lgChoice = LEAGUE_CHOICES.some(c => c.value === lg) ? lg : "all";
+      ["league_filter", "save_league", "comp_league_a"].forEach(id => {
+        document.getElementById(id).value = lgChoice;
+      });
+      comboRegistry["gk_select"].setItems(getFilteredKeepers(lgChoice), reqKeeper, 0);
+      comboRegistry["save_gk"].setItems(getFilteredKeepers(lgChoice), reqKeeper, 0);
+      comboRegistry["comp_gk_a"].setItems(getFilteredKeepers(lgChoice), reqKeeper, 0);
+      saveManuallyPicked = true;
+    }
+
+    if (reqTab === "save" || reqTab === "comp" || reqTab === "post") {
+      switchGkTab(reqTab);
+    } else {
+      renderPosteriorPlot();
+    }
   }
 
   if (document.readyState === "loading") {
