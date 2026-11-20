@@ -652,7 +652,7 @@ cat(sprintf(
   }
 
   .gk-top-val.neg {
-    color: #B83A3A;
+    color: #B2182B;
   }
 
   /* Main Panels */
@@ -661,7 +661,7 @@ cat(sprintf(
     min-width: 0;
   }
 
-  /* Tab 1 Live HUD */
+  /* Tab 2 Live HUD */
   .gk-hud-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -686,7 +686,7 @@ cat(sprintf(
     background-color: #F8F9FA;
     border: 1px solid #DEE2E6;
     border-left: 3px solid #00747A;
-    border-radius: 5px;
+    border-radius: 2px;
     padding: 0.68rem 0.88rem;
   }
 
@@ -716,7 +716,7 @@ cat(sprintf(
 
   .gk-plot-frame {
     border: 1px solid #DEE2E6;
-    border-radius: 6px;
+    border-radius: 2px;
     padding: 0.75rem;
     background-color: #FFFFFF;
   }
@@ -747,7 +747,7 @@ cat(sprintf(
     font-size: 0.84rem;
     font-weight: 600;
     padding: 0.34rem 0.75rem;
-    border-radius: 4px;
+    border-radius: 2px;
     cursor: pointer;
     transition: all 0.14s ease;
   }
@@ -800,9 +800,9 @@ cat(sprintf(
     width: 100%;
     height: auto;
     display: block;
-    border-radius: 6px;
-    border: 1px solid #D6DDE5;
-    box-shadow: 0 4px 18px rgba(15, 30, 44, 0.08);
+    border-radius: 2px;
+    border: 1px solid #CFD8E0;
+    box-shadow: 0 2px 10px rgba(15, 30, 44, 0.05);
     cursor: crosshair;
   }
 
@@ -947,17 +947,17 @@ cat(sprintf(
     <div class="gk-subnav-left">
       <span class="gk-brand">Global Goalkeeper Evaluation</span>
       <div class="gk-tabs" role="tablist">
-        <button id="gk-tab-btn-post" class="gk-tab-btn active" role="tab" aria-selected="true" onclick="switchGkTab('post')">Shotstopping Posterior (Animated)</button>
+        <button id="gk-tab-btn-save" class="gk-tab-btn active" role="tab" aria-selected="true" onclick="switchGkTab('save')">Player Cards</button>
+        <button id="gk-tab-btn-post" class="gk-tab-btn" role="tab" aria-selected="false" onclick="switchGkTab('post')">Shotstopping Posterior (Animated)</button>
         <button id="gk-tab-btn-comp" class="gk-tab-btn" role="tab" aria-selected="false" onclick="switchGkTab('comp')">Goalkeeper Comparison</button>
-        <button id="gk-tab-btn-save" class="gk-tab-btn" role="tab" aria-selected="false" onclick="switchGkTab('save')">SAVE Profile</button>
       </div>
     </div>
     <div id="gk_model_badge" class="gk-model-meta-pill">Calibrated Logit EB</div>
   </div>
 
   <div class="gk-body-container">
-    <!-- TAB 1: SHOTSTOPPING POSTERIOR (ANIMATED) -->
-    <div id="gk-panel-post" class="gk-layout">
+    <!-- TAB 2: SHOTSTOPPING POSTERIOR (ANIMATED) -->
+    <div id="gk-panel-post" class="gk-layout" style="display: none;">
       <div class="gk-sidebar">
         <h4>Live Bayesian Trajectory</h4>
         <p class="gk-help">Watch how the model updates a goalkeeper's true shotstopping estimate shot by shot. Narrower curves reflect greater sample certainty.</p>
@@ -987,7 +987,7 @@ cat(sprintf(
           <hr class="gk-divider">
         </div>
 
-        <button id="post_jump_save" class="gk-btn-primary" type="button">Open SAVE Player Card &rarr;</button>
+        <button id="post_jump_save" class="gk-btn-primary" type="button">Open Player Card &rarr;</button>
         <button id="download_post_png" class="gk-btn-outline" type="button" style="margin-bottom:0;">Download Posterior Plot (PNG)</button>
       </div>
 
@@ -1040,7 +1040,7 @@ cat(sprintf(
     <div id="gk-panel-comp" class="gk-layout" style="display: none;">
       <div class="gk-sidebar">
         <h4>Head-to-Head Comparison</h4>
-        <p class="gk-help">Compare posterior shotstopping distributions, probability of superiority, and SAVE efficiency.</p>
+        <p class="gk-help">Compare posterior shotstopping distributions, probability of superiority, and shot-stopping efficiency.</p>
         <hr class="gk-divider gk-desktop-only">
 
         <h5>Goalkeeper A</h5>
@@ -1084,8 +1084,8 @@ cat(sprintf(
         <hr class="gk-divider">
         <label class="gk-label">Card Appearance:</label>
         <div class="gk-seg-group" id="comp_theme_seg">
-          <button type="button" class="gk-seg-btn active" data-theme="light">Editorial Light</button>
-          <button type="button" class="gk-seg-btn" data-theme="dark">Midnight Navy</button>
+          <button type="button" class="gk-seg-btn active" data-theme="light">Light</button>
+          <button type="button" class="gk-seg-btn" data-theme="dark">Navy</button>
         </div>
 
         <button id="download_duel_card" class="gk-btn-primary" type="button">Download Duel Card (PNG)</button>
@@ -1105,11 +1105,11 @@ cat(sprintf(
       </div>
     </div>
 
-    <!-- TAB 3: SAVE PROFILE PLAYER CARD -->
-    <div id="gk-panel-save" class="gk-layout" style="display: none;">
+    <!-- TAB 1: PLAYER CARDS -->
+    <div id="gk-panel-save" class="gk-layout">
       <div class="gk-sidebar">
-        <h4>SAVE Player Card</h4>
-        <p class="gk-help">Shareable scouting profile uniting Calibrated Logit EB posteriors, danger-tier save efficiency, and game-by-game form.</p>
+        <h4>Player Cards</h4>
+        <p class="gk-help">Shareable scouting card uniting Calibrated Logit EB posteriors, danger-tier save efficiency, and game-by-game form.</p>
 
         <div class="gk-selector-grid">
           <div>
@@ -1140,15 +1140,15 @@ cat(sprintf(
           <div>
             <label class="gk-label">Card Appearance:</label>
             <div class="gk-seg-group" id="save_theme_seg">
-              <button type="button" class="gk-seg-btn active" data-theme="light">Editorial Light</button>
-              <button type="button" class="gk-seg-btn" data-theme="dark">Midnight Navy</button>
+              <button type="button" class="gk-seg-btn active" data-theme="light">Light</button>
+              <button type="button" class="gk-seg-btn" data-theme="dark">Navy</button>
             </div>
           </div>
           <div>
             <label class="gk-label">Rank &amp; Benchmark:</label>
             <div class="gk-seg-group" id="save_bench_seg">
-              <button type="button" class="gk-seg-btn active" data-bench="league">League Cohort</button>
-              <button type="button" class="gk-seg-btn" data-bench="global">Global Cohort</button>
+              <button type="button" class="gk-seg-btn active" data-bench="league">League</button>
+              <button type="button" class="gk-seg-btn" data-bench="global">Global</button>
             </div>
           </div>
         </div>
@@ -1926,52 +1926,52 @@ cat(sprintf(
   // =========================================================================
   const THEMES = {
     light: {
-      bg: "#F5F7FA",
+      bg: "#FFFFFF",
       cardBg: "#FFFFFF",
-      cardBorder: "#D9E1EA",
-      subBg: "#F8FAFC",
-      crestPlate: "#F4F6F9",
-      crestBorder: "#D9E1EA",
-      ink: "#0F1E2C",
-      inkSub: "#4B5C6E",
-      inkMuted: "#738496",
-      rule: "#E3E9F0",
+      cardBorder: "#DEE2E6",
+      subBg: "#F8F9FA",
+      crestPlate: "#F8F9FA",
+      crestBorder: "#DEE2E6",
+      ink: "#111111",
+      inkSub: "#495057",
+      inkMuted: "#6C757D",
+      rule: "#DEE2E6",
       ruleStrong: "#1D3549",
       teal: "#00747A",
-      crimson: "#B83A3A",
-      priorStroke: "#7B8C9E",
-      priorFill: "rgba(123, 140, 158, 0.11)",
-      trackBg: "#E9EEF4",
+      crimson: "#B2182B",
+      priorStroke: "#6C757D",
+      priorFill: "rgba(108, 117, 125, 0.12)",
+      trackBg: "#E9ECEF",
       needle: "#1D3549",
-      pillBg: "#EFF5F8",
-      pillBorder: "#CBD8E4",
-      dietHigh: "#C44536",
-      dietMed: "#E09F3E",
-      dietLow: "#5E86A8"
+      pillBg: "#F1F5F8",
+      pillBorder: "#CBD5E1",
+      dietHigh: "#B2182B",
+      dietMed: "#D9822B",
+      dietLow: "#4A789C"
     },
     dark: {
-      bg: "#0E1B26",
-      cardBg: "#152635",
-      cardBorder: "#273F54",
-      subBg: "#1A2E40",
-      crestPlate: "#EDF2F7",
-      crestBorder: "#3A556E",
-      ink: "#F4F5EF",
-      inkSub: "#ADC0D1",
-      inkMuted: "#7D95AA",
-      rule: "#263D52",
-      ruleStrong: "#35536E",
-      teal: "#20B2AA",
-      crimson: "#E26A5A",
-      priorStroke: "#839BB0",
-      priorFill: "rgba(131, 155, 176, 0.12)",
-      trackBg: "#1F3549",
+      bg: "#1D3549",
+      cardBg: "#1D3549",
+      cardBorder: "#36536C",
+      subBg: "#162A3B",
+      crestPlate: "#F4F5EF",
+      crestBorder: "#36536C",
+      ink: "#EEEDCE",
+      inkSub: "#C7D2D9",
+      inkMuted: "#95AAB8",
+      rule: "#36536C",
+      ruleStrong: "#EEEDCE",
+      teal: "#3FBAC2",
+      crimson: "#E57363",
+      priorStroke: "#95AAB8",
+      priorFill: "rgba(149, 170, 184, 0.14)",
+      trackBg: "#28435B",
       needle: "#EEEDCE",
-      pillBg: "#1B3144",
-      pillBorder: "#2E4A63",
-      dietHigh: "#DF6A58",
+      pillBg: "#162A3B",
+      pillBorder: "#36536C",
+      dietHigh: "#E57363",
       dietMed: "#E4A749",
-      dietLow: "#5C8DB8"
+      dietLow: "#6BA3D6"
     }
   };
 
@@ -2032,8 +2032,8 @@ cat(sprintf(
     const half = size * 0.5;
     const img = badge.logo ? getLoadedLogo(badge.logo, onImageLoaded) : null;
     if (img && img.naturalWidth > 0 && img.naturalHeight > 0) {
-      // Crisp light neutral crest plate so dark club badges remain legible in Midnight Navy mode
-      fillStrokeRoundRect(ctx, cx - half, cy - half, size, size, 16, theme.crestPlate, theme.crestBorder, 2);
+      // Crisp neutral crest plate so dark club badges remain legible in Navy mode
+      fillStrokeRoundRect(ctx, cx - half, cy - half, size, size, 2, theme.crestPlate, theme.crestBorder, 1.5);
       const pad = size * 0.13;
       const box = size - pad * 2;
       const ratio = Math.min(box / img.naturalWidth, box / img.naturalHeight);
@@ -2043,7 +2043,7 @@ cat(sprintf(
       return badge.color;
     }
 
-    fillStrokeRoundRect(ctx, cx - half, cy - half, size, size, 16, theme.subBg, theme.cardBorder, 2);
+    fillStrokeRoundRect(ctx, cx - half, cy - half, size, size, 2, theme.subBg, theme.cardBorder, 1.5);
     ctx.save();
     const sw = size * 0.62;
     const sh = size * 0.68;
@@ -2151,21 +2151,25 @@ cat(sprintf(
     ctx.font = "600 20px Assistant, sans-serif";
     ctx.fillText(`Live Posterior Evolution vs. ${baselineLabel}  (${modelName})`, 68, 86);
 
-    // Right shot badge
+    // Right shot readout (plain typography, no pill box)
     const totalShots = postAnimState.frames[postAnimState.frames.length - 1].s;
     const shotTag = `SHOT ${f.s} OF ${totalShots}   \u2022   ${f.d.toUpperCase()}`;
-    ctx.font = "700 18px Assistant, sans-serif";
-    const tagW = Math.min(460, ctx.measureText(shotTag).width + 36);
-    fillStrokeRoundRect(ctx, W - 68 - tagW, 28, tagW, 40, 7, theme.pillBg, theme.pillBorder, 1.5);
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
+    ctx.textAlign = "right";
     ctx.fillStyle = theme.ink;
-    ctx.fillText(shotTag, W - 68 - tagW * 0.5, 48);
+    ctx.font = "700 20px Assistant, sans-serif";
+    ctx.fillText(shotTag, W - 68, 66);
+
+    ctx.strokeStyle = theme.ruleStrong;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(68, 106);
+    ctx.lineTo(W - 68, 106);
+    ctx.stroke();
     ctx.restore();
 
-    // Plot box
+    // Plot area
     const pX = 96, pW = W - 164;
-    const pTop = 148, pBot = 716;
+    const pTop = 154, pBot = 716;
     const pH = pBot - pTop;
     const xMin = -0.145, xMax = 0.145;
     const xToPx = (x) => pX + ((x - xMin) / (xMax - xMin)) * pW;
@@ -2246,11 +2250,7 @@ cat(sprintf(
     ctx.stroke();
     ctx.setLineDash([]);
 
-    // Draw Posterior
-    const grad = ctx.createLinearGradient(0, pTop, 0, pBot);
-    grad.addColorStop(0, isPos ? "rgba(0, 116, 122, 0.34)" : "rgba(184, 58, 58, 0.32)");
-    grad.addColorStop(1, isPos ? "rgba(0, 116, 122, 0.03)" : "rgba(184, 58, 58, 0.03)");
-
+    // Draw Posterior (flat translucent ggplot2 fill)
     ctx.beginPath();
     ctx.moveTo(xToPx(xMin), pBot);
     for (let i = 0; i <= steps; i++) {
@@ -2259,7 +2259,7 @@ cat(sprintf(
     }
     ctx.lineTo(xToPx(xMax), pBot);
     ctx.closePath();
-    ctx.fillStyle = grad;
+    ctx.fillStyle = isPos ? "rgba(0, 116, 122, 0.18)" : "rgba(178, 24, 43, 0.16)";
     ctx.fill();
 
     ctx.beginPath();
@@ -2268,15 +2268,15 @@ cat(sprintf(
       const py = yToPx(dnorm(xv, f.mu, f.sd));
       if (i === 0) ctx.moveTo(xToPx(xv), py); else ctx.lineTo(xToPx(xv), py);
     }
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 3.5;
     ctx.strokeStyle = curveCol;
     ctx.stroke();
 
-    // Peak line & pill
+    // Peak line & direct ggplot2 annotation
     const pkX = xToPx(f.mu);
     const pkY = yToPx(f.peakY);
     ctx.setLineDash([4, 4]);
-    ctx.lineWidth = 2.2;
+    ctx.lineWidth = 2;
     ctx.strokeStyle = curveCol;
     ctx.beginPath();
     ctx.moveTo(pkX, pkY);
@@ -2285,17 +2285,16 @@ cat(sprintf(
     ctx.setLineDash([]);
 
     ctx.beginPath();
-    ctx.arc(pkX, pkY, 6, 0, Math.PI * 2);
+    ctx.arc(pkX, pkY, 5.5, 0, Math.PI * 2);
     ctx.fillStyle = curveCol;
     ctx.fill();
 
     const muLbl = formatSigned(f.mu, 3);
-    fillStrokeRoundRect(ctx, pkX - 40, Math.max(pTop + 6, pkY - 38), 80, 26, 5, curveCol, null);
-    ctx.fillStyle = "#FFFFFF";
-    ctx.font = "700 15px Assistant, sans-serif";
+    ctx.fillStyle = curveCol;
+    ctx.font = "800 18px Assistant, sans-serif";
     ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(muLbl, pkX, Math.max(pTop + 19, pkY - 25));
+    ctx.textBaseline = "bottom";
+    ctx.fillText(muLbl, pkX, Math.max(pTop + 20, pkY - 12));
 
     // Baseline + 95% CI bracket
     ctx.strokeStyle = theme.ruleStrong;
@@ -2309,8 +2308,8 @@ cat(sprintf(
     const ciX1 = Math.min(pX + pW, xToPx(f.ciHi));
     const ciY = pBot + 20;
     ctx.strokeStyle = curveCol;
-    ctx.lineWidth = 5;
-    ctx.lineCap = "round";
+    ctx.lineWidth = 4.5;
+    ctx.lineCap = "butt";
     ctx.beginPath();
     ctx.moveTo(ciX0, ciY);
     ctx.lineTo(ciX1, ciY);
@@ -2321,7 +2320,7 @@ cat(sprintf(
     ctx.moveTo(ciX1, ciY - 7); ctx.lineTo(ciX1, ciY + 7);
     ctx.stroke();
     ctx.beginPath();
-    ctx.arc(pkX, ciY, 6.5, 0, Math.PI * 2);
+    ctx.arc(pkX, ciY, 6, 0, Math.PI * 2);
     ctx.fillStyle = curveCol;
     ctx.fill();
 
@@ -2338,8 +2337,14 @@ cat(sprintf(
     ctx.font = "700 17px Assistant, sans-serif";
     ctx.fillText("\u2190 Below Average   \u2022   True Talent Estimate (Calibrated Goals Prevented per Shot)   \u2022   Elite Shotstopper \u2192", pX + pW * 0.5, pBot + 70);
 
-    // Compact telemetry footer inside PNG
-    fillStrokeRoundRect(ctx, 68, 822, W - 136, 56, 8, theme.subBg, theme.cardBorder, 1.5);
+    // Flat hairline telemetry footer inside PNG
+    ctx.strokeStyle = theme.rule;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(68, 826);
+    ctx.lineTo(W - 68, 826);
+    ctx.stroke();
+
     const footItems = [
       `GOALS PREVENTED: ${formatSigned(f.gp, 2)} (${f.x.toFixed(2)} xGOT)`,
       `TALENT: ${formatSigned(f.mu * 100, 2)} / 100 SHOTS`,
@@ -2349,11 +2354,11 @@ cat(sprintf(
     ];
     ctx.textBaseline = "middle";
     ctx.font = "700 16px Assistant, sans-serif";
-    const segW = (W - 160) / footItems.length;
+    const segW = (W - 136) / footItems.length;
     footItems.forEach((txt, i) => {
       ctx.fillStyle = i === footItems.length - 1 ? theme.teal : theme.ink;
       ctx.textAlign = "center";
-      ctx.fillText(txt, 80 + segW * (i + 0.5), 850);
+      ctx.fillText(txt, 68 + segW * (i + 0.5), 858);
     });
     ctx.restore();
   }
@@ -2472,13 +2477,12 @@ cat(sprintf(
     saveHitboxes = [];
     savePlotMeta = null;
 
-    // 1. Canvas Background + Club Accent Bar
     ctx.fillStyle = theme.bg;
     ctx.fillRect(0, 0, W, H);
 
     const clubBadge = resolveClubBadge(keeper.team_name);
     ctx.fillStyle = clubBadge.color || theme.teal;
-    ctx.fillRect(0, 0, W, 11);
+    ctx.fillRect(0, 0, W, 10);
 
     // 2. Masthead (y: 44..198)
     const redrawSafe = () => requestAnimationFrame(drawPlayerCardCanvas);
@@ -2502,34 +2506,29 @@ cat(sprintf(
     const metaStr = metaParts.join("   \u2022   ");
     ctx.fillStyle = theme.inkSub;
     ctx.font = "600 24px Assistant, sans-serif";
-    ctx.fillText(truncateText(ctx, metaStr, 1260), 212, 152);
+    ctx.fillText(truncateText(ctx, metaStr, 1340), 212, 152);
     ctx.restore();
 
-    // Right Masthead: SAVE Mark + Cohort Rank/Pctl Badge
+    // Right Masthead: WOSO.LIVE / PLAYER CARD + Plain Rank Readout
     ctx.save();
     ctx.textAlign = "right";
     ctx.textBaseline = "alphabetic";
-    ctx.fillStyle = theme.ink;
-    ctx.font = "800 42px Assistant, sans-serif";
-    ctx.fillText("SAVE", 2208, 92);
     ctx.fillStyle = theme.teal;
-    ctx.font = "700 24px Assistant, sans-serif";
-    ctx.fillText("PROFILE", 2336, 92);
+    ctx.font = "800 20px Assistant, sans-serif";
+    ctx.fillText("WOSO.LIVE", 2336, 68);
+
+    ctx.fillStyle = theme.ink;
+    ctx.font = "800 38px Assistant, sans-serif";
+    ctx.fillText("PLAYER CARD", 2336, 110);
 
     const rankStr = bench.qualified && bench.rank !== null
-      ? `${getOrdinalSuffix(bench.pctl).toUpperCase()} PCTL   \u2022   #${bench.rank} OF ${bench.cohortSize} IN ${bench.cohortLabel.toUpperCase()}`
-      : `UNQUALIFIED (<450 MIN)   \u2022   ${bench.cohortLabel.toUpperCase()} BENCHMARK`;
-    ctx.font = "700 21px Assistant, sans-serif";
-    const pillW = Math.min(760, Math.max(380, ctx.measureText(rankStr).width + 46));
-    const pillX = 2336 - pillW;
-    fillStrokeRoundRect(ctx, pillX, 114, pillW, 50, 8, theme.pillBg, theme.pillBorder, 2);
-
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
+      ? `${getOrdinalSuffix(bench.pctl)} Percentile   \u2022   #${bench.rank} of ${bench.cohortSize} in ${bench.cohortLabel}`
+      : `Unqualified (<450 min)   \u2022   ${bench.cohortLabel} Benchmark`;
+    ctx.font = "700 23px Assistant, sans-serif";
     ctx.fillStyle = bench.qualified
       ? (bench.pctl >= 50 ? theme.teal : theme.crimson)
       : theme.inkSub;
-    ctx.fillText(truncateText(ctx, rankStr, pillW - 24), pillX + pillW * 0.5, 140);
+    ctx.fillText(truncateText(ctx, rankStr, 760), 2336, 152);
     ctx.restore();
 
     ctx.strokeStyle = theme.ruleStrong;
@@ -2539,21 +2538,28 @@ cat(sprintf(
     ctx.lineTo(2336, 198);
     ctx.stroke();
 
-    // 3. Hero Split Row (y: 226..796)
-    // LEFT HERO PANEL: BAYESIAN SHOT-STOPPING POSTERIOR (x: 64..1320)
-    const lpX = 64, lpY = 226, lpW = 1256, lpH = 570;
-    fillStrokeRoundRect(ctx, lpX, lpY, lpW, lpH, 12, theme.cardBg, theme.cardBorder, 2);
+    // Vertical hairline between Hero Left & Right sections
+    ctx.strokeStyle = theme.rule;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(1344, 222);
+    ctx.lineTo(1344, 788);
+    ctx.stroke();
+
+    // 3. Hero Split Row (y: 220..788)
+    // LEFT HERO ZONE: BAYESIAN SHOT-STOPPING POSTERIOR (x: 64..1312)
+    const lpX = 64, lpY = 220, lpW = 1248;
 
     ctx.save();
     ctx.textBaseline = "alphabetic";
     ctx.textAlign = "left";
     ctx.fillStyle = theme.inkMuted;
     ctx.font = "800 20px Assistant, sans-serif";
-    ctx.fillText("BAYESIAN TRUE TALENT MODEL", lpX + 36, lpY + 46);
+    ctx.fillText("BAYESIAN TRUE TALENT MODEL", lpX, lpY + 28);
 
     ctx.textAlign = "right";
     ctx.font = "600 19px Assistant, sans-serif";
-    ctx.fillText(modelName.toUpperCase(), lpX + lpW - 36, lpY + 46);
+    ctx.fillText(modelName.toUpperCase(), lpX + lpW, lpY + 28);
     ctx.restore();
 
     const isPosMu = keeper.mu >= 0;
@@ -2566,80 +2572,72 @@ cat(sprintf(
     // KPI 1: True Talent Estimate
     ctx.fillStyle = theme.inkMuted;
     ctx.font = "700 17px Assistant, sans-serif";
-    ctx.fillText("TRUE TALENT ESTIMATE", lpX + 36, lpY + 90);
+    ctx.fillText("TRUE TALENT ESTIMATE", lpX, lpY + 70);
 
     ctx.fillStyle = muColor;
     ctx.font = "800 48px Assistant, sans-serif";
     const muTxt = formatSigned(keeper.mu, 3);
-    ctx.fillText(muTxt, lpX + 36, lpY + 144);
+    ctx.fillText(muTxt, lpX, lpY + 124);
     const muW = ctx.measureText(muTxt).width;
     ctx.fillStyle = theme.inkSub;
     ctx.font = "600 20px Assistant, sans-serif";
-    ctx.fillText("GP / shot", lpX + 44 + muW, lpY + 144);
+    ctx.fillText("GP / shot", lpX + 8 + muW, lpY + 124);
 
     ctx.fillStyle = theme.ink;
     ctx.font = "700 20px Assistant, sans-serif";
-    ctx.fillText(`${formatSigned(keeper.mu * 100, 2)} Goals / 100 Shots`, lpX + 36, lpY + 180);
+    ctx.fillText(`${formatSigned(keeper.mu * 100, 2)} Goals / 100 Shots`, lpX, lpY + 160);
 
     ctx.strokeStyle = theme.rule;
     ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.moveTo(lpX + 420, lpY + 76);
-    ctx.lineTo(lpX + 420, lpY + 186);
+    ctx.moveTo(lpX + 412, lpY + 58);
+    ctx.lineTo(lpX + 412, lpY + 168);
     ctx.stroke();
 
     // KPI 2: Prob Above Average
     ctx.fillStyle = theme.inkMuted;
     ctx.font = "700 17px Assistant, sans-serif";
-    ctx.fillText("PROB. ABOVE AVERAGE", lpX + 452, lpY + 90);
+    ctx.fillText("PROB. ABOVE AVERAGE", lpX + 444, lpY + 70);
 
     const pColor = keeper.p_above_avg >= 60 ? theme.teal : (keeper.p_above_avg <= 40 ? theme.crimson : theme.ink);
     ctx.fillStyle = pColor;
     ctx.font = "800 48px Assistant, sans-serif";
     const pTxt = keeper.p_above_avg >= 99.95 ? ">99.9%" : (keeper.p_above_avg <= 0.05 ? "<0.1%" : `${keeper.p_above_avg.toFixed(1)}%`);
-    ctx.fillText(pTxt, lpX + 452, lpY + 144);
+    ctx.fillText(pTxt, lpX + 444, lpY + 124);
 
     ctx.fillStyle = theme.inkSub;
     ctx.font = "600 19px Assistant, sans-serif";
-    ctx.fillText("P(True Talent > 0.000)", lpX + 452, lpY + 180);
+    ctx.fillText("P(True Talent > 0.000)", lpX + 444, lpY + 160);
 
     ctx.beginPath();
-    ctx.moveTo(lpX + 802, lpY + 76);
-    ctx.lineTo(lpX + 802, lpY + 186);
+    ctx.moveTo(lpX + 798, lpY + 58);
+    ctx.lineTo(lpX + 798, lpY + 168);
     ctx.stroke();
 
-    // KPI 3: Sample Certainty + Precision Bar + 95% CI
+    // KPI 3: Sample Certainty + Crisp Numeric Readouts (no progress bar)
     ctx.fillStyle = theme.inkMuted;
     ctx.font = "700 17px Assistant, sans-serif";
-    ctx.fillText("SAMPLE CERTAINTY", lpX + 834, lpY + 90);
+    ctx.fillText("SAMPLE CERTAINTY", lpX + 830, lpY + 70);
 
     ctx.fillStyle = theme.ink;
     ctx.font = "800 48px Assistant, sans-serif";
     const certTxt = `${Math.round(keeper.certainty_pct)}%`;
-    ctx.fillText(certTxt, lpX + 834, lpY + 142);
+    ctx.fillText(certTxt, lpX + 830, lpY + 124);
     const certW = ctx.measureText(certTxt).width;
 
-    const shotLabelX = lpX + 848 + certW;
     ctx.fillStyle = theme.inkSub;
-    ctx.font = "600 19px Assistant, sans-serif";
-    ctx.fillText(`${keeper.shots_faced} ${plural(keeper.shots_faced, "shot")}`, shotLabelX, lpY + 126);
-
-    const barY = lpY + 138;
-    const barW = Math.max(120, lpX + lpW - 36 - shotLabelX);
-    fillStrokeRoundRect(ctx, shotLabelX, barY, barW, 8, 4, theme.trackBg, null);
-    if (keeper.certainty_pct > 0) {
-      fillStrokeRoundRect(ctx, shotLabelX, barY, Math.max(8, barW * (keeper.certainty_pct / 100)), 8, 4, theme.teal, null);
-    }
+    ctx.font = "600 20px Assistant, sans-serif";
+    ctx.fillText(`${keeper.shots_faced} ${plural(keeper.shots_faced, "shot")}`, lpX + 844 + certW, lpY + 124);
 
     ctx.fillStyle = theme.inkSub;
     ctx.font = "600 19px Assistant, sans-serif";
-    ctx.fillText(`95% CI: [${formatSigned(keeper.ci_low, 3)}, ${formatSigned(keeper.ci_high, 3)}]`, lpX + 834, lpY + 180);
+    ctx.fillText(`95% CI: [${formatSigned(keeper.ci_low, 3)}, ${formatSigned(keeper.ci_high, 3)}]`, lpX + 830, lpY + 160);
     ctx.restore();
 
-    // Posterior Bell Curve Plot Area (extra top headroom so Pro Avg never collides)
-    const pPlotX = lpX + 48;
-    const pPlotW = lpW - 96;
-    const pPlotTop = lpY + 230;
+    // Posterior Bell Curve Plot Area (ggplot2 editorial print style)
+    const pPlotX = lpX + 12;
+    const pPlotW = lpW - 24;
+    const pPlotTop = lpY + 216;
     const pPlotBot = lpY + 468;
     const pPlotH = pPlotBot - pPlotTop;
 
@@ -2679,7 +2677,7 @@ cat(sprintf(
     ctx.textBaseline = "bottom";
     ctx.fillText("Pro Avg (0.000)", xToPx(0), pPlotTop - 6);
 
-    // Drawn visual line legend top-right of plot
+    // Visual line legend top-right of plot
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
     ctx.font = "600 17px Assistant, sans-serif";
@@ -2729,11 +2727,7 @@ cat(sprintf(
     ctx.stroke();
     ctx.setLineDash([]);
 
-    // Keeper Posterior Curve
-    const grad = ctx.createLinearGradient(0, pPlotTop, 0, pPlotBot);
-    grad.addColorStop(0, isPosMu ? (saveTheme === "dark" ? "rgba(32,178,170,0.44)" : "rgba(0,116,122,0.34)") : (saveTheme === "dark" ? "rgba(226,106,90,0.44)" : "rgba(184,58,58,0.34)"));
-    grad.addColorStop(1, isPosMu ? "rgba(0,116,122,0.03)" : "rgba(184,58,58,0.03)");
-
+    // Keeper Posterior Curve (flat translucent ggplot2 shading)
     ctx.beginPath();
     ctx.moveTo(xToPx(xMin), pPlotBot);
     for (let i = 0; i <= steps; i++) {
@@ -2742,7 +2736,9 @@ cat(sprintf(
     }
     ctx.lineTo(xToPx(xMax), pPlotBot);
     ctx.closePath();
-    ctx.fillStyle = grad;
+    ctx.fillStyle = saveTheme === "dark"
+      ? (isPosMu ? "rgba(63,186,194,0.24)" : "rgba(229,115,99,0.24)")
+      : (isPosMu ? "rgba(0,116,122,0.18)" : "rgba(178,24,43,0.16)");
     ctx.fill();
 
     ctx.beginPath();
@@ -2751,14 +2747,14 @@ cat(sprintf(
       const py = yToPx(dnorm(xv, keeper.mu, keeper.sd));
       if (i === 0) ctx.moveTo(xToPx(xv), py); else ctx.lineTo(xToPx(xv), py);
     }
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 3.5;
     ctx.strokeStyle = muColor;
     ctx.stroke();
 
     const peakX = xToPx(keeper.mu);
     const peakY = yToPx(postPeak);
     ctx.setLineDash([4, 4]);
-    ctx.lineWidth = 2.2;
+    ctx.lineWidth = 2;
     ctx.strokeStyle = muColor;
     ctx.beginPath();
     ctx.moveTo(peakX, peakY);
@@ -2767,7 +2763,7 @@ cat(sprintf(
     ctx.setLineDash([]);
 
     ctx.beginPath();
-    ctx.arc(peakX, peakY, 6, 0, Math.PI * 2);
+    ctx.arc(peakX, peakY, 5.5, 0, Math.PI * 2);
     ctx.fillStyle = muColor;
     ctx.fill();
 
@@ -2782,8 +2778,8 @@ cat(sprintf(
     const ciX1 = Math.min(pPlotX + pPlotW, xToPx(keeper.ci_high));
     const ciY = pPlotBot + 18;
     ctx.strokeStyle = muColor;
-    ctx.lineWidth = 5;
-    ctx.lineCap = "round";
+    ctx.lineWidth = 4.5;
+    ctx.lineCap = "butt";
     ctx.beginPath();
     ctx.moveTo(ciX0, ciY);
     ctx.lineTo(ciX1, ciY);
@@ -2795,7 +2791,7 @@ cat(sprintf(
     ctx.stroke();
 
     ctx.beginPath();
-    ctx.arc(peakX, ciY, 6.5, 0, Math.PI * 2);
+    ctx.arc(peakX, ciY, 6, 0, Math.PI * 2);
     ctx.fillStyle = muColor;
     ctx.fill();
 
@@ -2813,32 +2809,31 @@ cat(sprintf(
     ctx.fillText("\u2190 Below Average    \u2022    95% Credible Interval Bracket    \u2022    Elite Shotstopper \u2192", pPlotX + pPlotW * 0.5, pPlotBot + 66);
     ctx.restore();
 
-    // RIGHT HERO PANEL: SEASON LEDGER & SHOT DIET (x: 1356..2336)
-    const rpX = 1356, rpY = 226, rpW = 980, rpH = 570;
-    fillStrokeRoundRect(ctx, rpX, rpY, rpW, rpH, 12, theme.cardBg, theme.cardBorder, 2);
+    // RIGHT HERO ZONE: SHOT-STOPPING LEDGER & SHOT DIET (x: 1372..2336)
+    const rpX = 1372, rpY = 220, rpW = 964;
 
     ctx.save();
     ctx.textBaseline = "alphabetic";
     ctx.textAlign = "left";
     ctx.fillStyle = theme.inkMuted;
     ctx.font = "800 20px Assistant, sans-serif";
-    ctx.fillText("SEASON SHOT-STOPPING LEDGER", rpX + 36, rpY + 46);
+    ctx.fillText("SHOT-STOPPING LEDGER", rpX, rpY + 28);
 
     ctx.textAlign = "right";
     ctx.font = "600 19px Assistant, sans-serif";
-    ctx.fillText(`BENCHMARK: ${bench.cohortLabel.toUpperCase()} AVG`, rpX + rpW - 36, rpY + 46);
+    ctx.fillText(`BENCHMARK: ${bench.cohortLabel.toUpperCase()} AVG`, rpX + rpW, rpY + 28);
 
     const midX = rpX + rpW * 0.5;
-    const midY = rpY + 228;
+    const midY = rpY + 214;
     ctx.strokeStyle = theme.rule;
     ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.moveTo(rpX + 36, midY);
-    ctx.lineTo(rpX + rpW - 36, midY);
-    ctx.moveTo(midX, rpY + 74);
-    ctx.lineTo(midX, rpY + 378);
-    ctx.moveTo(rpX + 36, rpY + 390);
-    ctx.lineTo(rpX + rpW - 36, rpY + 390);
+    ctx.moveTo(rpX, midY);
+    ctx.lineTo(rpX + rpW, midY);
+    ctx.moveTo(midX, rpY + 58);
+    ctx.lineTo(midX, rpY + 368);
+    ctx.moveTo(rpX, rpY + 382);
+    ctx.lineTo(rpX + rpW, rpY + 382);
     ctx.stroke();
 
     ctx.textAlign = "left";
@@ -2846,56 +2841,56 @@ cat(sprintf(
     // Cell 1: Goals Prevented
     ctx.fillStyle = theme.inkMuted;
     ctx.font = "700 17px Assistant, sans-serif";
-    ctx.fillText("GOALS PREVENTED (GP)", rpX + 36, rpY + 104);
+    ctx.fillText("GOALS PREVENTED (GP)", rpX, rpY + 88);
     ctx.fillStyle = keeper.total_gp >= 0 ? theme.teal : theme.crimson;
     ctx.font = "800 50px Assistant, sans-serif";
-    ctx.fillText(formatSigned(keeper.total_gp, 2), rpX + 36, rpY + 160);
+    ctx.fillText(formatSigned(keeper.total_gp, 2), rpX, rpY + 144);
     ctx.fillStyle = theme.inkSub;
     ctx.font = "600 19px Assistant, sans-serif";
-    ctx.fillText(`${keeper.total_xgot.toFixed(2)} xGOT Faced  \u2022  ${keeper.goals_allowed} GA`, rpX + 36, rpY + 196);
+    ctx.fillText(`${keeper.total_xgot.toFixed(2)} xGOT Faced  \u2022  ${keeper.goals_allowed} GA`, rpX, rpY + 180);
 
     // Cell 2: GP / 10 xGOT
-    const c2X = midX + 34;
+    const c2X = midX + 32;
     ctx.fillStyle = theme.inkMuted;
     ctx.font = "700 17px Assistant, sans-serif";
-    ctx.fillText("GP / 10 xGOT FACED", c2X, rpY + 104);
+    ctx.fillText("GP / 10 xGOT FACED", c2X, rpY + 88);
     ctx.fillStyle = keeper.gp_10xgot >= bench.lgGp10 ? theme.teal : theme.crimson;
     ctx.font = "800 50px Assistant, sans-serif";
-    ctx.fillText(formatSigned(keeper.gp_10xgot, 2), c2X, rpY + 160);
+    ctx.fillText(formatSigned(keeper.gp_10xgot, 2), c2X, rpY + 144);
     ctx.fillStyle = theme.inkSub;
     ctx.font = "600 19px Assistant, sans-serif";
     const gp10BenchStr = bench.qualified
       ? `${bench.cohortLabel} Avg: ${formatSigned(bench.lgGp10, 2)}  \u2022  ${getOrdinalSuffix(bench.gp10Pctl)} Pctl`
       : `${bench.cohortLabel} Avg: ${formatSigned(bench.lgGp10, 2)}`;
-    ctx.fillText(gp10BenchStr, c2X, rpY + 196);
+    ctx.fillText(gp10BenchStr, c2X, rpY + 180);
 
     // Cell 3: Save % vs xSv%
     const svDiff = keeper.sv_pct - keeper.x_sv_pct;
     ctx.fillStyle = theme.inkMuted;
     ctx.font = "700 17px Assistant, sans-serif";
-    ctx.fillText("SAVE % vs EXPECTED (xSv%)", rpX + 36, rpY + 266);
+    ctx.fillText("SAVE % vs EXPECTED (xSv%)", rpX, rpY + 254);
     ctx.fillStyle = theme.ink;
     ctx.font = "800 50px Assistant, sans-serif";
     const svTxt = `${keeper.sv_pct.toFixed(1)}%`;
-    ctx.fillText(svTxt, rpX + 36, rpY + 322);
+    ctx.fillText(svTxt, rpX, rpY + 310);
     const svW = ctx.measureText(svTxt).width;
     ctx.fillStyle = theme.inkSub;
     ctx.font = "600 21px Assistant, sans-serif";
-    ctx.fillText(`vs ${keeper.x_sv_pct.toFixed(1)}% exp.`, rpX + 48 + svW, rpY + 322);
+    ctx.fillText(`vs ${keeper.x_sv_pct.toFixed(1)}% exp.`, rpX + 12 + svW, rpY + 310);
     ctx.fillStyle = svDiff >= 0 ? theme.teal : theme.crimson;
     ctx.font = "700 19px Assistant, sans-serif";
-    ctx.fillText(`${formatSigned(svDiff, 1)} pts vs Expected Save Rate`, rpX + 36, rpY + 356);
+    ctx.fillText(`${formatSigned(svDiff, 1)} pts vs Expected Save Rate`, rpX, rpY + 346);
 
     // Cell 4: AxA% Consistency
     ctx.fillStyle = theme.inkMuted;
     ctx.font = "700 17px Assistant, sans-serif";
-    ctx.fillText("MATCH CONSISTENCY (AxA%)", c2X, rpY + 266);
+    ctx.fillText("MATCH CONSISTENCY (AxA%)", c2X, rpY + 254);
     ctx.fillStyle = keeper.axa_pct >= bench.lgAxa ? theme.teal : theme.crimson;
     ctx.font = "800 50px Assistant, sans-serif";
-    ctx.fillText(`${keeper.axa_pct.toFixed(1)}%`, c2X, rpY + 322);
+    ctx.fillText(`${keeper.axa_pct.toFixed(1)}%`, c2X, rpY + 310);
     ctx.fillStyle = theme.inkSub;
     ctx.font = "600 19px Assistant, sans-serif";
-    ctx.fillText(`${keeper.pos_matches} of ${keeper.n_matches} ${plural(keeper.n_matches, "Match", "Matches")} > 0 GP  \u2022  Avg: ${bench.lgAxa.toFixed(1)}%`, c2X, rpY + 356);
+    ctx.fillText(`${keeper.pos_matches} of ${keeper.n_matches} ${plural(keeper.n_matches, "Match", "Matches")} > 0 GP  \u2022  Avg: ${bench.lgAxa.toFixed(1)}%`, c2X, rpY + 346);
 
     // Bottom Strip: Workload & Shot Diet Mix
     const minsSafe = keeper.total_minutes > 0 ? keeper.total_minutes : null;
@@ -2906,7 +2901,7 @@ cat(sprintf(
 
     ctx.fillStyle = theme.inkMuted;
     ctx.font = "800 17px Assistant, sans-serif";
-    ctx.fillText("WORKLOAD & SHOT DIET", rpX + 36, rpY + 428);
+    ctx.fillText("WORKLOAD & SHOT DIET", rpX, rpY + 418);
 
     ctx.textAlign = "right";
     ctx.fillStyle = theme.ink;
@@ -2914,11 +2909,11 @@ cat(sprintf(
     const wlText = minsSafe
       ? `${sh90.toFixed(2)} Shots/90   \u2022   ${x90.toFixed(2)} xGOT/90   \u2022   ${keeper.avg_shot_xgot.toFixed(3)} xGOT/Shot (${formatSigned(qDiff, 3)} vs Avg)`
       : `${keeper.total_shots} Shots Faced   \u2022   ${keeper.avg_shot_xgot.toFixed(3)} xGOT/Shot`;
-    ctx.fillText(wlText, rpX + rpW - 36, rpY + 428);
+    ctx.fillText(wlText, rpX + rpW, rpY + 418);
 
-    const sdBarX = rpX + 36;
-    const sdBarY = rpY + 450;
-    const sdBarW = rpW - 72;
+    const sdBarX = rpX;
+    const sdBarY = rpY + 442;
+    const sdBarW = rpW;
     const sdBarH = 42;
     const totCQ = Math.max(1, keeper.total_shots);
     const pHigh = keeper.cq_high.sf / totCQ;
@@ -2926,8 +2921,6 @@ cat(sprintf(
     const pLow  = keeper.cq_low.sf / totCQ;
 
     ctx.save();
-    roundRectPath(ctx, sdBarX, sdBarY, sdBarW, sdBarH, 7);
-    ctx.clip();
     const wH = sdBarW * pHigh;
     const wM = sdBarW * pMed;
     const wL = sdBarW - wH - wM;
@@ -2967,7 +2960,7 @@ cat(sprintf(
 
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
-    const legY = rpY + 524;
+    const legY = rpY + 516;
     const segLegends = [
       { col: theme.dietHigh, lbl: `High (>0.35): ${keeper.cq_high.sf} sh (${Math.round(pHigh * 100)}%)` },
       { col: theme.dietMed,  lbl: `Med (0.11\u20130.35): ${keeper.cq_med.sf} sh (${Math.round(pMed * 100)}%)` },
@@ -2975,29 +2968,44 @@ cat(sprintf(
     ];
     let lx = sdBarX;
     segLegends.forEach((sl) => {
-      fillStrokeRoundRect(ctx, lx, legY - 8, 16, 16, 3, sl.col, null);
+      ctx.fillStyle = sl.col;
+      ctx.fillRect(lx, legY - 7, 14, 14);
       ctx.fillStyle = theme.inkSub;
       ctx.font = "600 18px Assistant, sans-serif";
-      ctx.fillText(sl.lbl, lx + 24, legY);
-      lx += 302;
+      ctx.fillText(sl.lbl, lx + 22, legY);
+      lx += 322;
     });
     ctx.restore();
 
-    // 4. Bottom Split Row (y: 824..1422)
-    // BOTTOM-LEFT: SAVE EFFICIENCY BY CHANCE QUALITY (x: 64..1182)
-    const blX = 64, blY = 824, blW = 1118, blH = 598;
-    fillStrokeRoundRect(ctx, blX, blY, blW, blH, 12, theme.cardBg, theme.cardBorder, 2);
+    // Horizontal hairline separating Hero & Bottom bands
+    ctx.strokeStyle = theme.rule;
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    ctx.moveTo(64, 806);
+    ctx.lineTo(2336, 806);
+    ctx.stroke();
+
+    // Vertical hairline between Bottom-Left & Bottom-Right zones
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(1200, 830);
+    ctx.lineTo(1200, 1410);
+    ctx.stroke();
+
+    // 4. Bottom Split Row (y: 830..1410)
+    // BOTTOM-LEFT: SAVE EFFICIENCY BY CHANCE QUALITY (x: 64..1168)
+    const blX = 64, blY = 830, blW = 1104, blH = 580;
 
     ctx.save();
     ctx.textBaseline = "alphabetic";
     ctx.textAlign = "left";
     ctx.fillStyle = theme.inkMuted;
     ctx.font = "800 20px Assistant, sans-serif";
-    ctx.fillText("SAVE EFFICIENCY BY CHANCE QUALITY", blX + 36, blY + 46);
+    ctx.fillText("SAVE EFFICIENCY BY CHANCE QUALITY", blX, blY + 28);
 
     ctx.textAlign = "right";
     ctx.font = "600 19px Assistant, sans-serif";
-    ctx.fillText(`VERTICAL NEEDLE = ${bench.cohortLabel.toUpperCase()} AVG`, blX + blW - 36, blY + 46);
+    ctx.fillText(`VERTICAL NEEDLE = ${bench.cohortLabel.toUpperCase()} AVG`, blX + blW, blY + 28);
 
     const tiers = [
       { key: "High", title: "High Danger (HDSv%)", sub: "> 0.35 xGOT  \u2022  1v1s & Top-Corner Strikes", split: keeper.cq_high },
@@ -3005,12 +3013,12 @@ cat(sprintf(
       { key: "Low", title: "Low Danger (LDSv%)", sub: "\u2264 0.10 xGOT  \u2022  Long-Range & Routine Saves", split: keeper.cq_low }
     ];
 
-    const barTrackX = blX + 36;
-    const barTrackW = blW - 72;
+    const barTrackX = blX;
+    const barTrackW = blW;
     const barTrackH = 38;
 
     tiers.forEach((tier, idx) => {
-      const ty = blY + 108 + idx * 158;
+      const ty = blY + 90 + idx * 158;
       const sf = tier.split.sf;
       const ga = tier.split.ga;
       const svPct = sf > 0 ? ((sf - ga) / sf) * 100 : null;
@@ -3054,17 +3062,19 @@ cat(sprintf(
       }
 
       const by = ty + 42;
-      fillStrokeRoundRect(ctx, barTrackX, by, barTrackW, barTrackH, 7, theme.trackBg, null);
+      ctx.fillStyle = theme.trackBg;
+      ctx.fillRect(barTrackX, by, barTrackW, barTrackH);
 
       if (svPct !== null && svPct > 0) {
-        const fw = Math.max(12, barTrackW * Math.min(1, svPct / 100));
+        const fw = Math.max(8, barTrackW * Math.min(1, svPct / 100));
         const barCol = (svPct >= lgAvg) ? theme.teal : theme.crimson;
-        fillStrokeRoundRect(ctx, barTrackX, by, fw, barTrackH, 7, barCol, null);
+        ctx.fillStyle = barCol;
+        ctx.fillRect(barTrackX, by, fw, barTrackH);
       }
 
       const nx = barTrackX + barTrackW * (Math.max(0, Math.min(100, lgAvg)) / 100);
       ctx.strokeStyle = theme.needle;
-      ctx.lineWidth = 4;
+      ctx.lineWidth = 3.5;
       ctx.beginPath();
       ctx.moveTo(nx, by - 7);
       ctx.lineTo(nx, by + barTrackH + 7);
@@ -3090,26 +3100,25 @@ cat(sprintf(
     [0, 25, 50, 75, 100].forEach(pct => {
       const px = barTrackX + barTrackW * (pct / 100);
       ctx.textAlign = pct === 0 ? "left" : (pct === 100 ? "right" : "center");
-      ctx.fillText(`${pct}%`, px, blY + blH - 18);
+      ctx.fillText(`${pct}%`, px, blY + blH - 6);
     });
     ctx.restore();
 
-    // BOTTOM-RIGHT: GAME-BY-GAME GOALS PREVENTED FORM (x: 1218..2336)
-    const brX = 1218, brY = 824, brW = 1118, brH = 598;
-    fillStrokeRoundRect(ctx, brX, brY, brW, brH, 12, theme.cardBg, theme.cardBorder, 2);
+    // BOTTOM-RIGHT: GAME-BY-GAME GOALS PREVENTED FORM (x: 1232..2336)
+    const brX = 1232, brY = 830, brW = 1104, brH = 580;
 
     ctx.save();
     ctx.textBaseline = "alphabetic";
     ctx.textAlign = "left";
     ctx.fillStyle = theme.inkMuted;
     ctx.font = "800 20px Assistant, sans-serif";
-    ctx.fillText("GAME-BY-GAME GOALS PREVENTED", brX + 36, brY + 46);
+    ctx.fillText("GAME-BY-GAME GOALS PREVENTED", brX, brY + 28);
 
     ctx.textAlign = "right";
     ctx.font = "600 19px Assistant, sans-serif";
     const matchStr = `${keeper.n_matches} ${plural(keeper.n_matches, "MATCH", "MATCHES")}`;
     const csStr    = `${keeper.clean_sheets} ${plural(keeper.clean_sheets, "CLEAN SHEET", "CLEAN SHEETS")}`;
-    ctx.fillText(`${matchStr}  \u2022  ${csStr}`, brX + brW - 36, brY + 46);
+    ctx.fillText(`${matchStr}  \u2022  ${csStr}`, brX + brW, brY + 28);
 
     const mRows = keeper.matches || [];
     let bestM = null, worstM = null, maxAbsM = 1.5;
@@ -3128,17 +3137,17 @@ cat(sprintf(
     ctx.textAlign = "left";
     ctx.fillStyle = theme.inkSub;
     ctx.font = "600 19px Assistant, sans-serif";
-    ctx.fillText(spanStr, brX + 36, brY + 84);
+    ctx.fillText(spanStr, brX, brY + 66);
 
     if (bestM && worstM) {
       ctx.textAlign = "right";
-      ctx.fillText(`Peak: ${formatSigned(bestM.gp, 2)} GP   \u2022   Low: ${formatSigned(worstM.gp, 2)} GP`, brX + brW - 36, brY + 84);
+      ctx.fillText(`Peak: ${formatSigned(bestM.gp, 2)} GP   \u2022   Low: ${formatSigned(worstM.gp, 2)} GP`, brX + brW, brY + 66);
     }
 
-    const fPlotX = brX + 86;
-    const fPlotW = brW - 122;
-    const fPlotTop = brY + 122;
-    const fPlotBot = brY + 510;
+    const fPlotX = brX + 56;
+    const fPlotW = brW - 56;
+    const fPlotTop = brY + 104;
+    const fPlotBot = brY + 492;
     const fMidY = (fPlotTop + fPlotBot) * 0.5;
     const fHalfH = (fPlotBot - fPlotTop) * 0.5;
 
@@ -3195,25 +3204,35 @@ cat(sprintf(
     ctx.fillStyle = theme.inkMuted;
     ctx.font = "600 17px Assistant, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("Chronological Match Appearances (Oldest \u2192 Most Recent)", fPlotX + fPlotW * 0.5, brY + brH - 42);
+    ctx.fillText("Chronological Match Appearances (Oldest \u2192 Most Recent)", fPlotX + fPlotW * 0.5, brY + brH - 40);
 
-    fillStrokeRoundRect(ctx, fPlotX, brY + brH - 25, 14, 14, 3, theme.teal, null);
+    ctx.fillStyle = theme.teal;
+    ctx.fillRect(fPlotX, brY + brH - 22, 14, 14);
     ctx.textAlign = "left";
     ctx.fillStyle = theme.inkSub;
     ctx.font = "600 16px Assistant, sans-serif";
-    ctx.fillText("Outperformed xGOT (GP > 0)", fPlotX + 20, brY + brH - 13);
+    ctx.fillText("Outperformed xGOT (GP > 0)", fPlotX + 20, brY + brH - 9);
 
-    fillStrokeRoundRect(ctx, fPlotX + 270, brY + brH - 25, 14, 14, 3, theme.crimson, null);
-    ctx.fillText("Allowed Above xGOT (GP \u2264 0)", fPlotX + 290, brY + brH - 13);
+    ctx.fillStyle = theme.crimson;
+    ctx.fillRect(fPlotX + 270, brY + brH - 22, 14, 14);
+    ctx.fillStyle = theme.inkSub;
+    ctx.fillText("Allowed Above xGOT (GP \u2264 0)", fPlotX + 290, brY + brH - 9);
     ctx.restore();
 
-    // 5. Card Footer
+    // 5. Card Footer Hairline + Caption
     ctx.save();
+    ctx.strokeStyle = theme.rule;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(64, 1432);
+    ctx.lineTo(2336, 1432);
+    ctx.stroke();
+
     ctx.textBaseline = "alphabetic";
     ctx.fillStyle = theme.inkMuted;
     ctx.font = "700 18px Assistant, sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText("WOSO.LIVE   \u2022   GLOBAL GOALKEEPER EVALUATION", 64, 1468);
+    ctx.fillText("WOSO.LIVE   \u2022   GOALKEEPER PLAYER CARD", 64, 1468);
 
     const lastDateStr = validDates.length > 0 ? `Latest Match: ${validDates[validDates.length - 1]}` : "Non-Penalty xGOT Shots";
     ctx.textAlign = "right";
@@ -3274,8 +3293,8 @@ cat(sprintf(
     const theme = THEMES[compTheme] || THEMES.light;
     const colA = theme.teal;
     const colB = compTheme === "dark" ? "#EB8258" : "#C8553D";
-    const fillA = compTheme === "dark" ? "rgba(32, 178, 170, 0.28)" : "rgba(0, 116, 122, 0.25)";
-    const fillB = compTheme === "dark" ? "rgba(235, 130, 88, 0.28)" : "rgba(200, 85, 61, 0.24)";
+    const fillA = compTheme === "dark" ? "rgba(63, 186, 194, 0.24)" : "rgba(0, 116, 122, 0.20)";
+    const fillB = compTheme === "dark" ? "rgba(235, 130, 88, 0.24)" : "rgba(200, 85, 61, 0.18)";
 
     const W = 2400, H = 1450;
     const ctx = canvas.getContext("2d");
@@ -3285,9 +3304,9 @@ cat(sprintf(
     ctx.fillRect(0, 0, W, H);
 
     ctx.fillStyle = colA;
-    ctx.fillRect(0, 0, W * 0.5, 11);
+    ctx.fillRect(0, 0, W * 0.5, 10);
     ctx.fillStyle = colB;
-    ctx.fillRect(W * 0.5, 0, W * 0.5, 11);
+    ctx.fillRect(W * 0.5, 0, W * 0.5, 10);
 
     const redrawSafe = () => requestAnimationFrame(drawDuelCardCanvas);
     const lgA = document.getElementById("comp_league_a").value;
@@ -3295,46 +3314,52 @@ cat(sprintf(
     const benchA = getBenchmarkInfo(kA, lgA, "league");
     const benchB = getBenchmarkInfo(kB, lgB, "league");
 
-    drawClubCrest(ctx, kA.team_name, 124, 118, 116, theme, redrawSafe);
-    drawClubCrest(ctx, kB.team_name, 2276, 118, 116, theme, redrawSafe);
+    drawClubCrest(ctx, kA.team_name, 124, 112, 116, theme, redrawSafe);
+    drawClubCrest(ctx, kB.team_name, 2276, 112, 116, theme, redrawSafe);
 
     ctx.save();
     ctx.textBaseline = "alphabetic";
     ctx.textAlign = "left";
     fitTextFont(ctx, kA.player_name.toUpperCase(), 820, 800, 50, 32);
     ctx.fillStyle = colA;
-    ctx.fillText(kA.player_name.toUpperCase(), 208, 108);
+    ctx.fillText(kA.player_name.toUpperCase(), 208, 104);
     ctx.fillStyle = theme.inkSub;
     ctx.font = "600 22px Assistant, sans-serif";
     const rankATxt = benchA.qualified && benchA.rank ? `#${benchA.rank} in ${benchA.cohortLabel} (${getOrdinalSuffix(benchA.pctl)})` : benchA.cohortLabel;
-    ctx.fillText(truncateText(ctx, `${kA.team_name.toUpperCase()}  \u2022  ${rankATxt}  \u2022  ${kA.shots_faced} SHOTS`, 840), 208, 148);
+    ctx.fillText(truncateText(ctx, `${kA.team_name.toUpperCase()}  \u2022  ${rankATxt}  \u2022  ${kA.shots_faced} SHOTS`, 840), 208, 144);
 
-    fillStrokeRoundRect(ctx, 1152, 84, 96, 56, 28, theme.pillBg, theme.pillBorder, 2);
+    // Center Masthead Matchup Mark (plain typography, no pill badge)
     ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
+    ctx.fillStyle = theme.inkMuted;
+    ctx.font = "800 15px Assistant, sans-serif";
+    ctx.fillText("WOSO.LIVE", 1200, 78);
     ctx.fillStyle = theme.ink;
-    ctx.font = "800 24px Assistant, sans-serif";
-    ctx.fillText("VS", 1200, 112);
+    ctx.font = "800 32px Assistant, sans-serif";
+    ctx.fillText("VS", 1200, 118);
 
-    ctx.textBaseline = "alphabetic";
     ctx.textAlign = "right";
     fitTextFont(ctx, kB.player_name.toUpperCase(), 820, 800, 50, 32);
     ctx.fillStyle = colB;
-    ctx.fillText(kB.player_name.toUpperCase(), 2192, 108);
+    ctx.fillText(kB.player_name.toUpperCase(), 2192, 104);
     ctx.fillStyle = theme.inkSub;
     ctx.font = "600 22px Assistant, sans-serif";
     const rankBTxt = benchB.qualified && benchB.rank ? `#${benchB.rank} in ${benchB.cohortLabel} (${getOrdinalSuffix(benchB.pctl)})` : benchB.cohortLabel;
-    ctx.fillText(truncateText(ctx, `${kB.shots_faced} SHOTS  \u2022  ${rankBTxt}  \u2022  ${kB.team_name.toUpperCase()}`, 840), 2192, 148);
+    ctx.fillText(truncateText(ctx, `${kB.shots_faced} SHOTS  \u2022  ${rankBTxt}  \u2022  ${kB.team_name.toUpperCase()}`, 840), 2192, 144);
     ctx.restore();
 
-    // Superiority Banner
+    ctx.strokeStyle = theme.ruleStrong;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(64, 186);
+    ctx.lineTo(2336, 186);
+    ctx.stroke();
+
+    // Superiority Banner (flat sheet zone)
     const diffSd = Math.sqrt(kA.sd * kA.sd + kB.sd * kB.sd);
     const probA = (1 - pnorm(0, kA.mu - kB.mu, Math.max(diffSd, 1e-6))) * 100;
     const probB = 100 - probA;
 
-    const banX = 64, banY = 196, banW = 2272, banH = 148;
-    fillStrokeRoundRect(ctx, banX, banY, banW, banH, 12, theme.cardBg, theme.cardBorder, 2);
-
+    const banX = 64, banY = 204, banW = 2272;
     ctx.save();
     ctx.textBaseline = "alphabetic";
     ctx.textAlign = "center";
@@ -3342,24 +3367,20 @@ cat(sprintf(
     const verdictProb = Math.max(probA, probB);
     ctx.fillStyle = theme.inkMuted;
     ctx.font = "800 18px Assistant, sans-serif";
-    ctx.fillText("BAYESIAN PROBABILITY OF SUPERIORITY  \u2022  P(TRUE TALENT A > TRUE TALENT B)", 1200, banY + 36);
+    ctx.fillText("BAYESIAN PROBABILITY OF SUPERIORITY  \u2022  P(TRUE TALENT A > TRUE TALENT B)", 1200, banY + 24);
 
     ctx.fillStyle = theme.ink;
     ctx.font = "800 32px Assistant, sans-serif";
-    ctx.fillText(`${verdictName.toUpperCase()} IS ${verdictProb.toFixed(1)}% LIKELY TO BE THE SUPERIOR SHOTSTOPPER`, 1200, banY + 76);
+    ctx.fillText(`${verdictName.toUpperCase()} IS ${verdictProb.toFixed(1)}% LIKELY TO BE THE SUPERIOR SHOTSTOPPER`, 1200, banY + 64);
 
-    const sBarX = banX + 48, sBarY = banY + 94, sBarW = banW - 96, sBarH = 32;
+    const sBarX = banX, sBarY = banY + 84, sBarW = banW, sBarH = 34;
     const wA = sBarW * (probA / 100);
-    ctx.save();
-    roundRectPath(ctx, sBarX, sBarY, sBarW, sBarH, 7);
-    ctx.clip();
     ctx.fillStyle = colA;
     ctx.fillRect(sBarX, sBarY, wA, sBarH);
     ctx.fillStyle = colB;
     ctx.fillRect(sBarX + wA, sBarY, sBarW - wA, sBarH);
-    ctx.fillStyle = theme.cardBg;
+    ctx.fillStyle = theme.bg;
     ctx.fillRect(sBarX + wA - 1.5, sBarY, 3, sBarH);
-    ctx.restore();
 
     ctx.textBaseline = "middle";
     ctx.font = "800 18px Assistant, sans-serif";
@@ -3374,44 +3395,60 @@ cat(sprintf(
     }
     ctx.restore();
 
+    ctx.strokeStyle = theme.rule;
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    ctx.moveTo(64, 344);
+    ctx.lineTo(2336, 344);
+    ctx.stroke();
+
+    // Vertical divider between Posterior & Tale of the Tape
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(1296, 368);
+    ctx.lineTo(1296, 1364);
+    ctx.stroke();
+
     // Lower Split: Posterior Distributions (Left) + Tale of the Tape (Right)
-    const lpX = 64, lpY = 368, lpW = 1230, lpH = 1004;
-    fillStrokeRoundRect(ctx, lpX, lpY, lpW, lpH, 12, theme.cardBg, theme.cardBorder, 2);
+    const lpX = 64, lpY = 368, lpW = 1200;
 
     ctx.save();
     ctx.textBaseline = "alphabetic";
     ctx.textAlign = "left";
     ctx.fillStyle = theme.inkMuted;
     ctx.font = "800 20px Assistant, sans-serif";
-    ctx.fillText("POSTERIOR TALENT DISTRIBUTIONS", lpX + 36, lpY + 46);
+    ctx.fillText("POSTERIOR TALENT DISTRIBUTIONS", lpX, lpY + 26);
     ctx.textAlign = "right";
     ctx.font = "600 18px Assistant, sans-serif";
-    ctx.fillText("OVERLAPPING 95% CREDIBLE INTERVALS", lpX + lpW - 36, lpY + 46);
+    ctx.fillText("OVERLAPPING 95% CREDIBLE INTERVALS", lpX + lpW, lpY + 26);
 
-    fillStrokeRoundRect(ctx, lpX + 36, lpY + 72, 18, 18, 4, colA, null);
+    ctx.fillStyle = colA;
+    ctx.fillRect(lpX, lpY + 54, 16, 16);
     ctx.textAlign = "left";
     ctx.fillStyle = theme.ink;
     ctx.font = "700 21px Assistant, sans-serif";
-    ctx.fillText(`${kA.player_name} (${formatSigned(kA.mu, 3)} \u00B1 ${(1.96 * kA.sd).toFixed(3)})`, lpX + 64, lpY + 88);
+    ctx.fillText(`${kA.player_name} (${formatSigned(kA.mu, 3)} \u00B1 ${(1.96 * kA.sd).toFixed(3)})`, lpX + 26, lpY + 69);
 
-    fillStrokeRoundRect(ctx, lpX + 36, lpY + 106, 18, 18, 4, colB, null);
-    ctx.fillText(`${kB.player_name} (${formatSigned(kB.mu, 3)} \u00B1 ${(1.96 * kB.sd).toFixed(3)})`, lpX + 64, lpY + 122);
+    ctx.fillStyle = colB;
+    ctx.fillRect(lpX, lpY + 88, 16, 16);
+    ctx.fillStyle = theme.ink;
+    ctx.fillText(`${kB.player_name} (${formatSigned(kB.mu, 3)} \u00B1 ${(1.96 * kB.sd).toFixed(3)})`, lpX + 26, lpY + 103);
 
     // Dashed Prior legend on right of legend band
     ctx.strokeStyle = theme.priorStroke;
     ctx.lineWidth = 2.5;
     ctx.setLineDash([6, 4]);
     ctx.beginPath();
-    ctx.moveTo(lpX + lpW - 230, lpY + 82);
-    ctx.lineTo(lpX + lpW - 196, lpY + 82);
+    ctx.moveTo(lpX + lpW - 194, lpY + 63);
+    ctx.lineTo(lpX + lpW - 160, lpY + 63);
     ctx.stroke();
     ctx.setLineDash([]);
     ctx.fillStyle = theme.inkSub;
     ctx.font = "600 18px Assistant, sans-serif";
-    ctx.fillText("Pro Baseline Prior", lpX + lpW - 188, lpY + 88);
+    ctx.fillText("Pro Baseline Prior", lpX + lpW - 152, lpY + 69);
 
-    const pX0 = lpX + 48, pW = lpW - 96;
-    const pTop = lpY + 188, pBot = lpY + 768;
+    const pX0 = lpX + 14, pW = lpW - 28;
+    const pTop = lpY + 178, pBot = lpY + 782;
     const pH = pBot - pTop;
     const xMin = -0.14, xMax = 0.14;
     const xToPx = (x) => pX0 + ((x - xMin) / (xMax - xMin)) * pW;
@@ -3474,14 +3511,14 @@ cat(sprintf(
         const py = yToPx(dnorm(xv, k.mu, k.sd));
         if (i === 0) ctx.moveTo(xToPx(xv), py); else ctx.lineTo(xToPx(xv), py);
       }
-      ctx.lineWidth = 4;
+      ctx.lineWidth = 3.5;
       ctx.strokeStyle = col;
       ctx.stroke();
 
       const mx = xToPx(k.mu);
       const my = yToPx(pk);
       ctx.setLineDash([4, 4]);
-      ctx.lineWidth = 2.2;
+      ctx.lineWidth = 2;
       ctx.strokeStyle = col;
       ctx.beginPath();
       ctx.moveTo(mx, my);
@@ -3506,14 +3543,19 @@ cat(sprintf(
       const x1 = Math.min(pX0 + pW, xToPx(k.ci_high));
       const xm = xToPx(k.mu);
       ctx.strokeStyle = col;
-      ctx.lineWidth = 5;
-      ctx.lineCap = "round";
+      ctx.lineWidth = 4.5;
+      ctx.lineCap = "butt";
       ctx.beginPath();
       ctx.moveTo(x0, cy);
       ctx.lineTo(x1, cy);
       ctx.stroke();
+      ctx.lineWidth = 2.5;
       ctx.beginPath();
-      ctx.arc(xm, cy, 7, 0, Math.PI * 2);
+      ctx.moveTo(x0, cy - 7); ctx.lineTo(x0, cy + 7);
+      ctx.moveTo(x1, cy - 7); ctx.lineTo(x1, cy + 7);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(xm, cy, 6.5, 0, Math.PI * 2);
       ctx.fillStyle = col;
       ctx.fill();
     });
@@ -3531,19 +3573,18 @@ cat(sprintf(
     ctx.fillText("True Talent Estimate (Calibrated Goals Prevented per Shot)  \u2022  95% Credible Intervals Shown", pX0 + pW * 0.5, pBot + 132);
     ctx.restore();
 
-    // RIGHT PANEL: TALE OF THE TAPE
-    const rpX = 1324, rpY = 368, rpW = 1012, rpH = 1004;
-    fillStrokeRoundRect(ctx, rpX, rpY, rpW, rpH, 12, theme.cardBg, theme.cardBorder, 2);
+    // RIGHT ZONE: TALE OF THE TAPE (x: 1328..2336)
+    const rpX = 1328, rpY = 368, rpW = 1008;
 
     ctx.save();
     ctx.textBaseline = "alphabetic";
     ctx.textAlign = "left";
     ctx.fillStyle = theme.inkMuted;
     ctx.font = "800 20px Assistant, sans-serif";
-    ctx.fillText("HEAD-TO-HEAD TALE OF THE TAPE", rpX + 36, rpY + 46);
+    ctx.fillText("HEAD-TO-HEAD TALE OF THE TAPE", rpX, rpY + 26);
     ctx.textAlign = "right";
     ctx.font = "600 18px Assistant, sans-serif";
-    ctx.fillText("BOLD INDICATES LEADER", rpX + rpW - 36, rpY + 46);
+    ctx.fillText("BOLD INDICATES LEADER", rpX + rpW, rpY + 26);
 
     const metrics = [
       {
@@ -3599,15 +3640,15 @@ cat(sprintf(
     ];
 
     const cX = rpX + rpW * 0.5;
-    const halfBarW = 420;
+    const halfBarW = 456;
     metrics.forEach((m, idx) => {
-      const ry = rpY + 112 + idx * 145;
+      const ry = rpY + 92 + idx * 145;
       if (idx > 0) {
         ctx.strokeStyle = theme.rule;
         ctx.lineWidth = 1.2;
         ctx.beginPath();
-        ctx.moveTo(rpX + 36, ry - 32);
-        ctx.lineTo(rpX + rpW - 36, ry - 32);
+        ctx.moveTo(rpX, ry - 32);
+        ctx.lineTo(rpX + rpW, ry - 32);
         ctx.stroke();
       }
 
@@ -3624,50 +3665,60 @@ cat(sprintf(
       ctx.textAlign = "left";
       ctx.fillStyle = aLeads ? colA : theme.ink;
       ctx.font = `${aLeads ? 800 : 600} 34px Assistant, sans-serif`;
-      ctx.fillText(m.fA, rpX + 36, ry + 36);
+      ctx.fillText(m.fA, rpX, ry + 36);
       ctx.fillStyle = theme.inkSub;
       ctx.font = "600 17px Assistant, sans-serif";
-      ctx.fillText(m.subA, rpX + 36, ry + 60);
+      ctx.fillText(m.subA, rpX, ry + 60);
 
       ctx.textAlign = "right";
       ctx.fillStyle = bLeads ? colB : theme.ink;
       ctx.font = `${bLeads ? 800 : 600} 34px Assistant, sans-serif`;
-      ctx.fillText(m.fB, rpX + rpW - 36, ry + 36);
+      ctx.fillText(m.fB, rpX + rpW, ry + 36);
       ctx.fillStyle = theme.inkSub;
       ctx.font = "600 17px Assistant, sans-serif";
-      ctx.fillText(m.subB, rpX + rpW - 36, ry + 60);
+      ctx.fillText(m.subB, rpX + rpW, ry + 60);
 
       const barY = ry + 74;
       const barH = 16;
       const leftTrackX = cX - halfBarW - 8;
       const rightTrackX = cX + 8;
 
-      fillStrokeRoundRect(ctx, leftTrackX, barY, halfBarW, barH, 4, theme.trackBg, null);
-      fillStrokeRoundRect(ctx, rightTrackX, barY, halfBarW, barH, 4, theme.trackBg, null);
+      ctx.fillStyle = theme.trackBg;
+      ctx.fillRect(leftTrackX, barY, halfBarW, barH);
+      ctx.fillRect(rightTrackX, barY, halfBarW, barH);
 
       const magA = m.vA === null ? 0 : (m.zeroShift ? Math.max(0, Math.min(1, m.vA / m.maxRef)) : Math.max(0.05, Math.min(1, (m.vA + m.maxRef) / (2 * m.maxRef))));
       const magB = m.vB === null ? 0 : (m.zeroShift ? Math.max(0, Math.min(1, m.vB / m.maxRef)) : Math.max(0.05, Math.min(1, (m.vB + m.maxRef) / (2 * m.maxRef))));
 
       if (m.vA !== null) {
         const wLeft = halfBarW * magA;
-        fillStrokeRoundRect(ctx, cX - 8 - wLeft, barY, wLeft, barH, 4, colA, null);
+        ctx.fillStyle = colA;
+        ctx.fillRect(cX - 8 - wLeft, barY, wLeft, barH);
       }
       if (m.vB !== null) {
         const wRight = halfBarW * magB;
-        fillStrokeRoundRect(ctx, rightTrackX, barY, wRight, barH, 4, colB, null);
+        ctx.fillStyle = colB;
+        ctx.fillRect(rightTrackX, barY, wRight, barH);
       }
     });
     ctx.restore();
 
     ctx.save();
+    ctx.strokeStyle = theme.rule;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(64, 1384);
+    ctx.lineTo(2336, 1384);
+    ctx.stroke();
+
     ctx.textBaseline = "alphabetic";
     ctx.fillStyle = theme.inkMuted;
     ctx.font = "700 18px Assistant, sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText("WOSO.LIVE   \u2022   BAYESIAN HEAD-TO-HEAD COMPARISON", 64, 1418);
+    ctx.fillText("WOSO.LIVE   \u2022   BAYESIAN HEAD-TO-HEAD COMPARISON", 64, 1420);
     ctx.textAlign = "right";
     ctx.font = "600 18px Assistant, sans-serif";
-    ctx.fillText(`${modelName}  \u2022  Non-Penalty xGOT Shots`, 2336, 1418);
+    ctx.fillText(`${modelName}  \u2022  Non-Penalty xGOT Shots`, 2336, 1420);
     ctx.restore();
   }
 
@@ -3752,8 +3803,9 @@ cat(sprintf(
   // =========================================================================
   // TAB SWITCHING & INITIALIZATION
   // =========================================================================
-  let currentTab = "post";
+  let currentTab = "save";
   let saveManuallyPicked = false;
+  let postManuallyPicked = false;
 
   window.switchGkTab = function(tab) {
     currentTab = tab;
@@ -3761,16 +3813,30 @@ cat(sprintf(
     document.getElementById("gk-panel-comp").style.display = (tab === "comp") ? "grid" : "none";
     document.getElementById("gk-panel-save").style.display = (tab === "save") ? "grid" : "none";
 
-    document.getElementById("gk-tab-btn-post").classList.toggle("active", tab === "post");
-    document.getElementById("gk-tab-btn-comp").classList.toggle("active", tab === "comp");
-    document.getElementById("gk-tab-btn-save").classList.toggle("active", tab === "save");
+    const btnSave = document.getElementById("gk-tab-btn-save");
+    const btnPost = document.getElementById("gk-tab-btn-post");
+    const btnComp = document.getElementById("gk-tab-btn-comp");
+    btnSave.classList.toggle("active", tab === "save");
+    btnPost.classList.toggle("active", tab === "post");
+    btnComp.classList.toggle("active", tab === "comp");
+    btnSave.setAttribute("aria-selected", tab === "save" ? "true" : "false");
+    btnPost.setAttribute("aria-selected", tab === "post" ? "true" : "false");
+    btnComp.setAttribute("aria-selected", tab === "comp" ? "true" : "false");
 
     if (tab === "post") {
+      if (!postManuallyPicked) {
+        const cardLg = document.getElementById("save_league").value;
+        const cardGk = document.getElementById("save_gk").value;
+        if (cardGk) {
+          document.getElementById("league_filter").value = cardLg;
+          comboRegistry["gk_select"].setItems(getFilteredKeepers(cardLg), cardGk, 0);
+        }
+      }
       renderPosteriorPlot();
     } else if (tab === "comp") {
       renderCompView();
     } else if (tab === "save") {
-      if (!saveManuallyPicked) {
+      if (!saveManuallyPicked && postManuallyPicked) {
         const postLg = document.getElementById("league_filter").value;
         const postGk = document.getElementById("gk_select").value;
         if (postGk) {
@@ -3797,7 +3863,7 @@ cat(sprintf(
   function initGkApp() {
     ["league_filter", "comp_league_a", "comp_league_b", "save_league"].forEach(id => populateLeagueSelect(id, "9134"));
 
-    setupSearchableCombo("gk_select", () => renderPosteriorPlot());
+    setupSearchableCombo("gk_select", () => { postManuallyPicked = true; renderPosteriorPlot(); });
     setupSearchableCombo("comp_gk_a", () => renderCompView());
     setupSearchableCombo("comp_gk_b", () => renderCompView());
     setupSearchableCombo("save_gk", () => { saveManuallyPicked = true; renderSaveProfile(); });
@@ -3811,6 +3877,7 @@ cat(sprintf(
     comboRegistry["save_gk"].setItems(getFilteredKeepers("9134"), defA, 0);
 
     document.getElementById("league_filter").addEventListener("change", (e) => {
+      postManuallyPicked = true;
       const lv = e.target.value;
       comboRegistry["gk_select"].setItems(getFilteredKeepers(lv), pickDefaultKeeperId(lv, 0), 0);
       renderPosteriorPlot();
@@ -3914,7 +3981,7 @@ cat(sprintf(
 
     document.getElementById("download_save_dash").addEventListener("click", () => {
       const k = keeperById.get(document.getElementById("save_gk").value);
-      const fname = `${slugify(k?.player_name || "goalkeeper")}_save_card.png`;
+      const fname = `${slugify(k?.player_name || "goalkeeper")}_player_card.png`;
       downloadCanvasPng("save_player_canvas", fname);
     });
 
@@ -3980,9 +4047,10 @@ cat(sprintf(
       return null;
     });
 
-    // Support URL hash / query deep links (e.g. ?tab=save or #save)
+    // Support URL hash / query deep links (e.g. ?tab=card or ?tab=save or #save)
     const params = new URLSearchParams(window.location.search);
-    const reqTab = (params.get("tab") || window.location.hash.replace("#", "") || "").toLowerCase();
+    const reqTabRaw = (params.get("tab") || window.location.hash.replace("#", "") || "").toLowerCase();
+    const reqTab = (reqTabRaw === "card" || reqTabRaw === "cards") ? "save" : reqTabRaw;
     const reqKeeper = params.get("keeper");
     if (reqKeeper && keeperById.has(reqKeeper)) {
       const k = keeperById.get(reqKeeper);
@@ -3995,12 +4063,13 @@ cat(sprintf(
       comboRegistry["save_gk"].setItems(getFilteredKeepers(lgChoice), reqKeeper, 0);
       comboRegistry["comp_gk_a"].setItems(getFilteredKeepers(lgChoice), reqKeeper, 0);
       saveManuallyPicked = true;
+      postManuallyPicked = true;
     }
 
     if (reqTab === "save" || reqTab === "comp" || reqTab === "post") {
       switchGkTab(reqTab);
     } else {
-      renderPosteriorPlot();
+      switchGkTab("save");
     }
   }
 
