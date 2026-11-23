@@ -303,6 +303,16 @@ tryCatch({
   }
 }, error = function(e) {})
 
+club_badges_path <- file.path(data_dir, "club_badges.json")
+extra_club_badges <- if (file.exists(club_badges_path)) {
+  tryCatch(
+    jsonlite::fromJSON(club_badges_path, simplifyVector = FALSE),
+    error = function(e) setNames(list(), character(0))
+  )
+} else {
+  setNames(list(), character(0))
+}
+
 payload <- list(
   globals = list(
     cq_avgs    = global_cq_avgs,
@@ -322,6 +332,7 @@ payload <- list(
   club_leagues        = club_leagues_exact,
   club_leagues_base   = club_leagues_base,
   keeper_club_history = keeper_club_history_map,
+  club_badges         = extra_club_badges,
   mapping             = mapping_clean,
   stream              = stream_by_gk,
   matches             = matches_by_gk,
@@ -338,7 +349,7 @@ cat(sprintf(
 <!--| quarto-html-table-processing: none -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&family=Source+Sans+3:wght@400;600;700;800&display=swap">
 
 <style>
   .gk-app-wrapper {
@@ -347,6 +358,14 @@ cat(sprintf(
     min-height: calc(100vh - 60px);
     font-family: 'Assistant', sans-serif;
     padding-bottom: 3rem;
+  }
+
+  /* Scoped font strictly for goalkeeper names so extended Latin/Vietnamese diacritics match Assistant's proportions without fallback */
+  .gk-app-wrapper .gk-name-font,
+  .gk-app-wrapper .gk-search-input,
+  .gk-app-wrapper .gk-search-option-name,
+  .gk-app-wrapper .gk-top-name-text {
+    font-family: 'Source Sans 3', 'Assistant', sans-serif !important;
   }
 
   .gk-subnav {
@@ -1389,7 +1408,7 @@ cat(sprintf(
   const QUAL_MIN_MINS = 450;
 
   // Same-origin local club badges in quarto_site/logos/ + curated club colors
-  const CLUB_BADGES = {
+  const CURATED_CLUB_BADGES = {
     "Adelaide United": { logo: "logos/fm_675725.png", color: "#E30043" },
     "Angel City FC": { logo: "logos/fm_1335914.png", color: "#E58B7B" },
     "Arsenal": { logo: "logos/fm_258657.png", color: "#EF0107" },
@@ -1944,15 +1963,26 @@ cat(sprintf(
     };
   }
 
-  // Logo cache for safe same-origin Canvas rendering
+  // Logo cache & merged O(1) badge lookup (curated overrides auto-synced manifest)
+  const CLUB_BADGES = Object.assign({}, payload.club_badges || {}, CURATED_CLUB_BADGES);
+  const CLUB_BADGES_NORM = new Map();
+  const CLUB_BADGES_KEY  = new Map();
+  for (const [key, val] of Object.entries(CLUB_BADGES)) {
+    const ns = normSearch(key);
+    if (ns && !CLUB_BADGES_NORM.has(ns)) CLUB_BADGES_NORM.set(ns, val);
+    const nk = normClubKey(key);
+    if (nk && !CLUB_BADGES_KEY.has(nk)) CLUB_BADGES_KEY.set(nk, val);
+  }
+
   const logoImageCache = new Map();
 
   function resolveClubBadge(teamName) {
-    if (CLUB_BADGES[teamName]) return CLUB_BADGES[teamName];
-    const norm = normSearch(teamName);
-    for (const [key, val] of Object.entries(CLUB_BADGES)) {
-      if (normSearch(key) === norm) return val;
-    }
+    if (!teamName) return { logo: null, color: "#00747A" };
+    if (Object.prototype.hasOwnProperty.call(CLUB_BADGES, teamName)) return CLUB_BADGES[teamName];
+    const ns = normSearch(teamName);
+    if (CLUB_BADGES_NORM.has(ns)) return CLUB_BADGES_NORM.get(ns);
+    const nk = normClubKey(teamName);
+    if (CLUB_BADGES_KEY.has(nk)) return CLUB_BADGES_KEY.get(nk);
     return { logo: null, color: "#00747A" };
   }
 
@@ -1981,6 +2011,10 @@ cat(sprintf(
     return null;
   }
 
+  const NAME_FONT_FAMILY = "'Source Sans 3', 'Assistant', sans-serif";
+  // Sample characters spanning Latin, Latin-Ext, and Vietnamese ranges to force all WOFF2 subsets to load
+  const NAME_FONT_SAMPLE = "AZ\u0106\u010C\u0110\u0141\u0143\u0145\u0158\u0160\u017D\u1EA6\u1EB0\u1ECA\u1ED4\u2019";
+
   let fontsPromise = null;
   function ensureFonts() {
     if (!fontsPromise) {
@@ -1989,10 +2023,13 @@ cat(sprintf(
             document.fonts.load("800 60px Assistant").catch(() => {}),
             document.fonts.load("700 32px Assistant").catch(() => {}),
             document.fonts.load("600 22px Assistant").catch(() => {}),
+            document.fonts.load("800 60px 'Source Sans 3'", NAME_FONT_SAMPLE).catch(() => {}),
+            document.fonts.load("700 24px 'Source Sans 3'", NAME_FONT_SAMPLE).catch(() => {}),
+            document.fonts.load("600 22px 'Source Sans 3'", NAME_FONT_SAMPLE).catch(() => {}),
             document.fonts.ready
           ])
         : Promise.resolve();
-      const timeout = new Promise(res => setTimeout(res, 1200));
+      const timeout = new Promise(res => setTimeout(res, 1800));
       fontsPromise = Promise.race([waitFonts, timeout]);
     }
     return fontsPromise;
@@ -2193,7 +2230,7 @@ cat(sprintf(
       btn.className = "gk-top-item" + (k.keeper_id === activeKeeperId ? " active" : "");
       btn.innerHTML = `
         <span class="gk-top-rank">#${idx + 1}</span>
-        <span class="gk-top-name">${escapeHtml(k.player_name)}<span class="gk-top-sub">${escapeHtml(clubSub)} &bull; ${k.shots_faced} sh</span></span>
+        <span class="gk-top-name"><span class="gk-top-name-text">${escapeHtml(k.player_name)}</span><span class="gk-top-sub">${escapeHtml(clubSub)} &bull; ${k.shots_faced} sh</span></span>
         <span class="gk-top-val ${k.mu < 0 ? "neg" : ""}">${formatSigned(k.mu, 3)}</span>
       `;
       btn.addEventListener("click", () => onPick(k.keeper_id));
@@ -2425,10 +2462,14 @@ cat(sprintf(
     ctx.textBaseline = "alphabetic";
     ctx.textAlign = "left";
     ctx.fillStyle = theme.ink;
-    ctx.font = "800 34px Assistant, sans-serif";
+    ctx.font = `800 34px ${NAME_FONT_FAMILY}`;
     const clubLabel = postAff.currLgShort ? `${k.team_name} (${postAff.currLgShort})` : k.team_name;
-    const hdrName = `${k.player_name}  \u2022  ${clubLabel}`;
-    ctx.fillText(truncateText(ctx, hdrName, 1180), 68, 56);
+    const postNameTxt = truncateText(ctx, k.player_name, 820);
+    ctx.fillText(postNameTxt, 68, 56);
+    const postNameW = ctx.measureText(postNameTxt).width;
+    ctx.font = "800 34px Assistant, sans-serif";
+    const postClubTxt = truncateText(ctx, `  \u2022  ${clubLabel}`, Math.max(80, 1180 - postNameW));
+    ctx.fillText(postClubTxt, 68 + postNameW, 56);
 
     ctx.fillStyle = theme.inkSub;
     ctx.font = "600 20px Assistant, sans-serif";
@@ -2780,7 +2821,7 @@ cat(sprintf(
     ctx.textBaseline = "alphabetic";
     const nameUpper = keeper.player_name.toUpperCase();
     const hasFormerBanner = Boolean(aff.formerBannerText);
-    fitTextFont(ctx, nameUpper, 1260, 800, hasFormerBanner ? 58 : 62, 36);
+    fitTextFont(ctx, nameUpper, 1260, 800, hasFormerBanner ? 58 : 62, 36, NAME_FONT_FAMILY);
     ctx.fillStyle = theme.ink;
     ctx.fillText(nameUpper, 212, hasFormerBanner ? 98 : 110);
 
@@ -3537,7 +3578,7 @@ cat(sprintf(
     const tbody = document.getElementById("save_match_tbody");
     const titleEl = document.getElementById("save_log_title");
     if (!tbody || !keeper) return;
-    titleEl.textContent = `${keeper.player_name} \u2014 Match-by-Match Shot-Stopping Log (${keeper.n_matches} ${plural(keeper.n_matches, "match", "matches")})`;
+    titleEl.innerHTML = `<span class="gk-name-font">${escapeHtml(keeper.player_name)}</span> \u2014 Match-by-Match Shot-Stopping Log (${keeper.n_matches} ${plural(keeper.n_matches, "match", "matches")})`;
     const rows = (keeper.matches || []).slice().reverse();
     if (rows.length === 0) {
       tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#64748B;padding:1rem;">No match log records available.</td></tr>`;
@@ -3617,7 +3658,7 @@ cat(sprintf(
     const clubLgA = affA.currLgShort ? `${kA.team_name} (${affA.currLgShort})` : kA.team_name;
     const rankATxt = benchA.qualified && benchA.rank ? `#${benchA.rank} in ${benchA.cohortLabel} (${getOrdinalSuffix(benchA.pctl)})` : benchA.cohortLabel;
     const hasFormerA = Boolean(affA.formerBannerText);
-    fitTextFont(ctx, kA.player_name.toUpperCase(), 880, 800, hasFormerA ? 46 : 50, 32);
+    fitTextFont(ctx, kA.player_name.toUpperCase(), 880, 800, hasFormerA ? 46 : 50, 32, NAME_FONT_FAMILY);
     ctx.fillStyle = colA;
     ctx.fillText(kA.player_name.toUpperCase(), 208, hasFormerA ? 96 : 104);
     ctx.fillStyle = theme.inkSub;
@@ -3642,7 +3683,7 @@ cat(sprintf(
     const clubLgB = affB.currLgShort ? `${kB.team_name} (${affB.currLgShort})` : kB.team_name;
     const rankBTxt = benchB.qualified && benchB.rank ? `#${benchB.rank} in ${benchB.cohortLabel} (${getOrdinalSuffix(benchB.pctl)})` : benchB.cohortLabel;
     const hasFormerB = Boolean(affB.formerBannerText);
-    fitTextFont(ctx, kB.player_name.toUpperCase(), 880, 800, hasFormerB ? 46 : 50, 32);
+    fitTextFont(ctx, kB.player_name.toUpperCase(), 880, 800, hasFormerB ? 46 : 50, 32, NAME_FONT_FAMILY);
     ctx.fillStyle = colB;
     ctx.fillText(kB.player_name.toUpperCase(), 2192, hasFormerB ? 96 : 104);
     ctx.fillStyle = theme.inkSub;
@@ -3678,8 +3719,24 @@ cat(sprintf(
     ctx.fillText("BAYESIAN PROBABILITY OF SUPERIORITY  \u2022  P(TRUE TALENT A > TRUE TALENT B)", 1200, banY + 24);
 
     ctx.fillStyle = theme.ink;
-    ctx.font = "800 32px Assistant, sans-serif";
-    ctx.fillText(`${verdictName.toUpperCase()} IS ${verdictProb.toFixed(1)}% LIKELY TO BE THE SUPERIOR SHOTSTOPPER`, 1200, banY + 64);
+    const vNameTxt = verdictName.toUpperCase();
+    const vRestTxt = ` IS ${verdictProb.toFixed(1)}% LIKELY TO BE THE SUPERIOR SHOTSTOPPER`;
+    let vPx = 32, vNameW = 0, vRestW = 0;
+    while (vPx >= 20) {
+      ctx.font = `800 ${vPx}px ${NAME_FONT_FAMILY}`;
+      vNameW = ctx.measureText(vNameTxt).width;
+      ctx.font = `800 ${vPx}px Assistant, sans-serif`;
+      vRestW = ctx.measureText(vRestTxt).width;
+      if (vNameW + vRestW <= 2240 || vPx === 20) break;
+      vPx -= 2;
+    }
+    const vStartX = 1200 - (vNameW + vRestW) * 0.5;
+    ctx.textAlign = "left";
+    ctx.font = `800 ${vPx}px ${NAME_FONT_FAMILY}`;
+    ctx.fillText(vNameTxt, vStartX, banY + 64);
+    ctx.font = `800 ${vPx}px Assistant, sans-serif`;
+    ctx.fillText(vRestTxt, vStartX + vNameW, banY + 64);
+    ctx.textAlign = "center";
 
     const sBarX = banX, sBarY = banY + 84, sBarW = banW, sBarH = 34;
     const wA = sBarW * (probA / 100);
@@ -3734,13 +3791,20 @@ cat(sprintf(
     ctx.fillRect(lpX, lpY + 54, 16, 16);
     ctx.textAlign = "left";
     ctx.fillStyle = theme.ink;
+    ctx.font = `700 21px ${NAME_FONT_FAMILY}`;
+    ctx.fillText(kA.player_name, lpX + 26, lpY + 69);
+    const legAW = ctx.measureText(kA.player_name).width;
     ctx.font = "700 21px Assistant, sans-serif";
-    ctx.fillText(`${kA.player_name} (${formatSigned(kA.mu, 3)} \u00B1 ${(1.96 * kA.sd).toFixed(3)})`, lpX + 26, lpY + 69);
+    ctx.fillText(` (${formatSigned(kA.mu, 3)} \u00B1 ${(1.96 * kA.sd).toFixed(3)})`, lpX + 26 + legAW, lpY + 69);
 
     ctx.fillStyle = colB;
     ctx.fillRect(lpX, lpY + 88, 16, 16);
     ctx.fillStyle = theme.ink;
-    ctx.fillText(`${kB.player_name} (${formatSigned(kB.mu, 3)} \u00B1 ${(1.96 * kB.sd).toFixed(3)})`, lpX + 26, lpY + 103);
+    ctx.font = `700 21px ${NAME_FONT_FAMILY}`;
+    ctx.fillText(kB.player_name, lpX + 26, lpY + 103);
+    const legBW = ctx.measureText(kB.player_name).width;
+    ctx.font = "700 21px Assistant, sans-serif";
+    ctx.fillText(` (${formatSigned(kB.mu, 3)} \u00B1 ${(1.96 * kB.sd).toFixed(3)})`, lpX + 26 + legBW, lpY + 103);
 
     // Dashed Prior legend on right of legend band
     ctx.strokeStyle = theme.priorStroke;
@@ -4350,7 +4414,7 @@ cat(sprintf(
         const xv = compPlotMeta.xMin + ((cx - compPlotMeta.x0) / (compPlotMeta.x1 - compPlotMeta.x0)) * (compPlotMeta.xMax - compPlotMeta.xMin);
         const pA = (1 - pnorm(xv, compPlotMeta.kA.mu, Math.max(compPlotMeta.kA.sd, 1e-6))) * 100;
         const pB = (1 - pnorm(xv, compPlotMeta.kB.mu, Math.max(compPlotMeta.kB.sd, 1e-6))) * 100;
-        return `<b>Threshold: ${formatSigned(xv, 3)} GP/Shot</b><br>${escapeHtml(compPlotMeta.kA.player_name)}: ${pA.toFixed(1)}% above<br>${escapeHtml(compPlotMeta.kB.player_name)}: ${pB.toFixed(1)}% above`;
+        return `<b>Threshold: ${formatSigned(xv, 3)} GP/Shot</b><br><span class="gk-name-font">${escapeHtml(compPlotMeta.kA.player_name)}</span>: ${pA.toFixed(1)}% above<br><span class="gk-name-font">${escapeHtml(compPlotMeta.kB.player_name)}</span>: ${pB.toFixed(1)}% above`;
       }
       return null;
     });
