@@ -50,7 +50,26 @@ LEAGUE_REGISTRY <- list(
   u17      = list(cache = "u17_arbitrage_rapm_data_cache.qs2",      provider = "sofascore", label = "FIFA U-17 Women's World Cup"),
   u20      = list(cache = "u20_arbitrage_rapm_data_cache.qs2",      provider = "sofascore", label = "FIFA U-20 Women's World Cup"),
   unl      = list(cache = "unl_arbitrage_rapm_data_cache.qs2",      provider = "sofascore", label = "UEFA Women's Nations League"),
-  weuro    = list(cache = "weuro_arbitrage_rapm_data_cache.qs2",    provider = "sofascore", label = "UEFA Women's EURO")
+  weuro    = list(cache = "weuro_arbitrage_rapm_data_cache.qs2",    provider = "sofascore", label = "UEFA Women's EURO"),
+  can          = list(cache = "can_arbitrage_rapm_data_cache.qs2",          provider = "sofascore", label = "Northern Super League (CAN)"),
+  chn          = list(cache = "chn_arbitrage_rapm_data_cache.qs2",          provider = "sofascore", label = "CFA Women's Super League (CHN)"),
+  cze          = list(cache = "cze_arbitrage_rapm_data_cache.qs2",          provider = "sofascore", label = "1. Liga (CZE)"),
+  col          = list(cache = "col_arbitrage_rapm_data_cache.qs2",          provider = "sofascore", label = "Liga Femenina (COL)"),
+  irl          = list(cache = "irl_arbitrage_rapm_data_cache.qs2",          provider = "sofascore", label = "Women's Premier Division (IRL)"),
+  ned          = list(cache = "ned_arbitrage_rapm_data_cache.qs2",          provider = "sofascore", label = "Vrouwen Eredivisie (NED)"),
+  pol          = list(cache = "pol_arbitrage_rapm_data_cache.qs2",          provider = "sofascore", label = "Ekstraliga (POL)"),
+  rus          = list(cache = "rus_arbitrage_rapm_data_cache.qs2",          provider = "sofascore", label = "Russian Women's Super League (RUS)"),
+  lib          = list(cache = "lib_arbitrage_rapm_data_cache.qs2",          provider = "sofascore", label = "Copa Libertadores Femenina"),
+  cwcc         = list(cache = "cwcc_arbitrage_rapm_data_cache.qs2",         provider = "sofascore", label = "CONCACAF W Champions Cup"),
+  u17_euro     = list(cache = "u17_euro_arbitrage_rapm_data_cache.qs2",     provider = "sofascore", label = "UEFA U-17 Women's EURO"),
+  u20_concacaf = list(cache = "u20_concacaf_arbitrage_rapm_data_cache.qs2", provider = "sofascore", label = "CONCACAF U-20 Women's Championship"),
+  ofc_nc       = list(cache = "ofc_nc_arbitrage_rapm_data_cache.qs2",       provider = "sofascore", label = "OFC Women's Nations Cup"),
+  eng_lc       = list(cache = "eng_lc_arbitrage_rapm_data_cache.qs2",       provider = "sofascore", label = "FA Women's League Cup (ENG)"),
+  jpn_lc       = list(cache = "jpn_lc_arbitrage_rapm_data_cache.qs2",       provider = "sofascore", label = "WE League Cup (JPN)"),
+  bra_sc       = list(cache = "bra_sc_arbitrage_rapm_data_cache.qs2",       provider = "sofascore", label = "Supercopa Feminina do Brasil (BRA)"),
+  esp_sc       = list(cache = "esp_sc_arbitrage_rapm_data_cache.qs2",       provider = "sofascore", label = "Supercopa Femenina (ESP)"),
+  usa_cc       = list(cache = "usa_cc_arbitrage_rapm_data_cache.qs2",       provider = "sofascore", label = "NWSL Challenge Cup (USA)"),
+  irl_pc       = list(cache = "irl_pc_arbitrage_rapm_data_cache.qs2",       provider = "sofascore", label = "Women's President's Cup (IRL)")
 )
 
 parse_cli_args <- function(args) {

@@ -7,6 +7,10 @@
     "logo": "logos/sofa_164534.png",
     "color": "#AD1732"
   },
+  "1. FC Slovácko": {
+    "logo": "logos/sofa_44171.png",
+    "color": "#424A89"
+  },
   "1. FC Union Berlin": {
     "logo": "logos/sofa_36618.png",
     "color": "#D4011D"
@@ -39,9 +43,21 @@
     "logo": "logos/fm_675725.png",
     "color": "#004279"
   },
+  "ADIFFEM": {
+    "logo": "logos/sofa_928847.png",
+    "color": "#0D355A"
+  },
+  "ADO Den Haag": {
+    "logo": "logos/sofa_79161.png",
+    "color": "#008B45"
+  },
   "AEK Athens": {
     "logo": "logos/sofa_490436.png",
     "color": "#FDD705"
+  },
+  "AFC Toronto": {
+    "logo": "logos/sofa_1087191.png",
+    "color": "#641126"
   },
   "Agarista CSF Anenii Noi 2020": {
     "logo": "logos/sofa_269947.png",
@@ -103,6 +119,14 @@
     "logo": "logos/sofa_325475.png",
     "color": "#BB9312"
   },
+  "Alianza Lima": {
+    "logo": "logos/sofa_396194.png",
+    "color": "#002048"
+  },
+  "Alianza Women": {
+    "logo": "logos/sofa_306703.png",
+    "color": "#182140"
+  },
   "Alingsås IF Fotboll": {
     "logo": "logos/sofa_363670.png",
     "color": "#106348"
@@ -110,6 +134,10 @@
   "Allen Yellow Jackets": {
     "logo": "logos/sofa_1116685.png",
     "color": "#01519A"
+  },
+  "América de Cali Femenino": {
+    "logo": "logos/sofa_327841.png",
+    "color": "#CE0A10"
   },
   "América Mineiro": {
     "logo": "logos/sofa_286246.png",
@@ -126,6 +154,10 @@
   "Ankara BB Fomget GS": {
     "logo": "logos/sofa_335353.png",
     "color": "#C71F36"
+  },
+  "AP 2010 ORLEN Gdańsk": {
+    "logo": "logos/sofa_354463.png",
+    "color": "#1D3549"
   },
   "Apollon Limassol": {
     "logo": "logos/sofa_36709.png",
@@ -199,9 +231,13 @@
     "logo": "logos/sofa_826890.png",
     "color": "#FCCB54"
   },
+  "Asociacion Deportivo Pasto": {
+    "logo": "logos/sofa_462925.png",
+    "color": "#29176F"
+  },
   "Aston Villa": {
-    "logo": "logos/fm_231494.png",
-    "color": "#93BDE4"
+    "logo": "logos/sofa_266375.png",
+    "color": "#93BDE6"
   },
   "Athletic Club": {
     "logo": "logos/sofa_77877.png",
@@ -219,6 +255,10 @@
     "logo": "logos/sofa_267469.png",
     "color": "#E11515"
   },
+  "Atlético Bucaramanga Femenino": {
+    "logo": "logos/sofa_370748.png",
+    "color": "#FFF100"
+  },
   "Atlético de San Luis": {
     "logo": "logos/sofa_321815.png",
     "color": "#CD3824"
@@ -226,6 +266,10 @@
   "Atlético Mineiro": {
     "logo": "logos/sofa_312546.png",
     "color": "#FFD301"
+  },
+  "Atlético Nacional Medellín": {
+    "logo": "logos/sofa_370746.png",
+    "color": "#009733"
   },
   "Auburn Tigers": {
     "logo": "logos/sofa_422318.png",
@@ -247,6 +291,14 @@
     "logo": "logos/sofa_34014.png",
     "color": "#C8102E"
   },
+  "Austria U17": {
+    "logo": "logos/sofa_37970.png",
+    "color": "#C8102E"
+  },
+  "AZ Alkmaar": {
+    "logo": "logos/sofa_37185.png",
+    "color": "#CA1517"
+  },
   "Ball State Cardinals": {
     "logo": "logos/sofa_422336.png",
     "color": "#BA0C2F"
@@ -254,6 +306,10 @@
   "Bangladesh": {
     "logo": "logos/sofa_214194.png",
     "color": "#006A4E"
+  },
+  "Banik Ostrava": {
+    "logo": "logos/sofa_44175.png",
+    "color": "#01619E"
   },
   "Bay FC": {
     "logo": "logos/fm_1607273.png",
@@ -266,6 +322,10 @@
   "Baylor Bears": {
     "logo": "logos/sofa_296282.png",
     "color": "#004833"
+  },
+  "Beijing BG Phoenix": {
+    "logo": "logos/sofa_267628.png",
+    "color": "#5F4528"
   },
   "Belarus": {
     "logo": "logos/sofa_41487.png",
@@ -323,13 +383,25 @@
     "logo": "logos/sofa_1115665.png",
     "color": "#041543"
   },
+  "Boca Juniors": {
+    "logo": "logos/sofa_262935.png",
+    "color": "#172A50"
+  },
   "Bodø/Glimt": {
     "logo": "logos/sofa_503814.png",
     "color": "#FFE300"
   },
+  "Bohemian FC": {
+    "logo": "logos/sofa_355668.png",
+    "color": "#AA2421"
+  },
   "Boise State Broncos": {
     "logo": "logos/sofa_422576.png",
     "color": "#243976"
+  },
+  "Bolívar": {
+    "logo": "logos/sofa_526025.png",
+    "color": "#A6D7F6"
   },
   "Bolivia": {
     "logo": "logos/sofa_282524.png",
@@ -384,8 +456,8 @@
     "color": "#0F6756"
   },
   "Brighton": {
-    "logo": "logos/fm_231505.png",
-    "color": "#005BA8"
+    "logo": "logos/sofa_266376.png",
+    "color": "#02499A"
   },
   "Brisbane Roar FC": {
     "logo": "logos/fm_675726.png",
@@ -447,6 +519,10 @@
     "logo": "logos/sofa_422465.png",
     "color": "#D0112B"
   },
+  "Calgary Wild FC": {
+    "logo": "logos/sofa_1087186.png",
+    "color": "#330245"
+  },
   "California Baptist Lancers": {
     "logo": "logos/sofa_422426.png",
     "color": "#002453"
@@ -483,6 +559,10 @@
     "logo": "logos/sofa_422337.png",
     "color": "#EDB111"
   },
+  "Caracas FC": {
+    "logo": "logos/sofa_492482.png",
+    "color": "#DD210E"
+  },
   "Cardiff City FC": {
     "logo": "logos/sofa_36710.png",
     "color": "#2554B9"
@@ -498,6 +578,14 @@
   "CD Guadalajara (F)": {
     "logo": "logos/sofa_264823.png",
     "color": "#032653"
+  },
+  "CD Real Santander": {
+    "logo": "logos/sofa_409167.png",
+    "color": "#0098D8"
+  },
+  "CDP Junior FC": {
+    "logo": "logos/sofa_409166.png",
+    "color": "#0033A0"
   },
   "Celtic LFC": {
     "logo": "logos/sofa_191230.png",
@@ -526,6 +614,10 @@
   "Cerezo Osaka Sakai Ladies": {
     "logo": "logos/sofa_264992.png",
     "color": "#1F2380"
+  },
+  "Changchun Dazhong Zhiye": {
+    "logo": "logos/sofa_287104.png",
+    "color": "#B70005"
   },
   "Charleston Cougars": {
     "logo": "logos/sofa_422444.png",
@@ -558,6 +650,10 @@
   "Chelsea FC": {
     "logo": "logos/sofa_66768.png",
     "color": "#0D1188"
+  },
+  "Chertanovo Moscow": {
+    "logo": "logos/sofa_220944.png",
+    "color": "#0061FF"
   },
   "Chicago Stars": {
     "logo": "logos/fm_189393.png",
@@ -595,6 +691,10 @@
     "logo": "logos/sofa_39990.png",
     "color": "#003283"
   },
+  "Chorrillo": {
+    "logo": "logos/sofa_468438.png",
+    "color": "#32118C"
+  },
   "Cincinnati Bearcats": {
     "logo": "logos/sofa_422286.png",
     "color": "#E00122"
@@ -615,9 +715,17 @@
     "logo": "logos/sofa_283452.png",
     "color": "#1B9432"
   },
+  "Club Always Ready": {
+    "logo": "logos/sofa_452602.png",
+    "color": "#EA3A31"
+  },
   "Club América": {
     "logo": "logos/sofa_261128.png",
     "color": "#FEED02"
+  },
+  "Club Atlético Belgrano": {
+    "logo": "logos/sofa_412071.png",
+    "color": "#008BE2"
   },
   "Club Atlético de Madrid": {
     "logo": "logos/sofa_77879.png",
@@ -638,6 +746,10 @@
   "Colgate Raiders": {
     "logo": "logos/sofa_296135.png",
     "color": "#881111"
+  },
+  "Colo-Colo": {
+    "logo": "logos/sofa_268089.png",
+    "color": "#003961"
   },
   "Colombia": {
     "logo": "logos/sofa_46631.png",
@@ -695,9 +807,17 @@
     "logo": "logos/sofa_296280.png",
     "color": "#0E142E"
   },
+  "Cook Islands": {
+    "logo": "logos/sofa_1096996.png",
+    "color": "#C9102F"
+  },
   "Corinthians": {
     "logo": "logos/sofa_223182.png",
     "color": "#FD0102"
+  },
+  "Cork City WFC": {
+    "logo": "logos/sofa_234129.png",
+    "color": "#EC212F"
   },
   "Cornell Big Red": {
     "logo": "logos/sofa_422421.png",
@@ -736,12 +856,20 @@
     "color": "#003B93"
   },
   "Crystal Palace": {
-    "logo": "logos/fm_614828.png",
-    "color": "#17428D"
+    "logo": "logos/sofa_234204.png",
+    "color": "#0053A4"
+  },
+  "CSKA Moscow": {
+    "logo": "logos/sofa_220943.png",
+    "color": "#D91521"
   },
   "CSU Bakersfield Roadrunners": {
     "logo": "logos/sofa_422569.png",
     "color": "#005DAA"
+  },
+  "Czarni Antrans Sosnowiec": {
+    "logo": "logos/sofa_230007.png",
+    "color": "#D7B469"
   },
   "Czarni Sosnowiec": {
     "logo": "logos/sofa_230007.png",
@@ -775,6 +903,10 @@
     "logo": "logos/sofa_938777.png",
     "color": "#157BD7"
   },
+  "De Graafschap": {
+    "logo": "logos/sofa_826441.png",
+    "color": "#0D89CB"
+  },
   "Delaware Fightin Blue Hens": {
     "logo": "logos/sofa_422493.png",
     "color": "#0069AA"
@@ -807,6 +939,10 @@
     "logo": "logos/sofa_388473.png",
     "color": "#0232A0"
   },
+  "Deportivo Cali Femenino": {
+    "logo": "logos/sofa_370962.png",
+    "color": "#118F40"
+  },
   "Detroit Mercy Titans": {
     "logo": "logos/sofa_422393.png",
     "color": "#002D72"
@@ -822,6 +958,14 @@
   "Djurgårdens IF DFF": {
     "logo": "logos/sofa_1878.png",
     "color": "#E31E27"
+  },
+  "DLR Waves": {
+    "logo": "logos/sofa_234130.png",
+    "color": "#03ABEF"
+  },
+  "Dragonas Independiente del Valle": {
+    "logo": "logos/sofa_382034.png",
+    "color": "#966403"
   },
   "Drake Bulldogs": {
     "logo": "logos/sofa_422499.png",
@@ -846,6 +990,10 @@
   "Durham W.F.C.": {
     "logo": "logos/sofa_275782.png",
     "color": "#23418D"
+  },
+  "Dynamo Moscow": {
+    "logo": "logos/sofa_465886.png",
+    "color": "#0054A6"
   },
   "East Carolina Pirates": {
     "logo": "logos/sofa_422563.png",
@@ -923,9 +1071,17 @@
     "logo": "logos/sofa_7415.png",
     "color": "#CE1124"
   },
+  "England U17": {
+    "logo": "logos/sofa_38013.png",
+    "color": "#CE1124"
+  },
   "England U20": {
     "logo": "logos/sofa_43221.png",
     "color": "#CE1124"
+  },
+  "Enisey Krasnoyarsk": {
+    "logo": "logos/sofa_251605.png",
+    "color": "#EE1209"
   },
   "Enskede IK": {
     "logo": "logos/sofa_112691.png",
@@ -940,8 +1096,8 @@
     "color": "#382160"
   },
   "Everton": {
-    "logo": "logos/fm_258663.png",
-    "color": "#04059F"
+    "logo": "logos/sofa_36704.png",
+    "color": "#9B9BD9"
   },
   "Fairfield Stags": {
     "logo": "logos/sofa_422419.png",
@@ -954,6 +1110,10 @@
   "Fairmont State Fighting Falcons": {
     "logo": "logos/sofa_1113416.png",
     "color": "#75243D"
+  },
+  "Faroe Islands U17": {
+    "logo": "logos/sofa_38060.png",
+    "color": "#D72828"
   },
   "FC Badalona": {
     "logo": "logos/sofa_77893.png",
@@ -987,6 +1147,10 @@
     "logo": "logos/sofa_930205.png",
     "color": "#0F2DB9"
   },
+  "FC Krasnodar": {
+    "logo": "logos/sofa_220880.png",
+    "color": "#025832"
+  },
   "FC Midtjylland": {
     "logo": "logos/sofa_1049844.png",
     "color": "#B70C28"
@@ -1003,9 +1167,21 @@
     "logo": "logos/sofa_938214.png",
     "color": "#0077BC"
   },
+  "FC Prague Raptors": {
+    "logo": "logos/sofa_1110616.png",
+    "color": "#00BAFC"
+  },
   "FC Pyunik Yerevan": {
     "logo": "logos/sofa_530775.png",
     "color": "#151F78"
+  },
+  "FC Rostov": {
+    "logo": "logos/sofa_377861.png",
+    "color": "#FFEE00"
+  },
+  "FC Slovan Liberec": {
+    "logo": "logos/sofa_51745.png",
+    "color": "#62A1FF"
   },
   "FC Thy - Thisted": {
     "logo": "logos/sofa_290241.png",
@@ -1014,6 +1190,10 @@
   "FC Twente Vrouwen": {
     "logo": "logos/sofa_55511.png",
     "color": "#E6001A"
+  },
+  "FC Utrecht": {
+    "logo": "logos/sofa_485439.png",
+    "color": "#FF132D"
   },
   "FC Zimbru Chisinau": {
     "logo": "logos/sofa_1239500.png",
@@ -1035,12 +1215,24 @@
     "logo": "logos/sofa_223371.png",
     "color": "#571D1F"
   },
+  "Feyenoord": {
+    "logo": "logos/sofa_388668.png",
+    "color": "#AF9F71"
+  },
   "FH Hafnarfjörður Women": {
     "logo": "logos/sofa_48023.png",
     "color": "#131313"
   },
+  "Fiji": {
+    "logo": "logos/sofa_422129.png",
+    "color": "#68BFE5"
+  },
   "Finland": {
     "logo": "logos/sofa_21802.png",
+    "color": "#002F6B"
+  },
+  "Finland U17": {
+    "logo": "logos/sofa_37286.png",
     "color": "#002F6B"
   },
   "Fiorentina": {
@@ -1107,6 +1299,10 @@
     "logo": "logos/sofa_1041471.png",
     "color": "#003085"
   },
+  "Fortaleza FC": {
+    "logo": "logos/sofa_369108.png",
+    "color": "#051F40"
+  },
   "Fortuna Hjørring": {
     "logo": "logos/sofa_1367.png",
     "color": "#118E4F"
@@ -1142,6 +1338,10 @@
   "Fútbol Club Barcelona": {
     "logo": "logos/sofa_77889.png",
     "color": "#EDBB00"
+  },
+  "Galway United": {
+    "logo": "logos/sofa_234131.png",
+    "color": "#671620"
   },
   "Gamla Upsala Sk": {
     "logo": "logos/sofa_234771.png",
@@ -1207,6 +1407,10 @@
     "logo": "logos/sofa_36715.png",
     "color": "#8B8B00"
   },
+  "GKS Górnik Łęczna": {
+    "logo": "logos/sofa_229919.png",
+    "color": "#FFF200"
+  },
   "GKS Katowice": {
     "logo": "logos/sofa_263342.png",
     "color": "#296337"
@@ -1263,13 +1467,33 @@
     "logo": "logos/sofa_1072775.png",
     "color": "#306B3F"
   },
+  "Grot SMS Łódź": {
+    "logo": "logos/sofa_230347.png",
+    "color": "#015098"
+  },
   "Guadalajara": {
     "logo": "logos/sofa_264823.png",
     "color": "#032653"
   },
+  "Guangdong Meizhou Hakka": {
+    "logo": "logos/sofa_355662.png",
+    "color": "#162E75"
+  },
+  "Guangxi Pingguo": {
+    "logo": "logos/sofa_1217973.png",
+    "color": "#04388C"
+  },
+  "Guyana U20": {
+    "logo": "logos/sofa_323660.png",
+    "color": "#399408"
+  },
   "Haiti": {
     "logo": "logos/sofa_178948.png",
     "color": "#00209F"
+  },
+  "Halifax Tides FC": {
+    "logo": "logos/sofa_1087187.png",
+    "color": "#1F2032"
   },
   "Hamburger SV": {
     "logo": "logos/sofa_5548.png",
@@ -1439,6 +1663,14 @@
     "logo": "logos/sofa_422313.png",
     "color": "#C9323A"
   },
+  "Independiente Medellin": {
+    "logo": "logos/sofa_330865.png",
+    "color": "#FE2533"
+  },
+  "Independiente Santa Fé": {
+    "logo": "logos/sofa_268093.png",
+    "color": "#FF0000"
+  },
   "India": {
     "logo": "logos/sofa_132938.png",
     "color": "#FF9933"
@@ -1462,6 +1694,14 @@
   "Internacional": {
     "logo": "logos/sofa_311632.png",
     "color": "#EB0106"
+  },
+  "Internacional de Bogota": {
+    "logo": "logos/sofa_1170613.png",
+    "color": "#C09E66"
+  },
+  "Internacional Fútbol Club de Palmira": {
+    "logo": "logos/sofa_408969.png",
+    "color": "#D0F63E"
   },
   "Iona Gaels": {
     "logo": "logos/sofa_422485.png",
@@ -1547,6 +1787,10 @@
     "logo": "logos/sofa_1116136.png",
     "color": "#052042"
   },
+  "Jiangsu": {
+    "logo": "logos/sofa_267595.png",
+    "color": "#AA9968"
+  },
   "Jitex BK": {
     "logo": "logos/sofa_39479.png",
     "color": "#66236C"
@@ -1564,8 +1808,8 @@
     "color": "#018651"
   },
   "Kansas City Current": {
-    "logo": "logos/fm_1237561.png",
-    "color": "#63C7C7"
+    "logo": "logos/sofa_377826.png",
+    "color": "#64C6C7"
   },
   "Kansas City Roos": {
     "logo": "logos/sofa_422583.png",
@@ -1627,6 +1871,14 @@
     "logo": "logos/sofa_8086.png",
     "color": "#BC202D"
   },
+  "Krylya Sovetov Samara": {
+    "logo": "logos/sofa_383535.png",
+    "color": "#1D3D90"
+  },
+  "KS UJ Kraków": {
+    "logo": "logos/sofa_825304.png",
+    "color": "#005CA5"
+  },
   "KTP": {
     "logo": "logos/sofa_339357.png",
     "color": "#007C4B"
@@ -1655,6 +1907,14 @@
     "logo": "logos/sofa_389322.png",
     "color": "#8BD4F5"
   },
+  "LD Alajuelense": {
+    "logo": "logos/sofa_342391.png",
+    "color": "#FF1914"
+  },
+  "LDU Quito": {
+    "logo": "logos/sofa_382698.png",
+    "color": "#052263"
+  },
   "Le Havre": {
     "logo": "logos/fm_1169987.png",
     "color": "#003158"
@@ -1663,13 +1923,21 @@
     "logo": "logos/sofa_825122.png",
     "color": "#FDF20F"
   },
+  "Lech Poznań UAM": {
+    "logo": "logos/sofa_825311.png",
+    "color": "#00519B"
+  },
+  "Legia Ladies": {
+    "logo": "logos/sofa_825308.png",
+    "color": "#202020"
+  },
   "Lehigh Mountain Hawks": {
     "logo": "logos/sofa_422348.png",
     "color": "#663700"
   },
   "Leicester City": {
-    "logo": "logos/fm_614954.png",
-    "color": "#01509E"
+    "logo": "logos/sofa_299289.png",
+    "color": "#003090"
   },
   "Lens": {
     "logo": "logos/fm_1784549.png",
@@ -1686,6 +1954,14 @@
   "Lexington SC": {
     "logo": "logos/sofa_465515.png",
     "color": "#00390E"
+  },
+  "Liaoning Shenbei Hefeng": {
+    "logo": "logos/sofa_1079529.png",
+    "color": "#383E68"
+  },
+  "Libertad/Limpeño": {
+    "logo": "logos/sofa_318566.png",
+    "color": "#C11327"
   },
   "Liberty Lady Flames": {
     "logo": "logos/sofa_422347.png",
@@ -1715,13 +1991,29 @@
     "logo": "logos/fm_258665.png",
     "color": "#E51B24"
   },
+  "Liverpool FC": {
+    "logo": "logos/sofa_66774.png",
+    "color": "#E51B24"
+  },
+  "Llaneros FC": {
+    "logo": "logos/sofa_369109.png",
+    "color": "#F7DE76"
+  },
   "Logroño United": {
     "logo": "logos/sofa_861598.png",
     "color": "#DF2120"
   },
+  "Lokomotiv Moscow": {
+    "logo": "logos/sofa_283393.png",
+    "color": "#CE0C18"
+  },
+  "Lokomotiva Brno H.H.": {
+    "logo": "logos/sofa_262908.png",
+    "color": "#1F1A17"
+  },
   "London City Lionesses": {
-    "logo": "logos/fm_1075419.png",
-    "color": "#23BED1"
+    "logo": "logos/sofa_326573.png",
+    "color": "#03ABC8"
   },
   "Long Beach State 49ers": {
     "logo": "logos/sofa_422474.png",
@@ -1919,6 +2211,10 @@
     "logo": "logos/sofa_298858.png",
     "color": "#DF061B"
   },
+  "Millonarios": {
+    "logo": "logos/sofa_370015.png",
+    "color": "#034C8D"
+  },
   "Milwaukee Panthers": {
     "logo": "logos/sofa_422303.png",
     "color": "#897943"
@@ -1979,6 +2275,10 @@
     "logo": "logos/fm_606039.png",
     "color": "#061C48"
   },
+  "Montréal Roses FC": {
+    "logo": "logos/sofa_1087188.png",
+    "color": "#687DFD"
+  },
   "Montreat Cavaliers": {
     "logo": "logos/sofa_1258883.png",
     "color": "#0C3377"
@@ -2030,6 +2330,10 @@
   "Mynavi Vegalta Sendai": {
     "logo": "logos/sofa_216776.png",
     "color": "#007B39"
+  },
+  "Nacional": {
+    "logo": "logos/sofa_395934.png",
+    "color": "#1C4280"
   },
   "Nantes": {
     "logo": "logos/fm_1661332.png",
@@ -2119,6 +2423,10 @@
     "logo": "logos/sofa_422371.png",
     "color": "#703783"
   },
+  "Nicaragua U20": {
+    "logo": "logos/sofa_203646.png",
+    "color": "#0067C6"
+  },
   "Nicholls State Colonels": {
     "logo": "logos/sofa_422511.png",
     "color": "#AD1F2E"
@@ -2134,6 +2442,10 @@
   "Nippon TV Tokyo Verdy Beleza": {
     "logo": "logos/sofa_216778.png",
     "color": "#A99767"
+  },
+  "NJ/NY Gotham FC": {
+    "logo": "logos/sofa_34718.png",
+    "color": "#A8F0F6"
   },
   "Njit Highlanders": {
     "logo": "logos/sofa_422400.png",
@@ -2215,6 +2527,10 @@
     "logo": "logos/sofa_38099.png",
     "color": "#CC0000"
   },
+  "Northern Ireland U17": {
+    "logo": "logos/sofa_38065.png",
+    "color": "#CC0000"
+  },
   "Northern Kentucky Norse": {
     "logo": "logos/sofa_422290.png",
     "color": "#FEC524"
@@ -2291,6 +2607,10 @@
     "logo": "logos/sofa_422292.png",
     "color": "#CD0D2D"
   },
+  "Olimpia": {
+    "logo": "logos/sofa_326647.png",
+    "color": "#CDCDCD"
+  },
   "Omiya Ardija": {
     "logo": "logos/sofa_320575.png",
     "color": "#CC0F46"
@@ -2298,6 +2618,10 @@
   "Omonia Nicosia": {
     "logo": "logos/sofa_271437.png",
     "color": "#02713D"
+  },
+  "Once Caldas SA": {
+    "logo": "logos/sofa_1076873.png",
+    "color": "#419742"
   },
   "Oral Roberts Golden Eagles": {
     "logo": "logos/sofa_422582.png",
@@ -2316,12 +2640,20 @@
     "color": "#F47320"
   },
   "Orlando Pride": {
-    "logo": "logos/fm_728922.png",
-    "color": "#633394"
+    "logo": "logos/sofa_215083.png",
+    "color": "#623393"
+  },
+  "Orsomarso SC": {
+    "logo": "logos/sofa_409165.png",
+    "color": "#170B77"
   },
   "Østerbro IF": {
     "logo": "logos/sofa_268555.png",
     "color": "#DD3448"
+  },
+  "Ottawa Rapid FC": {
+    "logo": "logos/sofa_1087190.png",
+    "color": "#57CCE2"
   },
   "Oud-Heverlee Leuven": {
     "logo": "logos/sofa_178246.png",
@@ -2347,9 +2679,17 @@
     "logo": "logos/sofa_132954.png",
     "color": "#072357"
   },
+  "Panama U20": {
+    "logo": "logos/sofa_210722.png",
+    "color": "#072357"
+  },
   "PAOK": {
     "logo": "logos/sofa_37187.png",
     "color": "#B4976B"
+  },
+  "Papua New Guinea": {
+    "logo": "logos/sofa_412185.png",
+    "color": "#CE1126"
   },
   "Paraguay": {
     "logo": "logos/sofa_323786.png",
@@ -2378,6 +2718,14 @@
   "Partick Thistle LFC": {
     "logo": "logos/sofa_317824.png",
     "color": "#110F10"
+  },
+  "Peamount United": {
+    "logo": "logos/sofa_53425.png",
+    "color": "#016D50"
+  },
+  "PEC Zwolle Vrouwen": {
+    "logo": "logos/sofa_178256.png",
+    "color": "#005BAA"
   },
   "Penn State Nittany Lions": {
     "logo": "logos/sofa_422369.png",
@@ -2422,6 +2770,10 @@
   "PK-35 Vantaa": {
     "logo": "logos/sofa_53385.png",
     "color": "#DA2528"
+  },
+  "Pogoń Szczecin": {
+    "logo": "logos/sofa_422269.png",
+    "color": "#132249"
   },
   "Poland": {
     "logo": "logos/sofa_22026.png",
@@ -2485,6 +2837,10 @@
   },
   "Puerto Rico U17": {
     "logo": "logos/sofa_283928.png",
+    "color": "#0050F0"
+  },
+  "Puerto Rico U20": {
+    "logo": "logos/sofa_342026.png",
     "color": "#0050F0"
   },
   "Pumas UNAM": {
@@ -2567,6 +2923,10 @@
     "logo": "logos/sofa_1116595.png",
     "color": "#042C48"
   },
+  "Rekord Bielsko-Biala": {
+    "logo": "logos/sofa_291837.png",
+    "color": "#24554F"
+  },
   "Rhode Island Rams": {
     "logo": "logos/sofa_422329.png",
     "color": "#002147"
@@ -2615,6 +2975,10 @@
     "logo": "logos/sofa_1886.png",
     "color": "#181F57"
   },
+  "Rubin Kazan": {
+    "logo": "logos/sofa_377862.png",
+    "color": "#7F1E34"
+  },
   "Russia": {
     "logo": "logos/sofa_32486.png",
     "color": "#0039A6"
@@ -2622,6 +2986,10 @@
   "Rutgers Scarlet Knights": {
     "logo": "logos/sofa_295852.png",
     "color": "#CE4044"
+  },
+  "Ryazan-VDV": {
+    "logo": "logos/sofa_171120.png",
+    "color": "#1C4585"
   },
   "Sacramento State Hornets": {
     "logo": "logos/sofa_422577.png",
@@ -2687,6 +3055,10 @@
     "logo": "logos/sofa_422395.png",
     "color": "#112748"
   },
+  "Samoa": {
+    "logo": "logos/sofa_1096995.png",
+    "color": "#CC1126"
+  },
   "Samoa U17": {
     "logo": "logos/sofa_1098680.png",
     "color": "#CC1125"
@@ -2710,6 +3082,10 @@
   "San Jose State Spartans": {
     "logo": "logos/sofa_422515.png",
     "color": "#0060A9"
+  },
+  "San Lorenzo": {
+    "logo": "logos/sofa_265452.png",
+    "color": "#212F52"
   },
   "Sandvikens IF": {
     "logo": "logos/sofa_447835.png",
@@ -2746,6 +3122,10 @@
   "SC Freiburg": {
     "logo": "logos/sofa_5550.png",
     "color": "#1A171B"
+  },
+  "SC Heerenveen": {
+    "logo": "logos/sofa_178258.png",
+    "color": "#00519B"
   },
   "Schreiner Mountaineers": {
     "logo": "logos/sofa_1118193.png",
@@ -2799,13 +3179,37 @@
     "logo": "logos/sofa_5551.png",
     "color": "#572381"
   },
+  "Shaanxi Chang AN Athletic FC": {
+    "logo": "logos/sofa_412487.png",
+    "color": "#2E2C58"
+  },
+  "Shamrock Rovers FC": {
+    "logo": "logos/sofa_465885.png",
+    "color": "#1F8234"
+  },
+  "Shandong Sports Lottery": {
+    "logo": "logos/sofa_355658.png",
+    "color": "#EA5316"
+  },
+  "Shanghai RCB": {
+    "logo": "logos/sofa_267598.png",
+    "color": "#202C59"
+  },
   "Sheffield United Women": {
     "logo": "logos/sofa_302415.png",
     "color": "#EC2227"
   },
+  "Shelbourne Ladies": {
+    "logo": "logos/sofa_105949.png",
+    "color": "#D80001"
+  },
   "Shepherd Rams": {
     "logo": "logos/sofa_1117341.png",
     "color": "#BDB25F"
+  },
+  "Sichuan": {
+    "logo": "logos/sofa_314287.png",
+    "color": "#F2AB13"
   },
   "Siena Saints": {
     "logo": "logos/sofa_422331.png",
@@ -2831,6 +3235,18 @@
     "logo": "logos/sofa_118936.png",
     "color": "#23337C"
   },
+  "Śląsk Wrocław": {
+    "logo": "logos/sofa_194483.png",
+    "color": "#22B67C"
+  },
+  "Ślęza JAXAN Wrocław": {
+    "logo": "logos/sofa_825309.png",
+    "color": "#E91D25"
+  },
+  "Sligo Rovers": {
+    "logo": "logos/sofa_411165.png",
+    "color": "#C5071B"
+  },
   "Slovakia": {
     "logo": "logos/sofa_38101.png",
     "color": "#EE1C25"
@@ -2846,6 +3262,10 @@
   "Snow College Badgers": {
     "logo": "logos/sofa_1258396.png",
     "color": "#A4A9B3"
+  },
+  "Solomon Islands": {
+    "logo": "logos/sofa_422128.png",
+    "color": "#0000D6"
   },
   "South Africa": {
     "logo": "logos/sofa_65336.png",
@@ -2950,6 +3370,10 @@
   "Sparta Prague": {
     "logo": "logos/sofa_38255.png",
     "color": "#C7AB59"
+  },
+  "Spartak Moscow": {
+    "logo": "logos/sofa_504830.png",
+    "color": "#C8102E"
   },
   "Spartak Myjava": {
     "logo": "logos/sofa_284974.png",
@@ -3058,6 +3482,10 @@
   "Syracuse Orange": {
     "logo": "logos/sofa_422351.png",
     "color": "#E04307"
+  },
+  "Tahiti": {
+    "logo": "logos/sofa_408565.png",
+    "color": "#CE1126"
   },
   "Tampa Bay Sun FC": {
     "logo": "logos/sofa_1112821.png",
@@ -3171,6 +3599,14 @@
     "logo": "logos/sofa_261026.png",
     "color": "#D0112B"
   },
+  "Tonga": {
+    "logo": "logos/sofa_1096997.png",
+    "color": "#C00102"
+  },
+  "Tottenham FC": {
+    "logo": "logos/sofa_273547.png",
+    "color": "#0F1F4A"
+  },
   "Tottenham Hotspur": {
     "logo": "logos/fm_628117.png",
     "color": "#0E1E49"
@@ -3182,6 +3618,10 @@
   "Towson Tigers": {
     "logo": "logos/sofa_422553.png",
     "color": "#FDBA31"
+  },
+  "Treaty United": {
+    "logo": "logos/sofa_343549.png",
+    "color": "#DD1B33"
   },
   "Trelleborgs FF": {
     "logo": "logos/sofa_319189.png",
@@ -3287,6 +3727,14 @@
     "logo": "logos/sofa_422600.png",
     "color": "#F26322"
   },
+  "Universidad de Chile": {
+    "logo": "logos/sofa_376635.png",
+    "color": "#1F3C94"
+  },
+  "Universitario de Deportes": {
+    "logo": "logos/sofa_268090.png",
+    "color": "#8C1619"
+  },
   "UNLV Rebels": {
     "logo": "logos/sofa_422392.png",
     "color": "#E31936"
@@ -3383,9 +3831,17 @@
     "logo": "logos/sofa_37184.png",
     "color": "#DB2422"
   },
+  "Vancouver Rise FC": {
+    "logo": "logos/sofa_1087192.png",
+    "color": "#DBCC98"
+  },
   "Vanderbilt Commodores": {
     "logo": "logos/sofa_422320.png",
     "color": "#C9AC67"
+  },
+  "Vanuatu": {
+    "logo": "logos/sofa_422127.png",
+    "color": "#D21034"
   },
   "Vasa IFK": {
     "logo": "logos/sofa_190203.png",
@@ -3426,6 +3882,10 @@
   "Víkingur": {
     "logo": "logos/sofa_48021.png",
     "color": "#D4682C"
+  },
+  "Viktoria Plzeň": {
+    "logo": "logos/sofa_44172.png",
+    "color": "#E32219"
   },
   "Villanova Wildcats": {
     "logo": "logos/sofa_422330.png",
@@ -3484,12 +3944,16 @@
     "color": "#300370"
   },
   "Washington Spirit": {
-    "logo": "logos/fm_433030.png",
-    "color": "#111921"
+    "logo": "logos/sofa_151012.png",
+    "color": "#171E27"
   },
   "Washington State Cougars": {
     "logo": "logos/sofa_422394.png",
     "color": "#971E32"
+  },
+  "Waterford FC": {
+    "logo": "logos/sofa_1043315.png",
+    "color": "#051185"
   },
   "Watford FC Women": {
     "logo": "logos/sofa_271459.png",
@@ -3514,6 +3978,10 @@
   "West Georgia Wolves": {
     "logo": "logos/sofa_825124.png",
     "color": "#025AAA"
+  },
+  "West Ham": {
+    "logo": "logos/sofa_297802.png",
+    "color": "#7C2C3B"
   },
   "West Ham United": {
     "logo": "logos/fm_231497.png",
@@ -3546,6 +4014,10 @@
   "Westmont Warriors": {
     "logo": "logos/sofa_1116695.png",
     "color": "#9D0130"
+  },
+  "Wexford Youths AFC": {
+    "logo": "logos/sofa_201158.png",
+    "color": "#FAE04A"
   },
   "WFC Kharkiv": {
     "logo": "logos/sofa_512159.png",
@@ -3587,6 +4059,10 @@
     "logo": "logos/sofa_422389.png",
     "color": "#F8E19A"
   },
+  "Wuhan Chegu Jiangda": {
+    "logo": "logos/sofa_287105.png",
+    "color": "#08546E"
+  },
   "Wyoming Cowgirls": {
     "logo": "logos/sofa_422455.png",
     "color": "#241D17"
@@ -3615,6 +4091,10 @@
     "logo": "logos/sofa_134184.png",
     "color": "#198A00"
   },
+  "Zenit St. Petersburg": {
+    "logo": "logos/sofa_353851.png",
+    "color": "#009EE1"
+  },
   "ŽFK Budućnost Podgorica": {
     "logo": "logos/sofa_349232.png",
     "color": "#02408D"
@@ -3635,6 +4115,10 @@
     "logo": "logos/sofa_354349.png",
     "color": "#016A9D"
   },
+  "Zhejiang Hangzhou": {
+    "logo": "logos/sofa_355659.png",
+    "color": "#15609E"
+  },
   "ŽNK Agram": {
     "logo": "logos/sofa_301148.png",
     "color": "#FE1201"
@@ -3646,5 +4130,9 @@
   "ŽNK Mura": {
     "logo": "logos/sofa_38362.png",
     "color": "#F1DB87"
+  },
+  "Zvezda-2005 Perm": {
+    "logo": "logos/sofa_26242.png",
+    "color": "#AB0100"
   }
 }

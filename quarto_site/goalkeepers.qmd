@@ -130,13 +130,14 @@ matches_clean <- gk_match_log %>%
     keeper_id = keeper_id,
     d  = as.character(match_date),
     df = ifelse(is.na(match_date), "Unknown Date", format(as.Date(match_date), "%b %d, %Y")),
+    l  = as.integer(league_id),
     x  = round(match_xgot, 2),
     g  = as.integer(match_goals),
     gp = round(match_gp, 2)
   )
 matches_by_gk <- split(matches_clean %>% dplyr::select(-keeper_id), matches_clean$keeper_id)
 matches_by_gk <- lapply(matches_by_gk, function(df) {
-  list(d = df$d, df = df$df, x = df$x, g = df$g, gp = df$gp)
+  list(d = df$d, df = df$df, l = df$l, x = df$x, g = df$g, gp = df$gp)
 })
 
 cq_clean <- gk_cq_splits %>%
@@ -195,10 +196,11 @@ keeper_club_history_map <- list()
 tryCatch({
   rapm_dir <- file.path(data_dir, "rapm")
   rapm_slug_map <- c(
-    nwsl = 9134L, usl = 28384L, wsl = 9227L, wsl2 = 10553L, esp = 1127L,
-    fra = 9677L, ger = 232L, ita = 10640L, swe = 214L, eli = 19860L,
+    nwsl = 9134L, usl = 28384L, can = 26135L, wsl = 9227L, wsl2 = 10553L, esp = 1127L,
+    fra = 9677L, ger = 232L, ita = 10640L, ned = 2123L, swe = 214L, eli = 19860L,
     den = 9412L, por = 10527L, isl = 10307L, nor = 201L, fin = 1662L,
-    sco = 2054L, bra = 10257L, mex = 13593L, jpn = 18653L, aus = 9495L
+    sco = 2054L, irl = 20065L, pol = 10499L, cze = 823L, rus = 6783L,
+    bra = 10257L, col = 18555L, mex = 13593L, jpn = 18653L, chn = 10580L, aus = 9495L
   )
   dom_ids_all <- c(unname(rapm_slug_map), 18944L)
 
@@ -1370,41 +1372,110 @@ cat(sprintf(
 (function() {
   "use strict";
 
-  const LEAGUE_CHOICES = [
-    { label: "All Leagues", short: "Global", value: "all" },
-    { label: "NWSL (USA)", short: "NWSL", value: "9134" },
-    { label: "USL Super League (USA)", short: "USL Super League", value: "28384" },
-    { label: "NCAA Division I (USA)", short: "NCAA D1", value: "18944" },
-    { label: "WSL (ENG)", short: "WSL", value: "9227" },
-    { label: "WSL2 (ENG)", short: "WSL2", value: "10553" },
-    { label: "Liga F (ESP)", short: "Liga F", value: "1127" },
-    { label: "Premi\u00e8re Ligue (FRA)", short: "Premi\u00e8re Ligue", value: "9677" },
-    { label: "Frauen-Bundesliga (GER)", short: "Frauen-Bundesliga", value: "232" },
-    { label: "Serie A (ITA)", short: "Serie A", value: "10640" },
-    { label: "Damallsvenskan (SWE)", short: "Damallsvenskan", value: "214" },
-    { label: "Elitettan (SWE)", short: "Elitettan", value: "19860" },
-    { label: "Kvindeliga (DEN)", short: "Kvindeliga", value: "9412" },
-    { label: "Campeonato Nacional (POR)", short: "Campeonato Nacional", value: "10527" },
-    { label: "Besta deild kvenna (ISL)", short: "Besta deild", value: "10307" },
-    { label: "Toppserien (NOR)", short: "Toppserien", value: "201" },
-    { label: "Kansallinen Liiga (FIN)", short: "Kansallinen Liiga", value: "1662" },
-    { label: "SWPL 1 (SCO)", short: "SWPL 1", value: "2054" },
-    { label: "Brasileir\u00e3o S\u00e9rie A1 (BRA)", short: "Brasileir\u00e3o A1", value: "10257" },
-    { label: "Liga MX Femenil (MEX)", short: "Liga MX Femenil", value: "13593" },
-    { label: "WE-League (JPN)", short: "WE-League", value: "18653" },
-    { label: "A-League (AUS)", short: "A-League", value: "9495" },
-    { label: "UEFA Women's Champions League", short: "UWCL", value: "696" },
-    { label: "Senior International Matches", short: "Senior Intl", value: "intl" },
-    { label: "FIFA U-20 Women's World Cup", short: "FIFA U-20 WWC", value: "804" },
-    { label: "FIFA U-17 Women's World Cup", short: "FIFA U-17 WWC", value: "827" }
+  const LEAGUE_GROUPS = [
+    {
+      group: null,
+      options: [
+        { label: "All Competitions", short: "Global", value: "all" }
+      ]
+    },
+    {
+      group: "Club Domestic Leagues",
+      options: [
+        { label: "NWSL (USA)", short: "NWSL", value: "9134" },
+        { label: "USL Super League (USA)", short: "USL Super League", value: "28384" },
+        { label: "Northern Super League (CAN)", short: "Northern Super League", value: "26135" },
+        { label: "WSL (ENG)", short: "WSL", value: "9227" },
+        { label: "WSL2 (ENG)", short: "WSL2", value: "10553" },
+        { label: "Liga F (ESP)", short: "Liga F", value: "1127" },
+        { label: "Premi\u00e8re Ligue (FRA)", short: "Premi\u00e8re Ligue", value: "9677" },
+        { label: "Frauen-Bundesliga (GER)", short: "Frauen-Bundesliga", value: "232" },
+        { label: "Serie A (ITA)", short: "Serie A", value: "10640" },
+        { label: "Vrouwen Eredivisie (NED)", short: "Vrouwen Eredivisie", value: "2123" },
+        { label: "Damallsvenskan (SWE)", short: "Damallsvenskan", value: "214" },
+        { label: "Elitettan (SWE)", short: "Elitettan", value: "19860" },
+        { label: "Kvindeliga (DEN)", short: "Kvindeliga", value: "9412" },
+        { label: "Campeonato Nacional (POR)", short: "Campeonato Nacional", value: "10527" },
+        { label: "Besta deild kvenna (ISL)", short: "Besta deild", value: "10307" },
+        { label: "Toppserien (NOR)", short: "Toppserien", value: "201" },
+        { label: "Kansallinen Liiga (FIN)", short: "Kansallinen Liiga", value: "1662" },
+        { label: "SWPL 1 (SCO)", short: "SWPL 1", value: "2054" },
+        { label: "Women's Premier Division (IRL)", short: "Ireland WPD", value: "20065" },
+        { label: "Ekstraliga (POL)", short: "Ekstraliga", value: "10499" },
+        { label: "1. Liga (CZE)", short: "Czech 1. Liga", value: "823" },
+        { label: "Russian Super League (RUS)", short: "Russian WSL", value: "6783" },
+        { label: "Brasileir\u00e3o S\u00e9rie A1 (BRA)", short: "Brasileir\u00e3o A1", value: "10257" },
+        { label: "Liga Femenina (COL)", short: "Liga Femenina", value: "18555" },
+        { label: "Liga MX Femenil (MEX)", short: "Liga MX Femenil", value: "13593" },
+        { label: "WE-League (JPN)", short: "WE-League", value: "18653" },
+        { label: "CFA Women's Super League (CHN)", short: "CFA WSL", value: "10580" },
+        { label: "A-League (AUS)", short: "A-League", value: "9495" }
+      ]
+    },
+    {
+      group: "Collegiate",
+      options: [
+        { label: "NCAA Division I (USA)", short: "NCAA D1", value: "18944" }
+      ]
+    },
+    {
+      group: "Club Domestic Cups",
+      options: [
+        { label: "FA Women's League Cup (ENG)", short: "FA League Cup", value: "11667" },
+        { label: "WE League Cup (JPN)", short: "WE League Cup", value: "23701" },
+        { label: "NWSL Challenge Cup (USA)", short: "NWSL Challenge Cup", value: "14820" },
+        { label: "Supercopa Feminina (ESP)", short: "Supercopa ESP", value: "14687" },
+        { label: "Supercopa Feminina (BRA)", short: "Supercopa BRA", value: "19917" },
+        { label: "Women's President's Cup (IRL)", short: "Ireland President's Cup", value: "32065" }
+      ]
+    },
+    {
+      group: "Club Continental Competitions",
+      options: [
+        { label: "UEFA Women's Champions League", short: "UWCL", value: "696" },
+        { label: "CONCACAF W Champions Cup", short: "CONCACAF W CC", value: "23341" },
+        { label: "Copa Libertadores Femenina", short: "Copa Libertadores", value: "10602" }
+      ]
+    },
+    {
+      group: "Senior International Competitions",
+      options: [
+        { label: "All Senior International", short: "Senior Intl", value: "intl" },
+        { label: "UEFA Women's EURO", short: "Women's EURO", value: "477" },
+        { label: "Copa Am\u00e9rica Femenina", short: "Copa Am\u00e9rica", value: "18681" },
+        { label: "AFC Women's Asian Cup", short: "AFC Asian Cup", value: "1692" },
+        { label: "OFC Women's Nations Cup", short: "OFC Nations Cup", value: "27059" },
+        { label: "UEFA Women's Nations League", short: "Nations League", value: "20378" },
+        { label: "SheBelieves Cup", short: "SheBelieves Cup", value: "3076" },
+        { label: "EAFF E-1 Championship", short: "EAFF E-1", value: "404" },
+        { label: "FIFA Series", short: "FIFA Series", value: "32833" },
+        { label: "Algarve / Pinatar / Friendlies", short: "Int'l Cups", value: "11330" },
+        { label: "Senior Int'l Friendlies", short: "Int'l Friendlies", value: "852" }
+      ]
+    },
+    {
+      group: "Youth International Competitions",
+      options: [
+        { label: "FIFA U-20 Women's World Cup", short: "FIFA U-20 WWC", value: "804" },
+        { label: "FIFA U-17 Women's World Cup", short: "FIFA U-17 WWC", value: "827" },
+        { label: "UEFA U-17 Women's EURO", short: "U-17 Women's EURO", value: "917" },
+        { label: "CONCACAF U-20 Women's Championship", short: "U-20 CONCACAF", value: "1568" }
+      ]
+    }
   ];
 
+  const LEAGUE_CHOICES = LEAGUE_GROUPS.flatMap(g => g.options);
   const LEAGUE_SHORT_BY_ID = {};
-  LEAGUE_CHOICES.forEach(c => { LEAGUE_SHORT_BY_ID[String(c.value)] = c.short; });
+  const LEAGUE_LABEL_BY_ID = {};
+  LEAGUE_CHOICES.forEach(c => {
+    LEAGUE_SHORT_BY_ID[String(c.value)] = c.short;
+    LEAGUE_LABEL_BY_ID[String(c.value)] = c.label;
+  });
 
-  const INTL_SET = new Set([3076, 852, 1954, 780, 20378, 477, 878, 437, 290, 32833, 18681, 9558, 11330, 1692, 404]);
-  const DOMESTIC_PRIORITY = [9134, 9227, 28384, 9677, 232, 1127, 10640, 214, 10553, 9495, 13593, 10257, 18653, 201, 9412, 10527, 10307, 1662, 2054, 19860, 18944];
+  const INTL_SET = new Set([3076, 852, 1954, 780, 20378, 477, 878, 437, 290, 32833, 18681, 9558, 11330, 1692, 404, 27059]);
+  const DOMESTIC_PRIORITY = [9134, 9227, 28384, 26135, 9677, 232, 1127, 10640, 2123, 214, 10553, 9495, 13593, 10257, 18555, 18653, 10580, 6783, 10499, 823, 201, 9412, 10527, 10307, 1662, 2054, 20065, 19860, 18944];
   const DOM_LEAGUE_SET = new Set(DOMESTIC_PRIORITY);
+  const NON_DOM_COMP_SET = new Set([696, 10602, 23341, 804, 827, 917, 1568, 11667, 23701, 19917, 14687, 14820, 32065]);
   const QUAL_MIN_MINS = 450;
 
   // Same-origin local club badges in quarto_site/logos/ + curated club colors
@@ -1644,6 +1715,7 @@ cat(sprintf(
 
       const rawDates = toArr(ml.d);
       const rawFmt   = toArr(ml.df);
+      const rawLid   = toArr(ml.l).map(Number);
       const rawX     = toArr(ml.x).map(Number);
       const rawG     = toArr(ml.g).map(Number);
       const rawGp    = toArr(ml.gp).map(Number);
@@ -1653,6 +1725,7 @@ cat(sprintf(
           idx: m,
           d: rawDates[m] ? String(rawDates[m]) : null,
           df: rawFmt[m] ? String(rawFmt[m]) : "Unknown Date",
+          l: Number.isFinite(rawLid[m]) && rawLid[m] > 0 ? rawLid[m] : null,
           x: Number.isFinite(rawX[m]) ? rawX[m] : 0,
           g: Number.isFinite(rawG[m]) ? rawG[m] : 0,
           gp: Number.isFinite(rawGp[m]) ? rawGp[m] : 0
@@ -1745,7 +1818,7 @@ cat(sprintf(
       }
     }
     if (!DOM_LEAGUE_SET.has(chosen)) {
-      const nonIntl = k.leagues.find(l => !INTL_SET.has(l) && l !== 696);
+      const nonIntl = k.leagues.find(l => !INTL_SET.has(l) && !NON_DOM_COMP_SET.has(l));
       if (nonIntl !== undefined) chosen = nonIntl;
     }
 
@@ -2038,13 +2111,24 @@ cat(sprintf(
   function populateLeagueSelect(selectId, defaultVal = "9134") {
     const sel = document.getElementById(selectId);
     sel.innerHTML = "";
-    LEAGUE_CHOICES.forEach(ch => {
-      const opt = document.createElement("option");
-      opt.value = ch.value;
-      opt.textContent = ch.label;
-      sel.appendChild(opt);
+    LEAGUE_GROUPS.forEach(grp => {
+      const opts = grp.options.filter(ch => {
+        if (ch.value === "all" || ch.value === "intl") return true;
+        return (keepersByLeague.get(Number(ch.value)) || []).length > 0;
+      });
+      if (opts.length === 0) return;
+      const parent = grp.group ? document.createElement("optgroup") : sel;
+      if (grp.group) parent.label = grp.group;
+      opts.forEach(ch => {
+        const opt = document.createElement("option");
+        opt.value = ch.value;
+        opt.textContent = ch.label;
+        parent.appendChild(opt);
+      });
+      if (grp.group) sel.appendChild(parent);
     });
-    sel.value = defaultVal;
+    const hasDef = Array.from(sel.options).some(o => o.value === defaultVal);
+    sel.value = hasDef ? defaultVal : (sel.options[0]?.value || "all");
   }
 
   // Searchable combobox
@@ -3519,9 +3603,13 @@ cat(sprintf(
         ctx.fillStyle = col;
         ctx.fillRect(bx, by, bw, bh);
 
+        const compLabel = (m.l != null && LEAGUE_LABEL_BY_ID[String(m.l)])
+          ? LEAGUE_LABEL_BY_ID[String(m.l)]
+          : "Unknown Competition";
+
         saveHitboxes.push({
           x: bx - gap * 0.5, y: fPlotTop, w: bw + gap, h: fPlotBot - fPlotTop,
-          text: `<b>Match ${idx + 1} (${m.df})</b><br>Goals Prevented: ${formatSigned(m.gp, 2)}<br>xGOT Faced: ${m.x.toFixed(2)}  |  Goals Allowed: ${m.g}`
+          text: `<b>Match ${idx + 1} (${m.df})</b><br>Competition: ${escapeHtml(compLabel)}<br>Goals Prevented: ${formatSigned(m.gp, 2)}<br>xGOT Faced: ${m.x.toFixed(2)}  |  Goals Allowed: ${m.g}`
         });
       });
     }

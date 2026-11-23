@@ -16,3 +16,9 @@ condense_codebase_for_ingestion.R
 llm_ingestion_bundles/
 wsl2_sofascore_coverage_audit.*
 wyscout_endpoint_tests/
+
+data/wyscout_cache/
+wyscout_client.R
+wyscout_analytics.R
+wyscout_crosswalk.R
+wyscout_xg_experiment.R
