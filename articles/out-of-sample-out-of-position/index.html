@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Ian Fleming">
+<meta name="dcterms.date" content="2026-11-24">
+<meta name="description" content="Testing adjusted plus-minus, shot-level goalkeeping models, and sweeper-keeper stats across 21 women’s professional leagues.">
+
+<title>Out of Sample, Out of Position: Testing Soccer Defense and Goalkeeping – WoSo.Live</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../favicon.svg" rel="icon" type="image/svg+xml">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-f268a84125b410ce474cd5c5add1996b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-HV5N2DMVZR"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-HV5N2DMVZR', { 'anonymize_ip': true});
+</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+<meta property="og:title" content="Out of Sample, Out of Position: Testing Soccer Defense and Goalkeeping">
+<meta property="og:description" content="Testing adjusted plus-minus, shot-level goalkeeping models, and sweeper-keeper stats across 21 women’s professional leagues.">
+<meta property="og:image" content="https://woso.live/social_preview.png">
+<meta property="og:site_name" content="WoSo.Live">
+<meta property="og:image:height" content="630">
+<meta property="og:image:width" content="1200">
+<meta name="twitter:title" content="Out of Sample, Out of Position: Testing Soccer Defense and Goalkeeping">
+<meta name="twitter:description" content="Testing adjusted plus-minus, shot-level goalkeeping models, and sweeper-keeper stats across 21 women’s professional leagues.">
+<meta name="twitter:image" content="https://woso.live/social_preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image-height" content="630">
+<meta name="twitter:image-width" content="1200">
+</head>
+
+<body class="nav-fixed fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">WoSo.Live</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../rapm-tools.html"> 
+<span class="menu-text">RAPM Tools</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../goalkeepers.html"> 
+<span class="menu-text">Goalkeepers</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../forecasts.html"> 
+<span class="menu-text">Forecasts</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../shot-simulator.html"> 
+<span class="menu-text">Shot Simulator</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../wwc-simulator.html"> 
+<span class="menu-text">World Cup Simulator</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../articles.html"> 
+<span class="menu-text">Articles</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../explainers.html"> 
+<span class="menu-text">Explainers</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Out of Sample, Out of Position: Testing Soccer Defense and Goalkeeping</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">Defense</div>
+    <div class="quarto-category">Goalkeeping</div>
+    <div class="quarto-category">Methodology</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Testing adjusted plus-minus, shot-level goalkeeping models, and sweeper-keeper stats across 21 women’s professional leagues.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Ian Fleming </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">November 24, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div style="margin-top: 1.5rem; margin-bottom: 2rem; border-bottom: 2px solid #00747A; padding-bottom: 1rem;">
+<p style="margin: 0 0 0.75rem 0; font-size: 0.95rem;">
+<a href="../../articles.html" style="color: #00747A; text-decoration: none; font-weight: 600;">← All Articles</a>
+</p>
+<h1 style="color: #111111; font-weight: 700; font-size: 2.3rem; line-height: 1.2; margin-bottom: 0.65rem;">
+Out of Sample, Out of Position: Testing Soccer Defense and Goalkeeping
+</h1>
+<p style="color: #555555; font-size: 1.05rem; margin: 0;">
+By Ian Fleming · November 24, 2026
+</p>
+</div>
+<p>Recently, Christopher Gerrish at <em>American Soccer Analysis</em> published a thoughtful look at <a href="https://www.americansocceranalysis.com/home/2026/11/23/the-defense-problem-why-war-doesnt-work-for-soccer-yet-and-what-were-learning-on-the-way">the defense problem in soccer</a>, asking why Wins Above Replacement (WAR) still struggles to measure defending cleanly.</p>
+<p>Anyone who works with soccer data runs into that wall eventually. On the attacking side, we have comfortable tools to track who creates chances (<code>xG</code>) and who takes dangerous shots. Defending is trickier, mostly because box-score stats tend to measure how busy a defender was rather than whether she actually helped prevent goals.</p>
+<p>Since WoSo.Live takes a slightly different modeling path than ASA, using adjusted plus-minus for outfield players and shot-level models for goalkeepers, Gerrish’s piece made us wonder how well our own numbers hold up under similar tests. To find out, we checked our models across 21 women’s professional leagues, covering more than 500 team-seasons, over 2,300 matches, and 123,146 shots on target faced by over 2,100 goalkeepers. Wherever possible, we trained ratings strictly on Season 1 and graded them only on Season 2 games they had never seen.</p>
+<p>Here is what held up, what surprised us, and what we tuned afterward.</p>
+<section id="the-tackle-trap-holds-everywhere" class="level2">
+<h2 class="anchored" data-anchor-id="the-tackle-trap-holds-everywhere">The Tackle Trap Holds Everywhere</h2>
+<p>Picture two center backs. One plays on a deep-lying underdog and piles up clearances, blocks, and tackles every match. Another plays for a high-possession favorite whose best defending happens when she shuts down a counterattack before the pass is ever played.</p>
+<p>Gerrish showed that interrupting events had almost no link to future goals conceded in the NWSL. Across 21 leagues, we saw the same pattern. Defensive counting stats (tackles, interceptions, clearances, blocks, and recoveries) repeat surprisingly well from year to year (<code>0.82</code> overall, and even <code>0.80</code> when a player switches clubs). The catch is what they measure. Inside a season, teams with busier defenders concede more expected goals, not fewer. Looking ahead to next season, prior tackle and clearance volume predicts essentially zero percent of goals allowed (<code>r = -0.01</code>). Counting stats tell us plenty about a player’s workload, just very little about defensive quality.</p>
+</section>
+<section id="how-plus-minus-sees-the-off-ball-game" class="level2">
+<h2 class="anchored" data-anchor-id="how-plus-minus-sees-the-off-ball-game">How Plus-Minus Sees the Off-Ball Game</h2>
+<p>At the risk of oversimplification, WoSo.Live rates outfielders the way basketball and hockey analysts evaluate skaters: by tracking what happens to expected goal differential whenever a player is on the pitch. Every match splits into segments whenever a sub, goal, or red card happens. The model adjusts for teammates, opponents, home advantage, score state, rest, and travel, then pulls smaller samples back toward league average.</p>
+<p>So what do we actually see? Inside the same season, player and coach ratings explain roughly 76% of team points-per-game differences across 21 leagues, very close to ASA’s numbers. When we predict Season 2 strictly from Season 1 ratings without peeking ahead, that figure drops to 51%. That gap is a useful reminder that same-season tests soak up a lot of shared team rhythm. Even so, explaining half of next season’s standings variance from prior data is genuine signal, and defensive RAPM pulls real weight on its own (<code>r = -0.58</code> vs.&nbsp;next year’s goals conceded; <code>r = -0.60</code> vs.&nbsp;expected goals allowed). Across more than 2,300 unseen matches, adding defense on top of offense gave our match model its largest boost in accuracy.</p>
+</section>
+<section id="the-mover-test-does-defense-travel" class="level2">
+<h2 class="anchored" data-anchor-id="the-mover-test-does-defense-travel">The Mover Test: Does Defense Travel?</h2>
+<p>The hardest question in any plus-minus model is context. Did a defender earn her rating on her own, or alongside great teammates and a sharp coach? To test this, we looked at players with at least 450 minutes in back-to-back seasons in the same league and split them into <strong>1,655 Stayers</strong> (same club) and <strong>464 Movers</strong> (new club).</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Player Group (Same League, Year-over-Year)</th>
+<th style="text-align: center;">Players</th>
+<th style="text-align: center;">Offense (<code>r</code>)</th>
+<th style="text-align: center;">Defense (<code>r</code>)</th>
+<th style="text-align: center;">Overall Net (<code>r</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Stayers (same club)</td>
+<td style="text-align: center;">1,655</td>
+<td style="text-align: center;">0.43</td>
+<td style="text-align: center;">0.41</td>
+<td style="text-align: center;">0.54</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Movers (new club)</td>
+<td style="text-align: center;">464</td>
+<td style="text-align: center;">0.17</td>
+<td style="text-align: center;">0.12</td>
+<td style="text-align: center;">0.19</td>
+</tr>
+</tbody>
+</table>
+<p>Both halves of that table matter. First, roughly two-thirds of a player’s year-over-year stability fades when she changes jerseys (<code>0.54</code> down to <code>0.19</code>). Teammates and systems explain a lot, and no metric completely separates a defender from her backline. Yet both offense (<code>0.17</code>) and defense (<code>0.12</code>) remain clearly positive in new locker rooms under new managers. Individual defense is noisier than offense, though a real piece of it travels. <em>(This pass covered intra-league moves; testing cross-league transfers is next on our list.)</em></p>
+</section>
+<section id="how-does-defensive-rapm-compare-to-asas-approach" class="level2">
+<h2 class="anchored" data-anchor-id="how-does-defensive-rapm-compare-to-asas-approach">How Does Defensive RAPM Compare to ASA’s Approach?</h2>
+<p>It is fair to ask how WoSo.Live’s defensive RAPM stacks up against the tracking-based metrics ASA proposed, such as prevented transition shots and off-ball positioning. In the NWSL, defensive RAPM explains roughly 76% of team goals allowed within the same season, compared with about 48% for ASA’s composite tracking defense. That gap needs a grain of salt, though, because plus-minus is fitted directly to expected goals allowed in those games, giving it a natural advantage on same-season checks.</p>
+<p>Where defensive RAPM holds a clear edge right now is proven out-of-sample reach. ASA only had two non-consecutive seasons of tracking data (2018 and 2023), so it could not yet test year-to-year predictions or player movement. By contrast, defensive RAPM holds up across 21 leagues and over 2,300 unseen future matches, without needing optical tracking cameras.</p>
+<p>At the same time, ASA’s bottom-up positioning work tackles the exact spot where plus-minus is weakest: individual credit assignment. As the Mover Test shows, teammates and systems carry heavy weight in RAPM. Tracking whether a defender stays goal-side or closes a passing lane is much steadier player to player (<code>0.68</code> to <code>0.87</code> split-half consistency) and helps show who actually stopped the play. Rather than competing, the two views come at defense from opposite ends (outcomes versus process), and as tracking data spreads, those off-ball habits could eventually make plus-minus priors even sharper.</p>
+</section>
+<section id="goalkeepers-really-are-on-an-island" class="level2">
+<h2 class="anchored" data-anchor-id="goalkeepers-really-are-on-an-island">Goalkeepers Really Are on an Island</h2>
+<p>Once you account for the outfielders in front of her, a goalkeeper’s on-off defensive plus-minus shows almost no tie to shot-stopping (<code>r = 0.10</code>) and adds nothing when predicting future goals allowed.</p>
+<p>Measuring keepers directly on post-shot expected goals (<code>xGOT</code>, based on shot difficulty once the ball is struck on frame) across 123,146 shots tells a much cleaner story. First, pulling small samples back toward a global average keeps short-term hot streaks from going haywire while letting true skill separate once a keeper faces 75 to 150 shots. Second, unlike outfielders, returning keepers with 20 or more shots kept every bit of their consistency after changing clubs: <strong><code>0.24</code> year-over-year for movers versus <code>0.23</code> for stayers</strong> (and <strong><code>0.31</code></strong> among regular starters facing 40+ shots). We also checked whether shot-stopping splits into “highlight saves” versus routine stops, and found one unified skill curve works better.</p>
+</section>
+<section id="the-sweeper-keeper-question" class="level2">
+<h2 class="anchored" data-anchor-id="the-sweeper-keeper-question">The Sweeper-Keeper Question</h2>
+<p>Ann-Katrin Berger winning the 2026 NWSL Goalkeeper of the Year award brought a long-simmering debate back to the surface. Should an award value a keeper’s sweeping and distribution alongside her shot-stopping, or focus mainly on keeping shots out of the net? In the 2026 regular season, Berger was a strong shot-stopper for Gotham FC (<code>+4.86</code> goals prevented on <code>27.86</code> xGOT faced, or <code>+1.74</code> per 10 xGOT, placing 4th in our Bayesian ratings) while putting up eye-catching numbers outside her box: <code>1.63</code> sweeper actions per 90 minutes, nearly four times the <code>0.41</code> league average, alongside a league-best <code>1.22</code> high claims per 90 plus <code>34.6</code> accurate passes per 90. Yet other starters put together bigger shot-stopping seasons under much heavier fire, led by Jane Campbell (<code>+13.79</code> goals prevented on <code>55.79</code> xGOT faced, or <code>+2.47</code> per 10 xGOT), Jordan Silkowitz (<code>+8.07</code>), and Katie Lund (<code>+7.51</code> in 15 starts).</p>
+<p>To see how those two sides of goalkeeping fit together, we ran the same tests across our 21-league database and the four leagues with full sweeper tracking (NWSL, WSL, France, and Australia). First, sweeper and ball-playing stats sit almost completely separate from shot-stopping (<code>r = 0.01</code> for sweeper actions) and add nothing positive to goalkeeper plus-minus. In fact, busy defensive actions like clearances and recoveries fall into the exact same workload trap as outfield tackles because underdogs face more pressure.</p>
+<p>They are also tightly tied to club tactics. Across all 21 leagues, keeper passing volume drops from <code>0.70</code> year-over-year consistency for stayers to <code>0.35</code> when a keeper switches clubs, while two completely different keepers playing for the same club still correlate at <code>0.36</code> (and between <code>0.31</code> and <code>0.49</code> across sweeper, touch, and passing metrics in the four tracking-detail leagues). Pure shot-stopping does the exact opposite: <code>0.01</code> between different keepers at the same club, and <code>0.30</code> when a keeper changes teams. And when we predict next season’s team results across 275 clubs while controlling for outfield RAPM and prior team baselines, shot-stopping is the only goalkeeper trait that reliably moves future goals conceded and points per game. Sweeping, passing, claiming, and clearing counts add no consistent out-of-sample lift to future goals, expected goals, or points.</p>
+<p>Just like ASA’s point on outfield tackles, those null findings do not prove ball-playing or aggressive sweeping has zero worth. Counting how often a keeper clears a through ball or completes a short pass cannot capture pass difficulty under pressure or the breakaway that never materialized because a keeper stepped off her line early. What the numbers do show is that, with the event data we have today, shot-stopping is the one goalkeeper skill we can cleanly untangle from team style and link to future standings. Awards like Berger’s sit right on that boundary between what stands out clearly on film and what our models can currently prove.</p>
+</section>
+<section id="where-do-we-go-from-here" class="level2">
+<h2 class="anchored" data-anchor-id="where-do-we-go-from-here">Where Do We Go From Here?</h2>
+<p>The real value of checking your own work is spotting quiet flaws you can fix. This review led to three practical updates in WoSo.Live:</p>
+<ol type="1">
+<li><strong>Anchoring small-league keepers globally:</strong> Estimating spread inside smaller 30-keeper leagues created bouncy ratings from year to year. Tying every league to our 123,000-shot global baseline keeps smaller leagues steady without flattening standout seasons.</li>
+<li><strong>Giving unseen signings a club starting point:</strong> Player-based models beat simple team ratings in the balanced NWSL, yet assuming unseen signings are exact <code>0.00</code> league average pulled powerhouse clubs down in high-turnover European leagues. Adding a light club-strength prior for new signings, scaled by how much talent clusters by club in each league, improved forecasts across the board.</li>
+<li><strong>Adjusting goal-to-win math for league parity:</strong> In the tight NWSL, an extra goal per match adds about <code>0.66</code> points per game. In top-heavy leagues where contenders win 3-0 or 4-0 regularly, marginal goals run into diminishing returns (<code>0.48</code> overall in lopsided leagues, and <code>0.36</code> in Scotland’s SWPL 1). Accounting for team disparity cut our points-per-goal conversion error nearly fourfold.</li>
+</ol>
+</section>
+<section id="so-what-can-we-take-away-from-this" class="level2">
+<h2 class="anchored" data-anchor-id="so-what-can-we-take-away-from-this">So What Can We Take Away From This?</h2>
+<p>Soccer defense will probably never boil down to one spotless stat, and patience still goes a long way when judging players over a single season. Too much happens through shared movement across eleven players.</p>
+<p>Still, once we move past counting busy actions and judge models strictly against future games, the signal is real. Adjusted plus-minus captures genuine, portable defending, post-shot Bayesian models isolate goalkeeping skill, and both add real predictive value. The picture isn’t perfect yet, and it doesn’t have to be to help us see the game a little more clearly.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/woso\.live");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
