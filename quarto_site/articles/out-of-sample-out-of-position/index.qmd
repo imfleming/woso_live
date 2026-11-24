@@ -2,7 +2,7 @@
 title: "Out of Sample, Out of Position: Testing Soccer Defense and Goalkeeping"
 description: "Testing adjusted plus-minus, shot-level goalkeeping models, and sweeper-keeper stats across 21 women's professional leagues."
 author: "Ian Fleming"
-date: "2026-11-24"
+date: "2026-11-25"
 categories: [Defense, Goalkeeping, Methodology]
 page-layout: article
 open-graph:
