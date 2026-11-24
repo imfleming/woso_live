@@ -20,7 +20,7 @@ twitter-card:
 <div style="margin-top: 1.5rem; margin-bottom: 2rem; border-bottom: 2px solid #00747A; padding-bottom: 1rem;">
   <p style="margin: 0 0 0.75rem 0; font-size: 0.95rem;"><a href="../../articles.html" style="color: #00747A; text-decoration: none; font-weight: 600;">&larr; All Articles</a></p>
   <h1 style="color: #111111; font-weight: 700; font-size: 2.3rem; line-height: 1.2; margin-bottom: 0.65rem;">Out of Sample, Out of Position: Testing Soccer Defense and Goalkeeping</h1>
-  <p style="color: #555555; font-size: 1.05rem; margin: 0;">By Ian Fleming &middot; November 24, 2026</p>
+  <p style="color: #555555; font-size: 1.05rem; margin: 0;">By Ian Fleming &middot; November 25, 2026</p>
 </div>
 
 Recently, Christopher Gerrish at *American Soccer Analysis* published a thoughtful look at [the defense problem in soccer](https://www.americansocceranalysis.com/home/2026/11/23/the-defense-problem-why-war-doesnt-work-for-soccer-yet-and-what-were-learning-on-the-way), asking why Wins Above Replacement (WAR) still struggles to measure defending cleanly.
