@@ -1,0 +1,93 @@
+---
+title: "Out of Sample, Out of Position: Testing Soccer Defense and Goalkeeping"
+description: "Testing adjusted plus-minus, shot-level goalkeeping models, and sweeper-keeper stats across 21 women's professional leagues."
+author: "Ian Fleming"
+date: "2026-11-24"
+categories: [Defense, Goalkeeping, Methodology]
+page-layout: article
+open-graph:
+  title: "Out of Sample, Out of Position: Testing Soccer Defense and Goalkeeping"
+  description: "Testing adjusted plus-minus, shot-level goalkeeping models, and sweeper-keeper stats across 21 women's professional leagues."
+  image: "../../social_preview.png"
+  type: "article"
+twitter-card:
+  card-style: summary_large_image
+  title: "Out of Sample, Out of Position: Testing Soccer Defense and Goalkeeping"
+  description: "Testing adjusted plus-minus, shot-level goalkeeping models, and sweeper-keeper stats across 21 women's professional leagues."
+  image: "../../social_preview.png"
+---
+
+<div style="margin-top: 1.5rem; margin-bottom: 2rem; border-bottom: 2px solid #00747A; padding-bottom: 1rem;">
+  <p style="margin: 0 0 0.75rem 0; font-size: 0.95rem;"><a href="../../articles.html" style="color: #00747A; text-decoration: none; font-weight: 600;">&larr; All Articles</a></p>
+  <h1 style="color: #111111; font-weight: 700; font-size: 2.3rem; line-height: 1.2; margin-bottom: 0.65rem;">Out of Sample, Out of Position: Testing Soccer Defense and Goalkeeping</h1>
+  <p style="color: #555555; font-size: 1.05rem; margin: 0;">By Ian Fleming &middot; November 24, 2026</p>
+</div>
+
+Recently, Christopher Gerrish at *American Soccer Analysis* published a thoughtful look at [the defense problem in soccer](https://www.americansocceranalysis.com/home/2026/11/23/the-defense-problem-why-war-doesnt-work-for-soccer-yet-and-what-were-learning-on-the-way), asking why Wins Above Replacement (WAR) still struggles to measure defending cleanly.
+
+Anyone who works with soccer data runs into that wall eventually. On the attacking side, we have comfortable tools to track who creates chances (`xG`) and who takes dangerous shots. Defending is trickier, mostly because box-score stats tend to measure how busy a defender was rather than whether she actually helped prevent goals.
+
+Since WoSo.Live takes a slightly different modeling path than ASA, using adjusted plus-minus for outfield players and shot-level models for goalkeepers, Gerrish's piece made us wonder how well our own numbers hold up under similar tests. To find out, we checked our models across 21 women's professional leagues, covering more than 500 team-seasons, over 2,300 matches, and 123,146 shots on target faced by over 2,100 goalkeepers. Wherever possible, we trained ratings strictly on Season 1 and graded them only on Season 2 games they had never seen.
+
+Here is what held up, what surprised us, and what we tuned afterward.
+
+## The Tackle Trap Holds Everywhere
+
+Picture two center backs. One plays on a deep-lying underdog and piles up clearances, blocks, and tackles every match. Another plays for a high-possession favorite whose best defending happens when she shuts down a counterattack before the pass is ever played.
+
+Gerrish showed that interrupting events had almost no link to future goals conceded in the NWSL. Across 21 leagues, we saw the same pattern. Defensive counting stats (tackles, interceptions, clearances, blocks, and recoveries) repeat surprisingly well from year to year (`0.82` overall, and even `0.80` when a player switches clubs). The catch is what they measure. Inside a season, teams with busier defenders concede more expected goals, not fewer. Looking ahead to next season, prior tackle and clearance volume predicts essentially zero percent of goals allowed (`r = -0.01`). Counting stats tell us plenty about a player's workload, just very little about defensive quality.
+
+## How Plus-Minus Sees the Off-Ball Game
+
+At the risk of oversimplification, WoSo.Live rates outfielders the way basketball and hockey analysts evaluate skaters: by tracking what happens to expected goal differential whenever a player is on the pitch. Every match splits into segments whenever a sub, goal, or red card happens. The model adjusts for teammates, opponents, home advantage, score state, rest, and travel, then pulls smaller samples back toward league average.
+
+So what do we actually see? Inside the same season, player and coach ratings explain roughly 76% of team points-per-game differences across 21 leagues, very close to ASA's numbers. When we predict Season 2 strictly from Season 1 ratings without peeking ahead, that figure drops to 51%. That gap is a useful reminder that same-season tests soak up a lot of shared team rhythm. Even so, explaining half of next season's standings variance from prior data is genuine signal, and defensive RAPM pulls real weight on its own (`r = -0.58` vs. next year's goals conceded; `r = -0.60` vs. expected goals allowed). Across more than 2,300 unseen matches, adding defense on top of offense gave our match model its largest boost in accuracy.
+
+## The Mover Test: Does Defense Travel?
+
+The hardest question in any plus-minus model is context. Did a defender earn her rating on her own, or alongside great teammates and a sharp coach? To test this, we looked at players with at least 450 minutes in back-to-back seasons in the same league and split them into **1,655 Stayers** (same club) and **464 Movers** (new club).
+
+| Player Group (Same League, Year-over-Year) | Players | Offense (`r`) | Defense (`r`) | Overall Net (`r`) |
+| :--- | :---: | :---: | :---: | :---: |
+| Stayers (same club) | 1,655 | 0.43 | 0.41 | 0.54 |
+| Movers (new club) | 464 | 0.17 | 0.12 | 0.19 |
+
+Both halves of that table matter. First, roughly two-thirds of a player's year-over-year stability fades when she changes jerseys (`0.54` down to `0.19`). Teammates and systems explain a lot, and no metric completely separates a defender from her backline. Yet both offense (`0.17`) and defense (`0.12`) remain clearly positive in new locker rooms under new managers. Individual defense is noisier than offense, though a real piece of it travels. *(This pass covered intra-league moves; testing cross-league transfers is next on our list.)*
+
+## How Does Defensive RAPM Compare to ASA's Approach?
+
+It is fair to ask how WoSo.Live's defensive RAPM stacks up against the tracking-based metrics ASA proposed, such as prevented transition shots and off-ball positioning. In the NWSL, defensive RAPM explains roughly 76% of team goals allowed within the same season, compared with about 48% for ASA's composite tracking defense. That gap needs a grain of salt, though, because plus-minus is fitted directly to expected goals allowed in those games, giving it a natural advantage on same-season checks.
+
+Where defensive RAPM holds a clear edge right now is proven out-of-sample reach. ASA only had two non-consecutive seasons of tracking data (2018 and 2023), so it could not yet test year-to-year predictions or player movement. By contrast, defensive RAPM holds up across 21 leagues and over 2,300 unseen future matches, without needing optical tracking cameras.
+
+At the same time, ASA's bottom-up positioning work tackles the exact spot where plus-minus is weakest: individual credit assignment. As the Mover Test shows, teammates and systems carry heavy weight in RAPM. Tracking whether a defender stays goal-side or closes a passing lane is much steadier player to player (`0.68` to `0.87` split-half consistency) and helps show who actually stopped the play. Rather than competing, the two views come at defense from opposite ends (outcomes versus process), and as tracking data spreads, those off-ball habits could eventually make plus-minus priors even sharper.
+
+## Goalkeepers Really Are on an Island
+
+Once you account for the outfielders in front of her, a goalkeeper's on-off defensive plus-minus shows almost no tie to shot-stopping (`r = 0.10`) and adds nothing when predicting future goals allowed.
+
+Measuring keepers directly on post-shot expected goals (`xGOT`, based on shot difficulty once the ball is struck on frame) across 123,146 shots tells a much cleaner story. First, pulling small samples back toward a global average keeps short-term hot streaks from going haywire while letting true skill separate once a keeper faces 75 to 150 shots. Second, unlike outfielders, returning keepers with 20 or more shots kept every bit of their consistency after changing clubs: **`0.24` year-over-year for movers versus `0.23` for stayers** (and **`0.31`** among regular starters facing 40+ shots). We also checked whether shot-stopping splits into "highlight saves" versus routine stops, and found one unified skill curve works better.
+
+## The Sweeper-Keeper Question
+
+Ann-Katrin Berger winning the 2026 NWSL Goalkeeper of the Year award brought a long-simmering debate back to the surface. Should an award value a keeper's sweeping and distribution alongside her shot-stopping, or focus mainly on keeping shots out of the net? In the 2026 regular season, Berger was a strong shot-stopper for Gotham FC (`+4.86` goals prevented on `27.86` xGOT faced, or `+1.74` per 10 xGOT, placing 4th in our Bayesian ratings) while putting up eye-catching numbers outside her box: `1.63` sweeper actions per 90 minutes, nearly four times the `0.41` league average, alongside a league-best `1.22` high claims per 90 plus `34.6` accurate passes per 90. Yet other starters put together bigger shot-stopping seasons under much heavier fire, led by Jane Campbell (`+13.79` goals prevented on `55.79` xGOT faced, or `+2.47` per 10 xGOT), Jordan Silkowitz (`+8.07`), and Katie Lund (`+7.51` in 15 starts).
+
+To see how those two sides of goalkeeping fit together, we ran the same tests across our 21-league database and the four leagues with full sweeper tracking (NWSL, WSL, France, and Australia). First, sweeper and ball-playing stats sit almost completely separate from shot-stopping (`r = 0.01` for sweeper actions) and add nothing positive to goalkeeper plus-minus. In fact, busy defensive actions like clearances and recoveries fall into the exact same workload trap as outfield tackles because underdogs face more pressure.
+
+They are also tightly tied to club tactics. Across all 21 leagues, keeper passing volume drops from `0.70` year-over-year consistency for stayers to `0.35` when a keeper switches clubs, while two completely different keepers playing for the same club still correlate at `0.36` (and between `0.31` and `0.49` across sweeper, touch, and passing metrics in the four tracking-detail leagues). Pure shot-stopping does the exact opposite: `0.01` between different keepers at the same club, and `0.30` when a keeper changes teams. And when we predict next season's team results across 275 clubs while controlling for outfield RAPM and prior team baselines, shot-stopping is the only goalkeeper trait that reliably moves future goals conceded and points per game. Sweeping, passing, claiming, and clearing counts add no consistent out-of-sample lift to future goals, expected goals, or points.
+
+Just like ASA's point on outfield tackles, those null findings do not prove ball-playing or aggressive sweeping has zero worth. Counting how often a keeper clears a through ball or completes a short pass cannot capture pass difficulty under pressure or the breakaway that never materialized because a keeper stepped off her line early. What the numbers do show is that, with the event data we have today, shot-stopping is the one goalkeeper skill we can cleanly untangle from team style and link to future standings. Awards like Berger's sit right on that boundary between what stands out clearly on film and what our models can currently prove.
+
+## Where Do We Go From Here?
+
+The real value of checking your own work is spotting quiet flaws you can fix. This review led to three practical updates in WoSo.Live:
+
+1. **Anchoring small-league keepers globally:** Estimating spread inside smaller 30-keeper leagues created bouncy ratings from year to year. Tying every league to our 123,000-shot global baseline keeps smaller leagues steady without flattening standout seasons.
+2. **Giving unseen signings a club starting point:** Player-based models beat simple team ratings in the balanced NWSL, yet assuming unseen signings are exact `0.00` league average pulled powerhouse clubs down in high-turnover European leagues. Adding a light club-strength prior for new signings, scaled by how much talent clusters by club in each league, improved forecasts across the board.
+3. **Adjusting goal-to-win math for league parity:** In the tight NWSL, an extra goal per match adds about `0.66` points per game. In top-heavy leagues where contenders win 3-0 or 4-0 regularly, marginal goals run into diminishing returns (`0.48` overall in lopsided leagues, and `0.36` in Scotland's SWPL 1). Accounting for team disparity cut our points-per-goal conversion error nearly fourfold.
+
+## So What Can We Take Away From This?
+
+Soccer defense will probably never boil down to one spotless stat, and patience still goes a long way when judging players over a single season. Too much happens through shared movement across eleven players.
+
+Still, once we move past counting busy actions and judge models strictly against future games, the signal is real. Adjusted plus-minus captures genuine, portable defending, post-shot Bayesian models isolate goalkeeping skill, and both add real predictive value. The picture isn't perfect yet, and it doesn't have to be to help us see the game a little more clearly.

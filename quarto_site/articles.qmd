@@ -1,0 +1,15 @@
+---
+title: "Articles"
+page-layout: article
+listing:
+  contents: articles
+  sort: "date desc"
+  type: default
+  categories: true
+  fields: [date, title, description, author, reading-time]
+---
+
+<div style="margin-top: 1.5rem; margin-bottom: 2.5rem; border-bottom: 2px solid #00747A; padding-bottom: 1rem;">
+  <h1 style="color: #111111; font-weight: 700; font-size: 2.5rem; margin-bottom: 0.5rem;">Articles</h1>
+  <p style="color: #555555; font-size: 1.2rem; margin: 0;">Research, model validation, and essays on women's soccer analytics.</p>
+</div>

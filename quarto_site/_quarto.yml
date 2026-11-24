@@ -32,6 +32,8 @@ website:
         href: shot-simulator.qmd
       - text: "World Cup Simulator"
         href: wwc-simulator.qmd
+      - text: "Articles"
+        href: articles.qmd
       - text: "Explainers"
         href: explainers.qmd
       - text: "About"
